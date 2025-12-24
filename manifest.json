@@ -1,0 +1,24 @@
+{
+  "name": "CMMC Level 2 Study Guide",
+  "short_name": "CMMC Study",
+  "description": "Interactive study guide for CMMC Level 2 - 110 Controls with Quiz Mode",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#4fc3f7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

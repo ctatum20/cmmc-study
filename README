@@ -1,17 +1,82 @@
-## 🤝 For the CPN Community
+CMMC Level 2 Study Guide
 
-Built for fellow CMMC professionals grinding for their certifications. Good luck on your exams! 💪
+A free interactive study tool for the CMMC CCP/CCA exams covering all 110 Level 2 controls.
+
+Launch the App: https://ctatum20.github.io/cmmc-study/
+
+
+FEATURES
+
+- All 110 Controls - organized by domain with plain-English explanations
+- Progress Tracking - check off controls as you study them
+- 4 Quiz Modes - Multiple Choice, Flashcards, Type Match, Domain Match
+- Filter & Search - by implementation type, study status, or keywords
+- Works Offline - install it as an app on your phone
+- 100% Free - no account, no ads, no BS
+
+
+INSTALL ON YOUR PHONE
+
+This is a Progressive Web App (PWA) - use it like a real app!
+
+iPhone (Safari):
+1. Open the link in Safari
+2. Tap Share then "Add to Home Screen"
+
+Android (Chrome):
+1. Open the link in Chrome
+2. Tap menu then "Install app"
+
+
+IMPORTANT NOTES
+
+- Progress saves locally on each device (browser storage)
+- Progress does NOT sync between devices - your phone and laptop are separate
+- Don't use Incognito/Private mode or your progress won't save
+- Built from the official CMMC Level 2 Assessment Guide
+
+
+STUDY TIPS
+
+1. Work through one domain at a time
+2. Check off controls as you master them
+3. Use "Unstudied Only" quiz mode to target weak areas
+4. Flashcard mode is great for quick review before the exam
+
+
+FOR THE CPN COMMUNITY
+
+Built for fellow CMMC professionals grinding for their certifications. Good luck on your exams!
 
 Questions or feedback? Open an issue!
 
----
 
-## 👩‍💻 Built By
+BUILT BY
 
-**Charnice Tatum**
+Charnice Tatum
+Check out my portfolio on LinkedIn: https://www.linkedin.com/in/charnice-tatum
 
-[Check out my portfolio on LinkedIn →](https://www.linkedin.com/in/charnice-tatum)
+*******Biggest tip that has helped me so far:**********
 
----
+Each domain tells a coherent story.  
+Instead of memorizing 110 disconnected facts, you're learning 14 stories:
 
-*Not affiliated with The Cyber AB or CAICO or DoW. Just a study tool.*
+Domain --- The Story It Tells  
+AC --- "Who gets in, and what can they do once they're in?"  
+AT --- "Do people know what they're supposed to do?"  
+AU --- "Can we prove what happened?"  
+CM --- "Is the system configured correctly and controlled?"  
+IA --- "Are you who you say you are?"  
+IR --- "What happens when things go wrong?"  
+MA --- "How do we keep things running safely?"  
+MP --- "How do we protect the actual data containers?"  
+PE --- "Who can physically touch stuff?"  
+PS --- "Can we trust the people?"  
+RA --- "What could go wrong and how bad?"  
+CA --- "Are we actually doing what we say we're doing?"  
+SC --- "How do we protect data moving and sitting?"  
+SI --- "Is the system healthy and clean?"
+
+
+
+Not affiliated with The Cyber AB or DoD. Just a study tool.

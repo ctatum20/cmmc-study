@@ -1,7 +1,7 @@
 {
-  "name": "CMMC Level 2 Study Guide",
-  "short_name": "CMMC Study",
-  "description": "Interactive study guide for CMMC Level 2 - 110 Controls with Quiz Mode",
+  "name": "CMMC CCA Exam Study Guide",
+  "short_name": "CMMC CCA",
+  "description": "Complete CCA Exam Prep - 110 Controls, Ethics, Gotcha Questions, Assessor Judgment",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1a1a2e",

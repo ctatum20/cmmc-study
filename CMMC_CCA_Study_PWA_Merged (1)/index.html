@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CMMC Study">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="CMMC Level 2 CCA Exam Study Guide - 110 Controls, Ethics, Assessment Scenarios">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>CMMC CCA Study Guide - Complete Exam Prep</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f7fa;
+            color: #1a1a2e;
+        }
+        
+        .container { display: flex; min-height: 100vh; }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .sidebar h1 { font-size: 1.4rem; margin-bottom: 5px; color: #4fc3f7; }
+        .sidebar .subtitle {
+            font-size: 0.85rem; color: #888; margin-bottom: 20px;
+            padding-bottom: 15px; border-bottom: 1px solid #333;
+        }
+        
+        .section-title {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
+            color: #888; margin-bottom: 10px; margin-top: 20px;
+        }
+        
+        /* Mode Navigation */
+        .mode-nav {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .mode-btn {
+            padding: 10px 6px;
+            border: 2px solid #333;
+            background: transparent;
+            color: #888;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .mode-btn:hover { border-color: #4fc3f7; color: #4fc3f7; }
+        .mode-btn.active { background: #4fc3f7; border-color: #4fc3f7; color: #1a1a2e; }
+        .mode-btn .icon { display: block; font-size: 1.1rem; margin-bottom: 3px; }
+        
+        /* Mode-specific colors */
+        .mode-btn.ethics { border-color: #8b5cf6; }
+        .mode-btn.ethics:hover, .mode-btn.ethics.active { background: #8b5cf6; border-color: #8b5cf6; color: white; }
+        .mode-btn.gotcha { border-color: #ef4444; }
+        .mode-btn.gotcha:hover, .mode-btn.gotcha.active { background: #ef4444; border-color: #ef4444; color: white; }
+        .mode-btn.judgment { border-color: #f59e0b; }
+        .mode-btn.judgment:hover, .mode-btn.judgment.active { background: #f59e0b; border-color: #f59e0b; color: #1a1a2e; }
+        .mode-btn.deepdive { border-color: #06b6d4; }
+        .mode-btn.deepdive:hover, .mode-btn.deepdive.active { background: #06b6d4; border-color: #06b6d4; color: #1a1a2e; }
+        
+        /* Progress Section */
+        .progress-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .progress-title { font-size: 0.85rem; font-weight: 600; }
+        .progress-percent { font-size: 1.2rem; font-weight: 700; color: #4fc3f7; }
+        
+        .progress-bar-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4fc3f7, #29b6f6);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .progress-stats { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.75rem; color: #888; }
+        .progress-stats span { color: #4fc3f7; font-weight: 600; }
+        
+        .reset-progress {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            background: transparent;
+            border: 1px solid #444;
+            color: #888;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        .reset-progress:hover { border-color: #e74c3c; color: #e74c3c; }
+
+        /* Legend */
+        .legend-item {
+            display: flex; align-items: center;
+            padding: 8px 12px; margin-bottom: 6px;
+            border-radius: 8px; cursor: pointer;
+            transition: all 0.2s; border: 2px solid transparent;
+        }
+        .legend-item:hover { background: rgba(255,255,255,0.1); }
+        .legend-item.active { border-color: currentColor; background: rgba(255,255,255,0.05); }
+        
+        .legend-color { width: 14px; height: 14px; border-radius: 4px; margin-right: 10px; flex-shrink: 0; }
+        .legend-text { font-size: 0.85rem; }
+        
+        .policy { background: #2E86AB; color: #2E86AB; }
+        .config { background: #A23B72; color: #A23B72; }
+        .software { background: #F18F01; color: #F18F01; }
+        .hardware { background: #C73E1D; color: #C73E1D; }
+        .mixed { background: linear-gradient(135deg, #3D5A80, #7B2D8E); color: #7B2D8E; }
+        
+        /* Search */
+        .search-box { margin-bottom: 15px; }
+        .search-box input {
+            width: 100%; padding: 12px 15px; border: none; border-radius: 8px;
+            background: rgba(255,255,255,0.1); color: white; font-size: 0.9rem;
+        }
+        .search-box input::placeholder { color: #666; }
+        .search-box input:focus { outline: 2px solid #4fc3f7; background: rgba(255,255,255,0.15); }
+        
+        /* Study filter */
+        .study-filter { display: flex; gap: 6px; margin-bottom: 15px; }
+        .study-filter-btn {
+            flex: 1; padding: 8px 6px; border: 1px solid #333;
+            background: transparent; color: #888; border-radius: 6px;
+            cursor: pointer; font-size: 0.7rem; transition: all 0.2s;
+        }
+        .study-filter-btn:hover { border-color: #4fc3f7; color: #4fc3f7; }
+        .study-filter-btn.active { background: rgba(79, 195, 247, 0.2); border-color: #4fc3f7; color: #4fc3f7; }
+        
+        /* Stats */
+        .stats { margin-top: 15px; padding-top: 15px; border-top: 1px solid #333; }
+        .stat-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.8rem; }
+        .stat-value { color: #4fc3f7; font-weight: 600; }
+        
+        /* Main Content */
+        .main-content { margin-left: 300px; flex: 1; padding: 30px; }
+        
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h2 { font-size: 2rem; color: #1a1a2e; margin-bottom: 10px; }
+        .header p { color: #666; }
+        
+        /* Domain Sections */
+        .domain {
+            background: white; border-radius: 16px; margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;
+        }
+        
+        .domain-header {
+            padding: 18px 25px; color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: filter 0.2s;
+        }
+        .domain-header:hover { filter: brightness(1.1); }
+        
+        .domain-title { font-size: 1.1rem; font-weight: 600; }
+        .domain-meta { display: flex; align-items: center; gap: 12px; }
+        .domain-count { background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; }
+        .domain-progress { font-size: 0.8rem; opacity: 0.9; }
+        .domain-chevron { font-size: 1.2rem; transition: transform 0.3s; }
+        .domain.collapsed .domain-chevron { transform: rotate(-90deg); }
+        .domain.collapsed .domain-content { display: none; }
+        
+        /* Controls Table */
+        .controls-table { width: 100%; border-collapse: collapse; }
+        .controls-table th {
+            background: #f8f9fa; padding: 12px 15px; text-align: left;
+            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;
+            color: #666; border-bottom: 2px solid #e9ecef;
+        }
+        .controls-table td { padding: 15px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+        .controls-table tr:hover { background: #f8fafc; }
+        .controls-table tr.hidden { display: none; }
+        .controls-table tr.studied { background: #f0fdf4; }
+        .controls-table tr.studied:hover { background: #dcfce7; }
+        
+        .control-id { font-weight: 700; color: #1a1a2e; font-size: 0.95rem; }
+        .control-name { font-size: 0.8rem; color: #666; margin-top: 3px; }
+        .control-req { font-size: 0.85rem; color: #444; line-height: 1.5; }
+        .control-meaning { font-size: 0.85rem; color: #666; line-height: 1.5; }
+        
+        .impl-badge {
+            display: inline-block; padding: 5px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 600; color: white; white-space: nowrap;
+        }
+        
+        .study-checkbox { width: 22px; height: 22px; cursor: pointer; accent-color: #10b981; }
+        
+        /* Domain Colors */
+        .domain-ac .domain-header { background: linear-gradient(135deg, #2563EB, #1d4ed8); }
+        .domain-at .domain-header { background: linear-gradient(135deg, #059669, #047857); }
+        .domain-au .domain-header { background: linear-gradient(135deg, #7C3AED, #6d28d9); }
+        .domain-cm .domain-header { background: linear-gradient(135deg, #DC2626, #b91c1c); }
+        .domain-ia .domain-header { background: linear-gradient(135deg, #0891B2, #0e7490); }
+        .domain-ir .domain-header { background: linear-gradient(135deg, #EA580C, #c2410c); }
+        .domain-ma .domain-header { background: linear-gradient(135deg, #4F46E5, #4338ca); }
+        .domain-mp .domain-header { background: linear-gradient(135deg, #BE185D, #9d174d); }
+        .domain-ps .domain-header { background: linear-gradient(135deg, #0D9488, #0f766e); }
+        .domain-pe .domain-header { background: linear-gradient(135deg, #9333EA, #7e22ce); }
+        .domain-ra .domain-header { background: linear-gradient(135deg, #CA8A04, #a16207); }
+        .domain-ca .domain-header { background: linear-gradient(135deg, #2563EB, #1d4ed8); }
+        .domain-sc .domain-header { background: linear-gradient(135deg, #DC2626, #b91c1c); }
+        .domain-si .domain-header { background: linear-gradient(135deg, #65A30D, #4d7c0f); }
+        
+        /* Mode Panels */
+        .mode-panel { display: none; max-width: 900px; margin: 0 auto; }
+        .mode-panel.active { display: block; }
+        .study-container.hidden { display: none; }
+        
+        /* Quiz Mode Styles */
+        .quiz-settings {
+            background: white; border-radius: 16px; padding: 25px;
+            margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .quiz-settings h3 { margin-bottom: 20px; color: #1a1a2e; }
+        
+        .quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .quiz-option {
+            padding: 15px; border: 2px solid #e5e7eb; border-radius: 12px;
+            cursor: pointer; transition: all 0.2s; text-align: center;
+        }
+        .quiz-option:hover { border-color: #4fc3f7; background: #f0f9ff; }
+        .quiz-option.selected { border-color: #2563EB; background: #eff6ff; }
+        .quiz-option .icon { font-size: 2rem; margin-bottom: 8px; }
+        .quiz-option .label { font-weight: 600; color: #1a1a2e; margin-bottom: 4px; }
+        .quiz-option .desc { font-size: 0.8rem; color: #666; }
+        
+        .start-quiz-btn {
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, #2563EB, #1d4ed8);
+            color: white; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .start-quiz-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3); }
+        
+        /* Quiz Card */
+        .quiz-card {
+            background: white; border-radius: 20px; padding: 40px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.1); text-align: center; display: none;
+        }
+        .quiz-card.active { display: block; }
+        
+        .quiz-progress {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #e5e7eb;
+        }
+        .quiz-progress-text { font-size: 0.9rem; color: #666; }
+        .quiz-score { display: flex; gap: 20px; }
+        .quiz-score-item { font-size: 0.9rem; }
+        .quiz-score-item.correct { color: #10b981; }
+        .quiz-score-item.incorrect { color: #ef4444; }
+        
+        .quiz-question-label { font-size: 0.9rem; color: #666; margin-bottom: 10px; }
+        .quiz-question { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin-bottom: 10px; line-height: 1.4; }
+        .quiz-question-sub { font-size: 1rem; color: #666; margin-bottom: 30px; line-height: 1.5; }
+        
+        .quiz-answers { display: grid; gap: 12px; text-align: left; margin-bottom: 20px; }
+        .quiz-answer {
+            padding: 15px 20px; border: 2px solid #e5e7eb; border-radius: 12px;
+            cursor: pointer; transition: all 0.2s; font-size: 0.95rem;
+        }
+        .quiz-answer:hover:not(.disabled) { border-color: #4fc3f7; background: #f0f9ff; }
+        .quiz-answer.correct { border-color: #10b981; background: #ecfdf5; }
+        .quiz-answer.incorrect { border-color: #ef4444; background: #fef2f2; }
+        .quiz-answer.disabled { cursor: default; opacity: 0.8; }
+        
+        .quiz-feedback {
+            padding: 15px; border-radius: 12px; font-weight: 600;
+            display: none; margin-bottom: 20px;
+        }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.correct { background: #ecfdf5; color: #10b981; }
+        .quiz-feedback.incorrect { background: #fef2f2; color: #ef4444; }
+        
+        .quiz-btn {
+            padding: 12px 30px; border-radius: 10px; font-size: 1rem;
+            font-weight: 600; cursor: pointer; transition: all 0.2s; border: none;
+        }
+        .quiz-btn-primary { background: #2563EB; color: white; }
+        .quiz-btn-primary:hover { background: #1d4ed8; }
+        .quiz-btn-secondary { background: #e5e7eb; color: #666; }
+        .quiz-btn-secondary:hover { background: #d1d5db; }
+        
+        /* Flashcard */
+        .flashcard {
+            width: 100%; height: 300px; perspective: 1000px;
+            cursor: pointer; margin-bottom: 30px;
+        }
+        .flashcard-inner {
+            width: 100%; height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        
+        .flashcard-front, .flashcard-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 16px;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; padding: 30px;
+        }
+        .flashcard-front { background: linear-gradient(135deg, #2563EB, #1d4ed8); color: white; }
+        .flashcard-back { background: linear-gradient(135deg, #10b981, #059669); color: white; transform: rotateY(180deg); }
+        
+        .flashcard-id { font-size: 0.9rem; opacity: 0.8; margin-bottom: 10px; }
+        .flashcard-label { font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px; text-transform: uppercase; }
+        .flashcard-text { font-size: 1.2rem; text-align: center; line-height: 1.5; }
+        
+        .flashcard-buttons { display: flex; gap: 15px; justify-content: center; }
+        .fc-btn {
+            padding: 15px 40px; border-radius: 12px; font-size: 1rem;
+            font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+        }
+        .fc-btn-wrong { background: #fef2f2; color: #ef4444; }
+        .fc-btn-wrong:hover { background: #fee2e2; }
+        .fc-btn-right { background: #ecfdf5; color: #10b981; }
+        .fc-btn-right:hover { background: #d1fae5; }
+        
+        /* Quiz Results */
+        .quiz-results {
+            background: white; border-radius: 20px; padding: 50px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.1); text-align: center; display: none;
+        }
+        .quiz-results.active { display: block; }
+        
+        .results-icon { font-size: 4rem; margin-bottom: 20px; }
+        .results-score { font-size: 4rem; font-weight: 800; color: #2563EB; margin-bottom: 10px; }
+        .results-message { font-size: 1.2rem; color: #666; margin-bottom: 30px; }
+        
+        .results-stats { display: flex; justify-content: center; gap: 40px; margin-bottom: 30px; }
+        .results-stat { text-align: center; }
+        .results-stat-value { font-size: 2rem; font-weight: 700; }
+        .results-stat-value.correct { color: #10b981; }
+        .results-stat-value.incorrect { color: #ef4444; }
+        .results-stat-label { font-size: 0.85rem; color: #888; }
+        
+        /* CCA Mode Styles */
+        .cca-card {
+            background: white; border-radius: 16px; padding: 30px;
+            margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .cca-category {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 600; margin-bottom: 15px;
+        }
+        .cca-category.ethics { background: #8b5cf6; color: white; }
+        .cca-category.gotcha { background: #ef4444; color: white; }
+        .cca-category.judgment { background: #f59e0b; color: #1a1a2e; }
+        
+        .cca-question { font-size: 1.2rem; font-weight: 600; color: #1a1a2e; line-height: 1.5; margin-bottom: 20px; }
+        .cca-scenario { font-size: 1rem; color: #444; line-height: 1.6; margin-bottom: 25px; padding: 20px; background: #f8fafc; border-radius: 12px; border-left: 4px solid #2563EB; }
+        
+        .cca-options { display: grid; gap: 10px; margin-bottom: 20px; }
+        .cca-option {
+            padding: 15px 20px; border: 2px solid #e5e7eb; border-radius: 12px;
+            cursor: pointer; transition: all 0.2s; font-size: 0.95rem; text-align: left;
+        }
+        .cca-option:hover:not(.disabled) { border-color: #4fc3f7; background: #f0f9ff; }
+        .cca-option.selected { border-color: #2563EB; background: #eff6ff; }
+        .cca-option.correct { border-color: #10b981; background: #ecfdf5; }
+        .cca-option.incorrect { border-color: #ef4444; background: #fef2f2; }
+        .cca-option.disabled { cursor: default; }
+        
+        .cca-explanation {
+            background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px;
+            padding: 20px; margin-top: 20px; display: none;
+        }
+        .cca-explanation.show { display: block; }
+        .cca-explanation h4 { color: #0369a1; margin-bottom: 10px; font-size: 0.9rem; }
+        .cca-explanation p { color: #0c4a6e; line-height: 1.6; font-size: 0.9rem; }
+        
+        .cca-mindset {
+            background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px;
+            padding: 15px; margin-top: 15px;
+        }
+        .cca-mindset h5 { color: #92400e; margin-bottom: 8px; font-size: 0.85rem; }
+        .cca-mindset p { color: #78350f; font-size: 0.85rem; line-height: 1.5; }
+        
+        /* Deep Dive Styles */
+        .deepdive-search {
+            width: 100%; padding: 15px 20px; border: 2px solid #e5e7eb;
+            border-radius: 12px; font-size: 1rem; margin-bottom: 20px;
+        }
+        .deepdive-search:focus { outline: none; border-color: #06b6d4; }
+        
+        .deepdive-domain {
+            background: white; border-radius: 16px; margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;
+        }
+        
+        .deepdive-domain-header {
+            padding: 18px 25px; color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer;
+        }
+        
+        .deepdive-domain-content { display: none; padding: 20px; }
+        .deepdive-domain.expanded .deepdive-domain-content { display: block; }
+        .deepdive-domain.expanded .dd-chevron { transform: rotate(180deg); }
+        
+        .deepdive-control {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 20px; margin-bottom: 15px;
+        }
+        .deepdive-control.hidden { display: none; }
+        
+        .dd-control-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .dd-control-id { font-weight: 700; color: #1a1a2e; }
+        .dd-control-name { color: #64748b; font-size: 0.9rem; margin-left: 8px; }
+        .dd-badge { padding: 3px 10px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; }
+        .dd-badge-5pt { background: #ef4444; color: white; }
+        .dd-badge-partial { background: #f59e0b; color: #1a1a2e; }
+        
+        .dd-statement {
+            font-size: 0.9rem; color: #475569; line-height: 1.5;
+            padding: 12px; background: white; border-radius: 8px;
+            border-left: 3px solid #06b6d4; margin-bottom: 15px;
+        }
+        
+        .dd-takeaways h4 { color: #0891b2; font-size: 0.85rem; margin-bottom: 10px; }
+        .dd-takeaways ul { margin: 0; padding-left: 20px; }
+        .dd-takeaways li { color: #334155; font-size: 0.85rem; line-height: 1.6; margin-bottom: 5px; }
+        
+        .dd-tips {
+            background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px;
+            padding: 12px; margin-top: 15px;
+        }
+        .dd-tips h5 { color: #92400e; font-size: 0.8rem; margin-bottom: 6px; }
+        .dd-tips p { color: #78350f; font-size: 0.8rem; }
+        
+        /* Quiz Stats Sidebar for CCA modes */
+        .cca-stats {
+            background: rgba(255,255,255,0.05); border-radius: 12px;
+            padding: 15px; margin-top: 15px;
+        }
+        .cca-stats-title { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+        .cca-stats-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.85rem; }
+        
+        /* Mobile Styles */
+        .mobile-nav {
+            display: none;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: #1a1a2e; padding: 10px; z-index: 200;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .mobile-nav-inner { display: flex; justify-content: space-around; }
+        
+        .mobile-nav-btn {
+            background: none; border: none; color: #888;
+            padding: 8px 12px; border-radius: 8px;
+            font-size: 0.7rem; cursor: pointer;
+        }
+        .mobile-nav-btn.active { color: #4fc3f7; background: rgba(79, 195, 247, 0.1); }
+        .mobile-nav-btn .icon { display: block; font-size: 1.3rem; margin-bottom: 2px; }
+        
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 99;
+        }
+        .sidebar-overlay.show { display: block; }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                width: 280px;
+            }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; padding-bottom: 80px; }
+            .mobile-nav { display: block; }
+            .quiz-options { grid-template-columns: 1fr; }
+            .flashcard { height: 250px; }
+            .quiz-card, .cca-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+        
+        <aside class="sidebar">
+            <h1>📚 CMMC CCA Study</h1>
+            <div class="subtitle">Complete Exam Preparation</div>
+            
+            <div class="section-title">Study Modes</div>
+            <div class="mode-nav">
+                <button class="mode-btn active" id="modeStudy" onclick="setMode('study')">
+                    <span class="icon">📖</span> Controls
+                </button>
+                <button class="mode-btn" id="modeQuiz" onclick="setMode('quiz')">
+                    <span class="icon">✏️</span> Quiz
+                </button>
+                <button class="mode-btn ethics" id="modeEthics" onclick="setMode('ethics')">
+                    <span class="icon">⚖️</span> Ethics
+                </button>
+                <button class="mode-btn gotcha" id="modeGotcha" onclick="setMode('gotcha')">
+                    <span class="icon">⚡</span> Gotcha
+                </button>
+                <button class="mode-btn judgment" id="modeJudgment" onclick="setMode('judgment')">
+                    <span class="icon">🎯</span> Judgment
+                </button>
+                <button class="mode-btn deepdive" id="modeDeepDive" onclick="setMode('deepdive')">
+                    <span class="icon">🔬</span> Deep Dive
+                </button>
+            </div>
+            
+            <!-- Study Mode Sidebar -->
+            <div id="studySidebar">
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span class="progress-title">Study Progress</span>
+                        <span class="progress-percent" id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span><span id="studiedCount">0</span> / 110 studied</span>
+                    </div>
+                    <button class="reset-progress" onclick="resetProgress()">↺ Reset Progress</button>
+                </div>
+                
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="🔍 Search controls...">
+                </div>
+                
+                <div class="section-title">Filter by Status</div>
+                <div class="study-filter">
+                    <button class="study-filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+                    <button class="study-filter-btn" data-filter="studied" onclick="setFilter('studied')">✓ Studied</button>
+                    <button class="study-filter-btn" data-filter="unstudied" onclick="setFilter('unstudied')">○ To Study</button>
+                </div>
+                
+                <div class="section-title">Filter by Type</div>
+                <div class="legend-item active" data-type="all" onclick="setTypeFilter('all')">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #4fc3f7, #29b6f6);"></div>
+                    <span class="legend-text">All Types</span>
+                </div>
+                <div class="legend-item" data-type="policy" onclick="setTypeFilter('policy')">
+                    <div class="legend-color policy"></div>
+                    <span class="legend-text">Policy/Process</span>
+                </div>
+                <div class="legend-item" data-type="config" onclick="setTypeFilter('config')">
+                    <div class="legend-color config"></div>
+                    <span class="legend-text">Configuration</span>
+                </div>
+                <div class="legend-item" data-type="software" onclick="setTypeFilter('software')">
+                    <div class="legend-color software"></div>
+                    <span class="legend-text">Software/Tool</span>
+                </div>
+                <div class="legend-item" data-type="hardware" onclick="setTypeFilter('hardware')">
+                    <div class="legend-color hardware"></div>
+                    <span class="legend-text">Hardware</span>
+                </div>
+                <div class="legend-item" data-type="mixed" onclick="setTypeFilter('mixed')">
+                    <div class="legend-color mixed"></div>
+                    <span class="legend-text">Mixed</span>
+                </div>
+            </div>
+            
+            <!-- Quiz Sidebar -->
+            <div id="quizSidebar" style="display: none;">
+                <div class="cca-stats">
+                    <div class="cca-stats-title">Quiz Progress</div>
+                    <div class="cca-stats-row">
+                        <span>Correct</span>
+                        <span style="color: #10b981" id="quizCorrectCount">0</span>
+                    </div>
+                    <div class="cca-stats-row">
+                        <span>Incorrect</span>
+                        <span style="color: #ef4444" id="quizIncorrectCount">0</span>
+                    </div>
+                </div>
+                <button class="reset-progress" style="margin-top: 15px;" onclick="endQuiz()">✕ End Quiz</button>
+            </div>
+            
+            <!-- CCA Mode Sidebar -->
+            <div id="ccaSidebar" style="display: none;">
+                <div class="cca-stats">
+                    <div class="cca-stats-title">Session Progress</div>
+                    <div class="cca-stats-row">
+                        <span>Question</span>
+                        <span id="ccaProgress">0 / 0</span>
+                    </div>
+                    <div class="cca-stats-row">
+                        <span>Correct</span>
+                        <span style="color: #10b981" id="ccaCorrect">0</span>
+                    </div>
+                    <div class="cca-stats-row">
+                        <span>Incorrect</span>
+                        <span style="color: #ef4444" id="ccaIncorrect">0</span>
+                    </div>
+                </div>
+                <button class="reset-progress" style="margin-top: 15px;" onclick="restartCCAMode()">↺ Restart</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span>Total Controls</span>
+                    <span class="stat-value">110</span>
+                </div>
+                <div class="stat-item">
+                    <span>CCA Questions</span>
+                    <span class="stat-value">56</span>
+                </div>
+                <div class="stat-item">
+                    <span>Domains</span>
+                    <span class="stat-value">14</span>
+                </div>
+            </div>
+        </aside>
+        
+        <main class="main-content">
+            <!-- Study Mode -->
+            <div id="studyContainer" class="study-container">
+                <div class="header">
+                    <h2>CMMC Level 2 Controls Reference</h2>
+                    <p>Check off controls as you study them • Filter by type or study status</p>
+                </div>
+                <div id="domainsContainer"></div>
+            </div>
+            
+            <!-- Quiz Mode -->
+            <div id="quizContainer" class="mode-panel">
+                <div class="quiz-settings" id="quizSettings">
+                    <h3>🎯 Choose Your Quiz Mode</h3>
+                    <div class="quiz-options">
+                        <div class="quiz-option selected" data-quiz-type="multiple-choice" onclick="selectQuizType('multiple-choice')">
+                            <div class="icon">📝</div>
+                            <div class="label">Multiple Choice</div>
+                            <div class="desc">Match controls to requirements</div>
+                        </div>
+                        <div class="quiz-option" data-quiz-type="flashcard" onclick="selectQuizType('flashcard')">
+                            <div class="icon">🃏</div>
+                            <div class="label">Flashcards</div>
+                            <div class="desc">Flip to reveal answers</div>
+                        </div>
+                        <div class="quiz-option" data-quiz-type="type-match" onclick="selectQuizType('type-match')">
+                            <div class="icon">🏷️</div>
+                            <div class="label">Type Match</div>
+                            <div class="desc">Match to implementation type</div>
+                        </div>
+                        <div class="quiz-option" data-quiz-type="domain-match" onclick="selectQuizType('domain-match')">
+                            <div class="icon">📂</div>
+                            <div class="label">Domain Match</div>
+                            <div class="desc">Identify control domains</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <div class="section-title" style="color: #666; margin-top: 0;">Number of Questions</div>
+                        <div class="study-filter" style="margin-bottom: 0;">
+                            <button class="study-filter-btn" data-q-count="10" onclick="setQuestionCount(10)">10</button>
+                            <button class="study-filter-btn active" data-q-count="20" onclick="setQuestionCount(20)">20</button>
+                            <button class="study-filter-btn" data-q-count="50" onclick="setQuestionCount(50)">50</button>
+                            <button class="study-filter-btn" data-q-count="110" onclick="setQuestionCount(110)">All</button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <div class="section-title" style="color: #666; margin-top: 0;">Focus On</div>
+                        <div class="study-filter" style="margin-bottom: 0;">
+                            <button class="study-filter-btn active" data-focus="all" onclick="setQuizFocus('all')">All Controls</button>
+                            <button class="study-filter-btn" data-focus="studied" onclick="setQuizFocus('studied')">✓ Studied Only</button>
+                            <button class="study-filter-btn" data-focus="unstudied" onclick="setQuizFocus('unstudied')">○ Unstudied Only</button>
+                        </div>
+                    </div>
+                    
+                    <button class="start-quiz-btn" onclick="startQuiz()">Start Quiz →</button>
+                </div>
+                
+                <div class="quiz-card" id="quizCard">
+                    <div class="quiz-progress">
+                        <span class="quiz-progress-text">Question <span id="currentQuestion">1</span> of <span id="totalQuestions">20</span></span>
+                        <div class="quiz-score">
+                            <span class="quiz-score-item correct">✓ <span id="correctScore">0</span></span>
+                            <span class="quiz-score-item incorrect">✗ <span id="incorrectScore">0</span></span>
+                        </div>
+                    </div>
+                    <div class="quiz-question-label" id="questionLabel">What control is this?</div>
+                    <div class="quiz-question" id="questionText">Loading...</div>
+                    <div class="quiz-question-sub" id="questionSub"></div>
+                    <div class="quiz-answers" id="quizAnswers"></div>
+                    <div class="quiz-feedback" id="quizFeedback"></div>
+                    <button class="quiz-btn quiz-btn-primary" id="nextBtn" onclick="nextQuestion()" style="display: none;">Next →</button>
+                </div>
+                
+                <div class="quiz-card" id="flashcardCard">
+                    <div class="quiz-progress">
+                        <span class="quiz-progress-text">Card <span id="fcCurrentQuestion">1</span> of <span id="fcTotalQuestions">20</span></span>
+                    </div>
+                    <div class="flashcard" id="flashcard" onclick="flipCard()">
+                        <div class="flashcard-inner">
+                            <div class="flashcard-front">
+                                <div class="flashcard-id" id="fcControlId">3.1.1</div>
+                                <div class="flashcard-label">Control Requirement</div>
+                                <div class="flashcard-text" id="fcFront">Loading...</div>
+                            </div>
+                            <div class="flashcard-back">
+                                <div class="flashcard-label">What It Means</div>
+                                <div class="flashcard-text" id="fcBack">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="color: #888; font-size: 0.9rem; margin-bottom: 20px;">Tap card to flip</p>
+                    <div class="flashcard-buttons">
+                        <button class="fc-btn fc-btn-wrong" onclick="markFlashcard(false)">✗ Didn't Know</button>
+                        <button class="fc-btn fc-btn-right" onclick="markFlashcard(true)">✓ Got It</button>
+                    </div>
+                </div>
+                
+                <div class="quiz-results" id="quizResults">
+                    <div class="results-icon" id="resultsIcon">🏆</div>
+                    <div class="results-score" id="resultsScore">85%</div>
+                    <div class="results-message" id="resultsMessage">Great job!</div>
+                    <div class="results-stats">
+                        <div class="results-stat">
+                            <div class="results-stat-value correct" id="resultsCorrect">17</div>
+                            <div class="results-stat-label">Correct</div>
+                        </div>
+                        <div class="results-stat">
+                            <div class="results-stat-value incorrect" id="resultsIncorrect">3</div>
+                            <div class="results-stat-label">Incorrect</div>
+                        </div>
+                    </div>
+                    <button class="quiz-btn quiz-btn-primary" onclick="restartQuiz()">Try Again</button>
+                </div>
+            </div>
+            
+            <!-- Ethics Mode -->
+            <div id="ethicsContainer" class="mode-panel"></div>
+            
+            <!-- Gotcha Mode -->
+            <div id="gotchaContainer" class="mode-panel"></div>
+            
+            <!-- Judgment Mode -->
+            <div id="judgmentContainer" class="mode-panel"></div>
+            
+            <!-- Deep Dive Mode -->
+            <div id="deepdiveContainer" class="mode-panel"></div>
+        </main>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-inner">
+            <button class="mobile-nav-btn" onclick="toggleMobileSidebar()">
+                <span class="icon">☰</span> Menu
+            </button>
+            <button class="mobile-nav-btn active" id="mobileStudyBtn" onclick="mobileSetMode('study')">
+                <span class="icon">📖</span> Study
+            </button>
+            <button class="mobile-nav-btn" id="mobileQuizBtn" onclick="mobileSetMode('quiz')">
+                <span class="icon">✏️</span> Quiz
+            </button>
+            <button class="mobile-nav-btn" id="mobileCCABtn" onclick="mobileSetMode('ethics')">
+                <span class="icon">⚖️</span> CCA
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // ==================== CONTROL DATA ====================
+        const DOMAINS = {
+            'ACCESS CONTROL (AC)': {
+                id: 'ac', count: 22,
+                controls: [
+                    { id: '3.1.1', name: 'Authorized Access Control', type: 'config', req: 'Limit information system access to authorized users, processes acting on behalf of authorized users, or devices.', meaning: 'Only approved users and devices can access your systems. Maintain a list of authorized personnel.' },
+                    { id: '3.1.2', name: 'Transaction & Function Control', type: 'config', req: 'Limit information system access to the types of transactions and functions that authorized users are permitted to execute.', meaning: 'Users can only do what their job requires. Use role-based access control (RBAC).' },
+                    { id: '3.1.3', name: 'Control CUI Flow', type: 'config', req: 'Control the flow of CUI in accordance with approved authorizations.', meaning: 'Track and control where CUI can be sent. Use DLP tools and network segmentation.' },
+                    { id: '3.1.4', name: 'Separation of Duties', type: 'policy', req: 'Separate the duties of individuals to reduce the risk of malevolent activity without collusion.', meaning: 'No single person should control an entire critical process. Prevents fraud and mistakes.' },
+                    { id: '3.1.5', name: 'Least Privilege', type: 'config', req: 'Employ the principle of least privilege, including for specific security functions and privileged accounts.', meaning: 'Give users minimum access needed for their job. No unnecessary admin rights.' },
+                    { id: '3.1.6', name: 'Non-Privileged Account Use', type: 'policy', req: 'Use non-privileged accounts or roles when accessing nonsecurity functions.', meaning: 'Admins use regular accounts for daily tasks. Only use admin accounts when necessary.' },
+                    { id: '3.1.7', name: 'Privileged Functions', type: 'config', req: 'Prevent non-privileged users from executing privileged functions and capture the execution of such functions in audit logs.', meaning: 'Regular users cannot run admin commands. All admin actions are logged.' },
+                    { id: '3.1.8', name: 'Unsuccessful Logon Attempts', type: 'config', req: 'Limit unsuccessful logon attempts.', meaning: 'Lock accounts after too many failed logins (e.g., 5 attempts). Prevents brute force attacks.' },
+                    { id: '3.1.9', name: 'Privacy & Security Notices', type: 'config', req: 'Provide privacy and security notices consistent with applicable CUI rules.', meaning: 'Show warning banners at login about monitoring and authorized use only.' },
+                    { id: '3.1.10', name: 'Session Lock', type: 'config', req: 'Use session lock with pattern-hiding displays to prevent access and viewing of data after a period of inactivity.', meaning: 'Screen locks after inactivity (e.g., 15 min). Requires password to unlock.' },
+                    { id: '3.1.11', name: 'Session Termination', type: 'config', req: 'Terminate (automatically) a user session after a defined condition.', meaning: 'Auto-logoff after extended inactivity or at end of day.' },
+                    { id: '3.1.12', name: 'Control Remote Access', type: 'mixed', req: 'Monitor and control remote access sessions.', meaning: 'Track all remote connections. Use VPN with logging. Approve remote access.' },
+                    { id: '3.1.13', name: 'Remote Access Confidentiality', type: 'config', req: 'Employ cryptographic mechanisms to protect the confidentiality of remote access sessions.', meaning: 'Encrypt all remote connections (VPN, TLS). No unencrypted remote access.' },
+                    { id: '3.1.14', name: 'Remote Access Routing', type: 'config', req: 'Route remote access via managed access control points.', meaning: 'All remote access goes through controlled entry points like VPN concentrators.' },
+                    { id: '3.1.15', name: 'Privileged Remote Access', type: 'policy', req: 'Authorize remote execution of privileged commands and remote access to security-relevant information.', meaning: 'Extra approval needed for remote admin access. Document who has this access.' },
+                    { id: '3.1.16', name: 'Wireless Access Authorization', type: 'policy', req: 'Authorize wireless access prior to allowing such connections.', meaning: 'WiFi access requires approval. No unauthorized wireless access points.' },
+                    { id: '3.1.17', name: 'Wireless Access Protection', type: 'config', req: 'Protect wireless access using authentication and encryption.', meaning: 'Use WPA2/WPA3 Enterprise. No WEP or open networks for CUI systems.' },
+                    { id: '3.1.18', name: 'Mobile Device Connection', type: 'mixed', req: 'Control connection of mobile devices.', meaning: 'Approve and track mobile devices. Use MDM to enforce security policies.' },
+                    { id: '3.1.19', name: 'Encrypt CUI on Mobile', type: 'config', req: 'Encrypt CUI on mobile devices and mobile computing platforms.', meaning: 'Full device encryption on all mobile devices that handle CUI.' },
+                    { id: '3.1.20', name: 'External Connections', type: 'config', req: 'Verify and control/limit connections to and use of external information systems.', meaning: 'Control access to personal devices and external systems. Approve cloud services.' },
+                    { id: '3.1.21', name: 'Portable Storage Use', type: 'mixed', req: 'Limit use of portable storage devices on external systems.', meaning: 'Restrict USB drives on non-company systems. Encrypt portable storage.' },
+                    { id: '3.1.22', name: 'Control Public Information', type: 'policy', req: 'Control information posted or processed on publicly accessible information systems.', meaning: 'Review before posting to websites. Ensure no CUI is publicly accessible.' },
+                ]
+            },
+            'AWARENESS AND TRAINING (AT)': {
+                id: 'at', count: 3,
+                controls: [
+                    { id: '3.2.1', name: 'Role-Based Risk Awareness', type: 'policy', req: 'Ensure that managers, systems administrators, and users are made aware of the security risks associated with their activities.', meaning: 'Security awareness training for all staff. Cover phishing, social engineering, policies.' },
+                    { id: '3.2.2', name: 'Role-Based Training', type: 'policy', req: 'Ensure that personnel are trained to carry out their assigned information security-related duties.', meaning: 'Job-specific security training. Admins get technical training, users get awareness.' },
+                    { id: '3.2.3', name: 'Insider Threat Awareness', type: 'policy', req: 'Provide security awareness training on recognizing and reporting potential indicators of insider threat.', meaning: 'Train staff to recognize suspicious behavior. Provide reporting mechanisms.' },
+                ]
+            },
+            'AUDIT AND ACCOUNTABILITY (AU)': {
+                id: 'au', count: 9,
+                controls: [
+                    { id: '3.3.1', name: 'System Auditing', type: 'software', req: 'Create and retain system audit logs and records to the extent needed to enable the monitoring, analysis, investigation, and reporting of unlawful or unauthorized system activity.', meaning: 'Log all security events. Retain logs for investigation. Use SIEM for analysis.' },
+                    { id: '3.3.2', name: 'User Accountability', type: 'config', req: 'Ensure that the actions of individual system users can be uniquely traced to those users.', meaning: 'No shared accounts. Every action traceable to a specific person.' },
+                    { id: '3.3.3', name: 'Event Review', type: 'policy', req: 'Review and update logged events.', meaning: 'Regularly review audit logs. Update what is logged based on threats.' },
+                    { id: '3.3.4', name: 'Audit Failure Alerting', type: 'software', req: 'Alert in the event of an audit logging process failure.', meaning: 'Get alerts when logging stops working. Ensure continuous audit coverage.' },
+                    { id: '3.3.5', name: 'Audit Correlation', type: 'software', req: 'Correlate audit record review, analysis, and reporting processes for investigation and response.', meaning: 'Use SIEM tools to correlate logs from multiple sources for security analysis.' },
+                    { id: '3.3.6', name: 'Reduction & Reporting', type: 'software', req: 'Provide audit record reduction and report generation to support on-demand analysis.', meaning: 'Use tools to filter, summarize, and report on audit data. Generate security reports.' },
+                    { id: '3.3.7', name: 'Authoritative Time Source', type: 'config', req: 'Provide a system capability that compares and synchronizes internal system clocks.', meaning: 'Sync all system clocks to NTP server. Ensures accurate timestamps for audit logs.' },
+                    { id: '3.3.8', name: 'Audit Protection', type: 'config', req: 'Protect audit information and audit logging tools from unauthorized access, modification, and deletion.', meaning: 'Restrict access to audit logs to security personnel only. Use write-once storage.' },
+                    { id: '3.3.9', name: 'Audit Management', type: 'policy', req: 'Limit management of audit logging functionality to a subset of privileged users.', meaning: 'Only designated security admins can modify audit configurations.' },
+                ]
+            },
+            'CONFIGURATION MANAGEMENT (CM)': {
+                id: 'cm', count: 9,
+                controls: [
+                    { id: '3.4.1', name: 'System Baselining', type: 'policy', req: 'Establish and maintain baseline configurations and inventories of organizational systems.', meaning: 'Create standard configurations for computers/servers. Maintain hardware/software inventory.' },
+                    { id: '3.4.2', name: 'Security Configuration Enforcement', type: 'config', req: 'Establish and enforce security configuration settings for information technology products.', meaning: 'Use security configuration guides (STIGs, CIS Benchmarks). Prevent unauthorized changes.' },
+                    { id: '3.4.3', name: 'System Change Management', type: 'policy', req: 'Track, review, approve or disapprove, and log changes to organizational systems.', meaning: 'Document all system changes. Require approval before implementing changes.' },
+                    { id: '3.4.4', name: 'Security Impact Analysis', type: 'policy', req: 'Analyze the security impact of changes prior to implementation.', meaning: 'Evaluate how proposed changes affect security before implementing them.' },
+                    { id: '3.4.5', name: 'Access Restrictions for Change', type: 'config', req: 'Define, document, approve, and enforce physical and logical access restrictions associated with changes.', meaning: 'Limit who can make system changes. Require authentication for configuration changes.' },
+                    { id: '3.4.6', name: 'Least Functionality', type: 'config', req: 'Employ the principle of least functionality by configuring systems to provide only essential capabilities.', meaning: 'Disable unnecessary services, ports, and protocols. Remove unused software.' },
+                    { id: '3.4.7', name: 'Nonessential Functionality', type: 'config', req: 'Restrict, disable, or prevent the use of nonessential programs, functions, ports, protocols, and services.', meaning: 'Block unnecessary network ports. Disable unused system services.' },
+                    { id: '3.4.8', name: 'Application Execution Policy', type: 'mixed', req: 'Apply deny-by-exception (blacklisting) policy to prevent the use of unauthorized software.', meaning: 'Use application whitelisting/blacklisting to control what software can run.' },
+                    { id: '3.4.9', name: 'User-Installed Software', type: 'policy', req: 'Control and monitor user-installed software.', meaning: 'Restrict users from installing software. Monitor for unauthorized installations.' },
+                ]
+            },
+            'IDENTIFICATION AND AUTHENTICATION (IA)': {
+                id: 'ia', count: 11,
+                controls: [
+                    { id: '3.5.1', name: 'Identification', type: 'config', req: 'Identify system users, processes acting on behalf of users, and devices.', meaning: 'Assign unique identifiers to all users, processes, and devices accessing systems.' },
+                    { id: '3.5.2', name: 'Authentication', type: 'config', req: 'Authenticate (or verify) the identities of users, processes, or devices, as a prerequisite to allowing access.', meaning: 'Require passwords/credentials before granting system access.' },
+                    { id: '3.5.3', name: 'Multifactor Authentication', type: 'mixed', req: 'Use multifactor authentication for local and network access to privileged accounts and for network access to non-privileged accounts.', meaning: 'Implement MFA (password + phone/token) for admin and remote access.' },
+                    { id: '3.5.4', name: 'Replay-Resistant Authentication', type: 'config', req: 'Employ replay-resistant authentication mechanisms for network access.', meaning: 'Use authentication protocols that prevent replay attacks (Kerberos, TLS, OTP).' },
+                    { id: '3.5.5', name: 'Identifier Reuse', type: 'policy', req: 'Prevent reuse of identifiers for a defined period.', meaning: 'Don\'t reassign usernames to new users for a defined period after account deletion.' },
+                    { id: '3.5.6', name: 'Identifier Handling', type: 'policy', req: 'Disable identifiers after a defined period of inactivity.', meaning: 'Disable accounts after 90 days of inactivity. Disable accounts of terminated users immediately.' },
+                    { id: '3.5.7', name: 'Password Complexity', type: 'config', req: 'Enforce a minimum password complexity and change of characters when new passwords are created.', meaning: 'Require 12+ characters, mixed case, numbers, symbols. Prevent simple passwords.' },
+                    { id: '3.5.8', name: 'Password Reuse', type: 'config', req: 'Prohibit password reuse for a specified number of generations.', meaning: 'Prevent reuse of previous 24 passwords. Enforce password history.' },
+                    { id: '3.5.9', name: 'Temporary Passwords', type: 'policy', req: 'Allow temporary password use for system logons with an immediate change to a permanent password.', meaning: 'Force users to change temporary/initial passwords immediately upon first login.' },
+                    { id: '3.5.10', name: 'Cryptographically-Protected Passwords', type: 'config', req: 'Store and transmit only cryptographically-protected passwords.', meaning: 'Hash passwords in databases. Use encrypted connections for authentication.' },
+                    { id: '3.5.11', name: 'Obscure Feedback', type: 'config', req: 'Obscure feedback of authentication information.', meaning: 'Mask password entry with dots/asterisks. Don\'t display passwords on screen.' },
+                ]
+            },
+            'INCIDENT RESPONSE (IR)': {
+                id: 'ir', count: 3,
+                controls: [
+                    { id: '3.6.1', name: 'Incident Handling', type: 'policy', req: 'Establish an operational incident-handling capability including preparation, detection, analysis, containment, recovery, and user response.', meaning: 'Create incident response procedures. Establish IR team and contact lists.' },
+                    { id: '3.6.2', name: 'Incident Reporting', type: 'policy', req: 'Track, document, and report incidents to designated officials and/or authorities.', meaning: 'Document all incidents. Report to management and authorities as required.' },
+                    { id: '3.6.3', name: 'Incident Response Testing', type: 'policy', req: 'Test the organizational incident response capability.', meaning: 'Conduct tabletop exercises or simulations to test IR procedures annually.' },
+                ]
+            },
+            'MAINTENANCE (MA)': {
+                id: 'ma', count: 6,
+                controls: [
+                    { id: '3.7.1', name: 'Perform Maintenance', type: 'policy', req: 'Perform maintenance on organizational systems.', meaning: 'Conduct regular system maintenance including patching and updates.' },
+                    { id: '3.7.2', name: 'System Maintenance Control', type: 'policy', req: 'Provide controls on the tools, techniques, mechanisms, and personnel used to conduct system maintenance.', meaning: 'Control who performs maintenance and what tools they use. Inspect tools.' },
+                    { id: '3.7.3', name: 'Equipment Sanitization', type: 'policy', req: 'Ensure equipment removed for off-site maintenance is sanitized of any CUI.', meaning: 'Remove all CUI data before sending equipment for repair. Verify sanitization.' },
+                    { id: '3.7.4', name: 'Media Inspection', type: 'policy', req: 'Check media containing diagnostic and test programs for malicious code before use.', meaning: 'Scan maintenance media for malware before connecting to systems.' },
+                    { id: '3.7.5', name: 'Nonlocal Maintenance', type: 'mixed', req: 'Require multifactor authentication to establish nonlocal maintenance sessions and terminate such connections when complete.', meaning: 'MFA required for remote maintenance. Close connections when done.' },
+                    { id: '3.7.6', name: 'Maintenance Personnel', type: 'policy', req: 'Supervise the maintenance activities of maintenance personnel without required access authorization.', meaning: 'Escort and supervise third-party maintenance personnel at all times.' },
+                ]
+            },
+            'MEDIA PROTECTION (MP)': {
+                id: 'mp', count: 9,
+                controls: [
+                    { id: '3.8.1', name: 'Media Protection', type: 'hardware', req: 'Protect (i.e., physically control and securely store) system media containing CUI, both paper and digital.', meaning: 'Lock up CUI documents and drives. Control access to media storage areas.' },
+                    { id: '3.8.2', name: 'Media Access', type: 'policy', req: 'Limit access to CUI on system media to authorized users.', meaning: 'Only authorized personnel can access CUI media. Document who has access.' },
+                    { id: '3.8.3', name: 'Media Disposal', type: 'policy', req: 'Sanitize or destroy system media containing CUI before disposal or release for reuse.', meaning: 'Shred paper. Wipe or destroy hard drives. Follow NIST 800-88 guidelines.' },
+                    { id: '3.8.4', name: 'Media Markings', type: 'policy', req: 'Mark media with necessary CUI markings and distribution limitations.', meaning: 'Label CUI media with appropriate markings. Include handling instructions.' },
+                    { id: '3.8.5', name: 'Media Accountability', type: 'policy', req: 'Control access to media containing CUI and maintain accountability for media during transport.', meaning: 'Track who has CUI media. Log media when transported outside secure areas.' },
+                    { id: '3.8.6', name: 'Portable Storage Encryption', type: 'config', req: 'Implement cryptographic mechanisms to protect the confidentiality of CUI stored on digital media during transport.', meaning: 'Encrypt USB drives and portable storage containing CUI.' },
+                    { id: '3.8.7', name: 'Removable Media', type: 'mixed', req: 'Control the use of removable media on system components.', meaning: 'Restrict USB device usage. Use endpoint protection to control removable media.' },
+                    { id: '3.8.8', name: 'Shared Media', type: 'policy', req: 'Prohibit the use of portable storage devices when such devices have no identifiable owner.', meaning: 'No anonymous USB drives. All portable storage must be registered to an owner.' },
+                    { id: '3.8.9', name: 'Protect Backups', type: 'mixed', req: 'Protect the confidentiality of backup CUI at storage locations.', meaning: 'Encrypt backups containing CUI. Secure backup storage locations.' },
+                ]
+            },
+            'PERSONNEL SECURITY (PS)': {
+                id: 'ps', count: 2,
+                controls: [
+                    { id: '3.9.1', name: 'Screen Individuals', type: 'policy', req: 'Screen individuals prior to authorizing access to organizational systems containing CUI.', meaning: 'Background checks before granting CUI access. Verify employment/identity.' },
+                    { id: '3.9.2', name: 'Personnel Actions', type: 'policy', req: 'Ensure that organizational systems containing CUI are protected during and after personnel actions such as terminations and transfers.', meaning: 'Immediately revoke access when employees leave. Update access for transfers.' },
+                ]
+            },
+            'PHYSICAL PROTECTION (PE)': {
+                id: 'pe', count: 6,
+                controls: [
+                    { id: '3.10.1', name: 'Limit Physical Access', type: 'hardware', req: 'Limit physical access to organizational systems, equipment, and the respective operating environments to authorized individuals.', meaning: 'Use badges, locks, guards. Only authorized personnel in server rooms.' },
+                    { id: '3.10.2', name: 'Monitor Facility', type: 'hardware', req: 'Protect and monitor the physical facility and support infrastructure for organizational systems.', meaning: 'Security cameras, intrusion detection. Monitor server rooms and data centers.' },
+                    { id: '3.10.3', name: 'Escort Visitors', type: 'policy', req: 'Escort visitors and monitor visitor activity.', meaning: 'Visitors must be escorted at all times in secure areas. Log visitor access.' },
+                    { id: '3.10.4', name: 'Physical Access Logs', type: 'hardware', req: 'Maintain audit logs of physical access.', meaning: 'Log all badge swipes and physical access. Review logs for anomalies.' },
+                    { id: '3.10.5', name: 'Manage Physical Access', type: 'hardware', req: 'Control and manage physical access devices.', meaning: 'Manage keys, badges, and access cards. Recover credentials from departing staff.' },
+                    { id: '3.10.6', name: 'Alternative Work Sites', type: 'policy', req: 'Enforce safeguarding measures for CUI at alternate work sites.', meaning: 'Security requirements apply to home offices and remote work locations.' },
+                ]
+            },
+            'RISK ASSESSMENT (RA)': {
+                id: 'ra', count: 3,
+                controls: [
+                    { id: '3.11.1', name: 'Risk Assessments', type: 'policy', req: 'Periodically assess the risk to organizational operations, assets, and individuals resulting from the operation of organizational systems.', meaning: 'Conduct annual risk assessments. Identify and evaluate threats and vulnerabilities.' },
+                    { id: '3.11.2', name: 'Vulnerability Scan', type: 'software', req: 'Scan for vulnerabilities in organizational systems and applications periodically and when new vulnerabilities are identified.', meaning: 'Run vulnerability scanners regularly (monthly/quarterly). Scan after changes.' },
+                    { id: '3.11.3', name: 'Vulnerability Remediation', type: 'policy', req: 'Remediate vulnerabilities in accordance with risk assessments.', meaning: 'Fix high-risk vulnerabilities first. Track remediation progress.' },
+                ]
+            },
+            'SECURITY ASSESSMENT (CA)': {
+                id: 'ca', count: 4,
+                controls: [
+                    { id: '3.12.1', name: 'Security Control Assessment', type: 'policy', req: 'Periodically assess the security controls in organizational systems to determine if the controls are effective.', meaning: 'Annual security assessments. Test if controls actually work.' },
+                    { id: '3.12.2', name: 'Plan of Action', type: 'policy', req: 'Develop and implement plans of action designed to correct deficiencies and reduce or eliminate vulnerabilities.', meaning: 'POA&M for security gaps. Track progress on fixing issues.' },
+                    { id: '3.12.3', name: 'Security Control Monitoring', type: 'software', req: 'Monitor security controls on an ongoing basis to ensure the continued effectiveness of the controls.', meaning: 'Continuous monitoring. Don\'t just assess annually - watch continuously.' },
+                    { id: '3.12.4', name: 'System Security Plan', type: 'policy', req: 'Develop, document, and periodically update system security plans.', meaning: 'Create and maintain SSP. Document how you meet each security requirement.' },
+                ]
+            },
+            'SYSTEM AND COMMUNICATIONS PROTECTION (SC)': {
+                id: 'sc', count: 16,
+                controls: [
+                    { id: '3.13.1', name: 'Boundary Protection', type: 'hardware', req: 'Monitor, control, and protect organizational communications at the external boundaries and key internal boundaries.', meaning: 'Use firewalls at network boundaries. Monitor traffic in and out.' },
+                    { id: '3.13.2', name: 'Security Engineering', type: 'mixed', req: 'Employ architectural designs, software development techniques, and systems engineering principles that promote effective information security.', meaning: 'Build security into system design. Defense in depth architecture.' },
+                    { id: '3.13.3', name: 'Security Function Isolation', type: 'config', req: 'Separate user functionality from system management functionality.', meaning: 'Admin interfaces separate from user interfaces. Management networks isolated.' },
+                    { id: '3.13.4', name: 'Shared Resource Control', type: 'config', req: 'Prevent unauthorized and unintended information transfer via shared system resources.', meaning: 'Prevent data leakage in multi-tenant environments. Clear memory between uses.' },
+                    { id: '3.13.5', name: 'Public-Access System Separation', type: 'config', req: 'Implement subnetworks for publicly accessible system components that are physically or logically separated from internal networks.', meaning: 'DMZ for public-facing servers. Web servers isolated from internal network.' },
+                    { id: '3.13.6', name: 'Network Communication by Exception', type: 'config', req: 'Deny network communications traffic by default and allow network communications traffic by exception.', meaning: 'Default deny firewall rules. Only allow necessary traffic explicitly.' },
+                    { id: '3.13.7', name: 'Split Tunneling', type: 'config', req: 'Prevent remote devices from simultaneously establishing non-remote connections with organizational systems and communicating via some other connection to resources in external networks.', meaning: 'Disable split tunneling on VPN. All traffic goes through corporate network.' },
+                    { id: '3.13.8', name: 'Data in Transit', type: 'config', req: 'Implement cryptographic mechanisms to prevent unauthorized disclosure of CUI during transmission.', meaning: 'Encrypt CUI in transit. Use TLS 1.2+ for all network communications.' },
+                    { id: '3.13.9', name: 'Connections Termination', type: 'config', req: 'Terminate network connections associated with communications sessions at the end of the sessions or after a defined period of inactivity.', meaning: 'Auto-disconnect idle sessions. Don\'t leave connections open indefinitely.' },
+                    { id: '3.13.10', name: 'Key Management', type: 'policy', req: 'Establish and manage cryptographic keys for cryptography employed in organizational systems.', meaning: 'Manage encryption keys securely. Rotate keys, protect key storage.' },
+                    { id: '3.13.11', name: 'CUI Encryption', type: 'config', req: 'Employ FIPS-validated cryptography when used to protect the confidentiality of CUI.', meaning: 'Use FIPS 140-2 validated encryption for CUI. AES-256 for data at rest.' },
+                    { id: '3.13.12', name: 'Collaborative Device Control', type: 'config', req: 'Prohibit remote activation of collaborative computing devices and provide indication of devices in use.', meaning: 'Control webcams and microphones. Indicator lights when devices are active.' },
+                    { id: '3.13.13', name: 'Mobile Code', type: 'config', req: 'Control and monitor the use of mobile code.', meaning: 'Control JavaScript, ActiveX, Flash. Use browser security settings.' },
+                    { id: '3.13.14', name: 'Voice over IP', type: 'config', req: 'Control and monitor the use of Voice over Internet Protocol (VoIP) technologies.', meaning: 'Secure VoIP systems. Monitor for unauthorized use.' },
+                    { id: '3.13.15', name: 'Communications Authenticity', type: 'config', req: 'Protect the authenticity of communications sessions.', meaning: 'Use certificates for server authentication. Prevent man-in-the-middle attacks.' },
+                    { id: '3.13.16', name: 'Data at Rest', type: 'config', req: 'Protect the confidentiality of CUI at rest.', meaning: 'Encrypt CUI when stored. Full disk encryption on endpoints.' },
+                ]
+            },
+            'SYSTEM AND INFORMATION INTEGRITY (SI)': {
+                id: 'si', count: 7,
+                controls: [
+                    { id: '3.14.1', name: 'Flaw Remediation', type: 'policy', req: 'Identify, report, and correct information and information system flaws in a timely manner.', meaning: 'Patch systems promptly. Track vulnerabilities and fixes.' },
+                    { id: '3.14.2', name: 'Malicious Code Protection', type: 'software', req: 'Provide protection from malicious code at appropriate locations within organizational information systems.', meaning: 'Install antivirus/antimalware on all systems. Keep definitions updated.' },
+                    { id: '3.14.3', name: 'Security Alerts', type: 'policy', req: 'Monitor system security alerts and advisories and take action in response.', meaning: 'Subscribe to security alerts (US-CERT, vendors). Act on critical alerts.' },
+                    { id: '3.14.4', name: 'Update Malicious Code Protection', type: 'software', req: 'Update malicious code protection mechanisms when new releases are available.', meaning: 'Auto-update AV signatures. Keep malware protection current.' },
+                    { id: '3.14.5', name: 'System & File Scanning', type: 'software', req: 'Perform periodic scans of the information system and real-time scans of files from external sources.', meaning: 'Weekly full system scans. Real-time scanning of downloads and email.' },
+                    { id: '3.14.6', name: 'Monitor Communications', type: 'software', req: 'Monitor organizational systems, including inbound and outbound communications traffic, to detect attacks and indicators of potential attacks.', meaning: 'Use IDS/IPS. Monitor network traffic for threats.' },
+                    { id: '3.14.7', name: 'Identify Unauthorized Use', type: 'software', req: 'Identify unauthorized use of organizational systems.', meaning: 'Monitor for policy violations. Detect unauthorized access attempts.' },
+                ]
+            }
+        };
+
+        const DOMAIN_NAMES = Object.keys(DOMAINS);
+        
+        const TYPE_STYLES = {
+            policy: { bg: '#2E86AB', label: 'Policy/Process' },
+            config: { bg: '#A23B72', label: 'Configuration' },
+            software: { bg: '#F18F01', label: 'Software/Tool' },
+            hardware: { bg: '#C73E1D', label: 'Hardware' },
+            mixed: { bg: '#7B2D8E', label: 'Mixed' }
+        };
+
+        // ==================== CCA MODE DATA ====================
+        const ETHICS_QUESTIONS = [
+            { q: "A CCA's brother works as the IT Director at an OSC. The CCA has been assigned to assess this company. What should they do?", options: ["Proceed but document the relationship", "Recuse themselves from the assessment", "Get written consent from the OSC", "Only assess controls their brother doesn't manage"], correct: 1, explanation: "CCAs must recuse themselves when family members work at the OSC. This is a direct conflict of interest per the Code of Professional Conduct.", category: "Conflict of Interest" },
+            { q: "How long must a CCA wait after providing consulting services to an OSC before they can assess that same organization?", options: ["6 months", "1 year", "2 years", "3 years"], correct: 3, explanation: "Per 32 CFR §170.8(b)(17)(ii)(G), there's a 3-year prohibition on assessing organizations you've consulted for.", category: "Cooling Off Period" },
+            { q: "An OSC offers a CCA a $500 gift card as thanks for a smooth assessment. What should the CCA do?", options: ["Accept if under $1000", "Politely decline", "Accept but report it", "Donate it to charity"], correct: 1, explanation: "CCAs must decline gifts that could influence or appear to influence their judgment. Accepting creates a conflict of interest.", category: "Gifts & Impartiality" },
+            { q: "After completing an assessment, a CCA is asked by a journalist about the OSC's security posture. What should they say?", options: ["Provide general comments only", "Share only positive findings", "Decline to comment entirely", "Refer them to the OSC"], correct: 2, explanation: "Confidentiality requirements persist after the engagement ends. CCAs cannot disclose ANY assessment information to third parties.", category: "Confidentiality" },
+            { q: "A CCA notices during assessment that an OSC has unreported CUI spillage. What is required?", options: ["Note it in findings only", "Report to C3PAO and require incident response", "Ignore if not in scope", "Give them time to fix it"], correct: 1, explanation: "CCAs must report security incidents. CUI spillage requires immediate notification and proper incident handling.", category: "Incident Reporting" },
+            { q: "A CCP wants to perform CMMC assessments independently without a C3PAO. Is this permitted?", options: ["Yes, CCPs can assess independently", "Only for Level 1 assessments", "No, CCPs cannot lead assessments", "Only with CAICO approval"], correct: 2, explanation: "CCPs can only participate in assessments as part of a C3PAO assessment team. They cannot conduct assessments independently.", category: "Role Boundaries" },
+            { q: "Who may a CCI consult for after becoming certified?", options: ["Any organization except OSCs", "No one - CCIs cannot consult", "Only C3PAOs", "Only government agencies"], correct: 1, explanation: "CCIs (Instructors) are prohibited from providing consulting services. They can only train and develop exam content.", category: "CCI Restrictions" },
+            { q: "An OSC asks a CCA to use their personal laptop for the assessment because their C3PAO systems are slow. What should the CCA do?", options: ["Use it to help the client", "Decline - only authorized C3PAO systems allowed", "Use it but don't store data", "Get C3PAO approval first"], correct: 1, explanation: "Assessment activities must be conducted on authorized C3PAO systems only. Personal devices are prohibited.", category: "Proper Use of Technology" },
+            { q: "During assessment, a CCA finds the OSC has excellent marketing materials but weak technical controls. How should this affect scoring?", options: ["Give partial credit for effort", "Score based only on objective evidence", "Consider company size and resources", "Weight marketing as documentation"], correct: 1, explanation: "All OSCs are subject to the same assessment standards regardless of size, reputation, or presentation quality. Only objective evidence matters.", category: "Impartiality" },
+            { q: "A CCA discovers a minor administrative error in their assessment report after submission. What should they do?", options: ["Ignore if minor", "Notify the responsible C3PAO immediately", "Contact the OSC directly", "Wait for the next assessment"], correct: 1, explanation: "CCAs must immediately notify their responsible C3PAO of any errors, omissions, or security concerns - even minor ones.", category: "Honesty & Integrity" },
+            { q: "May a CCA use AI tools to process OSC customer data during an assessment?", options: ["Yes, if efficient", "Only with encryption", "No - prohibited for customer data", "Only for non-CUI data"], correct: 2, explanation: "Customer data must not be submitted to Internet-accessible AI/ML tools per the Code of Professional Conduct.", category: "AI Restrictions" },
+            { q: "How often must a CCA report their continuing education and qualifications?", options: ["Monthly", "Quarterly", "Annually", "Only at renewal"], correct: 2, explanation: "CCAs must annually report to the Accreditation Body/CAICO demonstrating continued qualification requirements.", category: "Disclosure Requirements" }
+        ];
+
+        const GOTCHA_QUESTIONS = [
+            { q: "When was NIST SP 800-171 FIRST published?", options: ["December 2017", "June 2015", "November 2021", "February 2020"], correct: 1, explanation: "NIST SP 800-171 was first published in June 2015. December 2017 is when DFARS 7012 went into effect - a common confusion!", category: "Regulatory History" },
+            { q: "DFARS 252.204-7012 became effective on what date?", options: ["June 2015", "November 2021", "December 31, 2017", "October 2024"], correct: 2, explanation: "DFARS 7012 became effective December 31, 2017. This is when contractors were required to implement 800-171.", category: "Regulatory History" },
+            { q: "What is the MAXIMUM score possible on a CMMC Level 2 assessment?", options: ["100 points", "110 points", "172 points", "320 points"], correct: 1, explanation: "The maximum score is 110 points - one point for each of the 110 Level 2 security requirements.", category: "Scoring" },
+            { q: "Which controls have PARTIAL SCORING in CMMC Level 2?", options: ["Any high-value control", "Only IA.L2-3.5.3 and SC.L2-3.13.11", "All 5-point controls", "PE and PS controls only"], correct: 1, explanation: "Only TWO controls have partial scoring: MFA (IA.L2-3.5.3) and FIPS Encryption (SC.L2-3.13.11). All others are binary MET/NOT MET.", category: "Scoring" },
+            { q: "A control is NOT MET if:", options: ["More than 50% of objectives fail", "Any single objective is not satisfied", "The primary objective fails", "It depends on control weight"], correct: 1, explanation: "ALL assessment objectives must be MET for a practice to be MET. There is no partial credit at the objective level.", category: "Scoring" },
+            { q: "What distinguishes Out of Scope assets from CRMA?", options: ["CRMA has CUI, Out of Scope doesn't", "Out of Scope CUI can NEVER flow there; CRMA CUI COULD flow there", "They're the same thing", "CRMA requires assessment, Out of Scope doesn't"], correct: 1, explanation: "Out of Scope = CUI can NEVER flow there (physical/logical separation). CRMA = CUI COULD flow there but doesn't based on policy.", category: "Asset Categories" },
+            { q: "The CMMC 2.0 framework was announced in:", options: ["June 2015", "December 2017", "November 2021", "October 2024"], correct: 2, explanation: "CMMC 2.0 was announced November 2021, streamlining the original 5-level model to 3 levels.", category: "Regulatory History" },
+            { q: "The 32 CFR Part 170 final rule was published in:", options: ["November 2021", "December 2017", "October 2024", "June 2015"], correct: 2, explanation: "The final rule establishing CMMC requirements was published October 15, 2024.", category: "Regulatory History" },
+            { q: "Which Executive Order established the CUI Program?", options: ["EO 13526", "EO 13556", "EO 14028", "EO 12333"], correct: 1, explanation: "EO 13556 (2010) established the CUI Program. EO 13526 is about CLASSIFIED information - a common trick!", category: "Regulatory History" },
+            { q: "NIST SP 800-171 derived requirements come from:", options: ["FAR 52.204-21", "FIPS 200", "NIST SP 800-53", "DFARS 7012"], correct: 2, explanation: "The derived requirements in 800-171 come from NIST SP 800-53 moderate baseline controls. Basic requirements come from FIPS 200.", category: "Standards Origin" },
+            { q: "The purpose of CMMC is to:", options: ["Create new security requirements", "Replace NIST 800-171", "VERIFY implementation of existing requirements", "Simplify compliance"], correct: 2, explanation: "CMMC doesn't create new controls - it VERIFIES that contractors have actually implemented 800-171 requirements.", category: "CMMC Purpose" },
+            { q: "What is required for a cloud service provider handling CUI?", options: ["SOC 2 Type II", "ISO 27001", "FedRAMP Moderate or equivalent", "Any security certification"], correct: 2, explanation: "CSPs handling CUI must meet FedRAMP Moderate baseline (or equivalent) per 32 CFR Part 170.", category: "Cloud Requirements" },
+            { q: "Evidence is 'adequate' when it is:", options: ["Sufficient quantity", "The right KIND of evidence", "Both quality and quantity", "Approved by the OSC"], correct: 1, explanation: "Adequate = right KIND (quality/relevance). Sufficient = ENOUGH of the right kind (quantity). They're different!", category: "Evidence Terms" },
+            { q: "Can an SSP be placed on a POA&M?", options: ["Yes, if other documentation exists", "Yes, for up to 180 days", "No, SSP must exist at assessment time", "Only for self-assessments"], correct: 2, explanation: "Per 32 CFR 170.24(c)(5), OSAs must have an SSP in place at assessment time. It cannot be POA&M'd.", category: "POA&M Rules" },
+            { q: "A Security Protection Asset (SPA) is:", options: ["An asset containing CUI", "An asset that protects CUI assets (like firewalls)", "An out of scope asset", "A specialized asset"], correct: 1, explanation: "SPAs provide security functions for CUI assets - firewalls, SIEM, domain controllers, etc. They don't store CUI but protect systems that do.", category: "Asset Categories" },
+            { q: "The POA&M closeout deadline is:", options: ["90 days", "120 days", "180 days", "1 year"], correct: 2, explanation: "POA&M items must be closed within 180 days of Conditional certification, or the certification expires.", category: "POA&M Rules" }
+        ];
+
+        const JUDGMENT_SCENARIOS = [
+            { category: "Scoping", scenario: "A contractor has a smart TV in their conference room connected to the corporate network. Employees occasionally cast presentations from laptops that handle CUI. The contractor categorized this TV as Out of Scope because 'it's just a display device.'", options: ["Accept - TVs don't store data", "Flag as scoping error - CUI is transmitted to this device", "Categorize as CRMA", "Recommend unplugging the TV"], correct: 1, explanation: "If CUI is being cast/displayed on the TV, CUI IS being transmitted to that device. It cannot be Out of Scope.", mindset: "A reasonable assessor looks at data FLOW, not device TYPE. The question isn't 'is this a TV?' but 'does CUI touch this asset?'" },
+            { category: "Evidence", scenario: "A contractor shows you a comprehensive Access Control policy dated 2019. When asked for implementation evidence, they say 'we follow this policy' but cannot produce screenshots, configurations, or logs.", options: ["MET - policy is comprehensive", "NOT MET - policy alone is insufficient", "Request more time for evidence", "MET with observation"], correct: 1, explanation: "Policy ≠ Implementation. Assessment requires EVIDENCE of implementation, not just documented intent.", mindset: "Interviews show what they BELIEVE. Documentation shows INTENT. Testing shows what's ACTUALLY happening." },
+            { category: "Partial Scoring", scenario: "An organization has MFA for all remote access and privileged accounts, but local non-privileged users in the office don't use MFA.", options: ["MET - they have MFA", "NOT MET - all users need MFA", "Partial credit - 3 points subtracted", "NOT MET with no scoring impact"], correct: 2, explanation: "IA.L2-3.5.3 is one of only TWO practices with partial scoring. MFA for remote/privileged = 3 points subtracted instead of 5.", mindset: "Know which practices have partial scoring - it's ONLY MFA and FIPS encryption." },
+            { category: "Inheritance", scenario: "A contractor uses a FedRAMP Moderate authorized CSP for email. When assessing SC.L2-3.13.8 (Transmission Confidentiality), the contractor says 'our CSP handles that.'", options: ["Accept - CSP is FedRAMP authorized", "Need only CSP authorization letter", "Need evidence the control applies to contractor's specific use", "No evidence needed"], correct: 2, explanation: "Inheritance requires evidence that: (1) CSP performs the function, (2) it applies to contractor's specific use, (3) objectives are met.", mindset: "Inheritance isn't a blank check. Verify inherited controls are APPLICABLE to the contractor's environment." },
+            { category: "Technical vs Policy", scenario: "A contractor's policy doesn't document password reuse prohibition. But when you test Active Directory, passwords can't be reused for 5 generations. Is IA.L2-3.5.8 MET?", options: ["MET - some reuse restriction exists", "NOT MET - policy doesn't document it", "MET - technical implementation is evidence", "Depends on if 5 is adequate"], correct: 2, explanation: "The practice requires prohibiting reuse for a specified number. If AD is configured to prevent reuse, the TECHNICAL control is implemented.", mindset: "Technical evidence often weighs more than policy. If technically enforced, the control is working." },
+            { category: "Specialized Assets", scenario: "A manufacturer has CNC machines running Windows XP that receive technical drawings (CUI). They've categorized these as 'Specialized Assets' with network segmentation and monitoring.", options: ["NOT MET - XP can't meet requirements", "Can be MET with compensating controls", "Must upgrade to Windows 10", "Remove from scope entirely"], correct: 1, explanation: "Specialized Assets recognize some assets CANNOT meet standard controls. Key is documentation in SSP and appropriate compensating controls.", mindset: "A reasonable assessor understands operational realities. The question is: has the contractor documented risk and implemented reasonable compensating controls?" },
+            { category: "Percentage", scenario: "A contractor has 100 CUI assets. During AU.L2-3.3.1 assessment, 95 systems have proper audit logging, but 5 recently added systems don't have logging enabled.", options: ["MET - 95% is excellent", "NOT MET - all CUI assets must comply", "Conditional MET with POA&M", "MET with observation"], correct: 1, explanation: "There is no 'percentage compliance' in CMMC. ALL CUI assets must meet ALL applicable controls.", mindset: "CMMC doesn't grade on a curve. A reasonable assessor must document that ALL in-scope assets meet the control." },
+            { category: "Draft Evidence", scenario: "A contractor provides a policy document with 'DRAFT' watermarked on every page. The IT manager says 'It's basically final, we just haven't removed the watermark.'", options: ["Accept - content matters, not watermark", "Reject - drafts cannot be evidence per 32 CFR", "Accept with manager sign-off", "Accept with POA&M"], correct: 1, explanation: "Per 32 CFR 170.24(b)(1), 'All evidence must be in final form and not draft. Unacceptable forms include working papers, drafts, and unofficial policies.'", mindset: "The rule is explicit: no drafts. A reasonable assessor cannot accept draft evidence regardless of verbal assurances." },
+            { category: "POA&M Limits", scenario: "A contractor wants Conditional Level 2 status. They have 25 one-point controls NOT MET.", options: ["Acceptable - one-point controls can be POA&M'd", "Not acceptable - max 22 one-point controls", "Acceptable if 3 fixed during re-evaluation", "Not acceptable - need 80% MET"], correct: 1, explanation: "POA&M for Level 2 can include up to 22 security requirements with value of 1. With 25 NOT MET, they exceed the limit.", mindset: "POA&Ms have quantity limits, not just exclusion lists. Know the math: max 22 one-point controls." },
+            { category: "ESP Inheritance", scenario: "An MSP claims to handle AU.L2-3.3.1 (System Auditing) but doesn't have CMMC certification. They provide a Customer Responsibility Matrix showing they perform logging.", options: ["NOT MET - MSP needs CMMC certification", "Evaluate CRM and interview MSP for 'ownership'", "Accept CRM at face value", "Contractor must do all logging"], correct: 1, explanation: "ESPs don't need CMMC certification, but must 'demonstrate sufficient knowledge and credible ownership' of requirements - same standard as if contractor owned it.", mindset: "ESPs don't need CMMC certification to provide inherited controls, but they DO need to prove competence." },
+            { category: "Re-evaluation", scenario: "On day 8 after assessment ends, a contractor emails saying they fixed a NOT MET finding and want re-evaluation. The Assessment Findings Report hasn't been delivered.", options: ["Yes - 10 business days allowed", "No - only during active assessment", "Yes - but restart entire assessment", "Only if report not delivered"], correct: 3, explanation: "Re-evaluation can occur for 10 business days after assessment, BUT ONLY if report hasn't been delivered and fix doesn't impact other MET findings.", mindset: "The 10-day window isn't unlimited. Once the report is delivered, it's final." },
+            { category: "SSP Accuracy", scenario: "A contractor's SSP describes their CUI boundary as 'Building A network.' During assessment, you discover they also process CUI in Building B. The SSP hasn't been updated.", options: ["MET - they have an SSP", "NOT MET - SSP doesn't match reality", "MET with observation", "Pause until SSP corrected"], correct: 1, explanation: "CA.L2-3.12.4 requires the SSP to 'describe the boundary' accurately. An SSP that doesn't match reality fails the assessment objectives.", mindset: "An SSP isn't a checkbox document. It must accurately reflect the environment. Verify accuracy against observed reality." }
+        ];
+
+        // ==================== STATE ====================
+        let currentMode = 'study';
+        let studiedControls = JSON.parse(localStorage.getItem('studiedControls') || '[]');
+        let searchTerm = '';
+        let studyFilter = 'all';
+        let typeFilter = 'all';
+        let selectedQuizType = 'multiple-choice';
+        let questionCount = 20;
+        let quizFocus = 'all';
+        let quizQuestions = [];
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let answered = false;
+        let ccaMode = '';
+        let ccaQuestions = [];
+        let ccaIndex = 0;
+        let ccaCorrect = 0;
+        let ccaIncorrect = 0;
+
+        // ==================== MODE SWITCHING ====================
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // Update buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            const modeBtn = document.getElementById('mode' + mode.charAt(0).toUpperCase() + mode.slice(1));
+            if (modeBtn) modeBtn.classList.add('active');
+            
+            // Hide all containers
+            document.getElementById('studyContainer').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('active');
+            document.getElementById('ethicsContainer').classList.remove('active');
+            document.getElementById('gotchaContainer').classList.remove('active');
+            document.getElementById('judgmentContainer').classList.remove('active');
+            document.getElementById('deepdiveContainer').classList.remove('active');
+            
+            // Hide all sidebars
+            document.getElementById('studySidebar').style.display = 'none';
+            document.getElementById('quizSidebar').style.display = 'none';
+            document.getElementById('ccaSidebar').style.display = 'none';
+            
+            // Show appropriate content
+            if (mode === 'study') {
+                document.getElementById('studyContainer').classList.remove('hidden');
+                document.getElementById('studySidebar').style.display = 'block';
+            } else if (mode === 'quiz') {
+                document.getElementById('quizContainer').classList.add('active');
+                showQuizSettings();
+            } else if (mode === 'ethics') {
+                document.getElementById('ethicsContainer').classList.add('active');
+                document.getElementById('ccaSidebar').style.display = 'block';
+                startCCAMode('ethics', ETHICS_QUESTIONS);
+            } else if (mode === 'gotcha') {
+                document.getElementById('gotchaContainer').classList.add('active');
+                document.getElementById('ccaSidebar').style.display = 'block';
+                startCCAMode('gotcha', GOTCHA_QUESTIONS);
+            } else if (mode === 'judgment') {
+                document.getElementById('judgmentContainer').classList.add('active');
+                document.getElementById('ccaSidebar').style.display = 'block';
+                startCCAMode('judgment', JUDGMENT_SCENARIOS);
+            } else if (mode === 'deepdive') {
+                document.getElementById('deepdiveContainer').classList.add('active');
+                document.getElementById('studySidebar').style.display = 'block';
+                renderDeepDive();
+            }
+        }
+
+        // ==================== STUDY MODE ====================
+        function renderDomains() {
+            const container = document.getElementById('domainsContainer');
+            let html = '';
+            
+            for (const [domainName, domain] of Object.entries(DOMAINS)) {
+                const studiedInDomain = domain.controls.filter(c => studiedControls.includes(domain.id + '-' + c.id)).length;
+                const filteredControls = domain.controls.filter(c => {
+                    const isStudied = studiedControls.includes(domain.id + '-' + c.id);
+                    const matchesSearch = !searchTerm || 
+                        c.id.toLowerCase().includes(searchTerm) ||
+                        c.name.toLowerCase().includes(searchTerm) ||
+                        c.req.toLowerCase().includes(searchTerm) ||
+                        c.meaning.toLowerCase().includes(searchTerm);
+                    const matchesStudyFilter = studyFilter === 'all' || 
+                        (studyFilter === 'studied' && isStudied) ||
+                        (studyFilter === 'unstudied' && !isStudied);
+                    const matchesTypeFilter = typeFilter === 'all' || c.type === typeFilter;
+                    return matchesSearch && matchesStudyFilter && matchesTypeFilter;
+                });
+                
+                if (filteredControls.length === 0 && (searchTerm || studyFilter !== 'all' || typeFilter !== 'all')) continue;
+                
+                html += `
+                    <div class="domain domain-${domain.id}">
+                        <div class="domain-header" onclick="toggleDomain('${domain.id}')">
+                            <span class="domain-title">${domainName}</span>
+                            <div class="domain-meta">
+                                <span class="domain-progress">${studiedInDomain}/${domain.count} studied</span>
+                                <span class="domain-count">${domain.count} controls</span>
+                                <span class="domain-chevron">▼</span>
+                            </div>
+                        </div>
+                        <div class="domain-content">
+                            <table class="controls-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">✓</th>
+                                        <th style="width: 120px;">Control</th>
+                                        <th>Requirement</th>
+                                        <th style="width: 280px;">What It Means</th>
+                                        <th style="width: 100px;">Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${domain.controls.map(c => {
+                                        const controlKey = domain.id + '-' + c.id;
+                                        const isStudied = studiedControls.includes(controlKey);
+                                        const hidden = !filteredControls.includes(c);
+                                        return `
+                                            <tr class="${isStudied ? 'studied' : ''} ${hidden ? 'hidden' : ''}">
+                                                <td><input type="checkbox" class="study-checkbox" ${isStudied ? 'checked' : ''} onchange="toggleStudied('${controlKey}')"></td>
+                                                <td><div class="control-id">${c.id}</div><div class="control-name">${c.name}</div></td>
+                                                <td class="control-req">${c.req}</td>
+                                                <td class="control-meaning">${c.meaning}</td>
+                                                <td><span class="impl-badge" style="background: ${TYPE_STYLES[c.type].bg}">${TYPE_STYLES[c.type].label}</span></td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function toggleDomain(domainId) {
+            const domain = document.querySelector(`.domain-${domainId}`);
+            domain.classList.toggle('collapsed');
+        }
+
+        function toggleStudied(controlKey) {
+            if (studiedControls.includes(controlKey)) {
+                studiedControls = studiedControls.filter(k => k !== controlKey);
+            } else {
+                studiedControls.push(controlKey);
+            }
+            localStorage.setItem('studiedControls', JSON.stringify(studiedControls));
+            updateProgressDisplay();
+            renderDomains();
+        }
+
+        function updateProgressDisplay() {
+            const percent = Math.round((studiedControls.length / 110) * 100);
+            document.getElementById('progressPercent').textContent = percent + '%';
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('studiedCount').textContent = studiedControls.length;
+        }
+
+        function resetProgress() {
+            if (confirm('Reset all study progress?')) {
+                studiedControls = [];
+                localStorage.setItem('studiedControls', JSON.stringify(studiedControls));
+                updateProgressDisplay();
+                renderDomains();
+            }
+        }
+
+        function setFilter(filter) {
+            studyFilter = filter;
+            document.querySelectorAll('[data-filter]').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+            renderDomains();
+        }
+
+        function setTypeFilter(type) {
+            typeFilter = type;
+            document.querySelectorAll('.legend-item').forEach(item => item.classList.remove('active'));
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            renderDomains();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchTerm = e.target.value.toLowerCase();
+            renderDomains();
+        });
+
+        // ==================== QUIZ MODE ====================
+        function selectQuizType(type) {
+            selectedQuizType = type;
+            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector(`[data-quiz-type="${type}"]`).classList.add('selected');
+        }
+
+        function setQuestionCount(count) {
+            questionCount = count;
+            document.querySelectorAll('[data-q-count]').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-q-count="${count}"]`).classList.add('active');
+        }
+
+        function setQuizFocus(focus) {
+            quizFocus = focus;
+            document.querySelectorAll('[data-focus]').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-focus="${focus}"]`).classList.add('active');
+        }
+
+        function showQuizSettings() {
+            document.getElementById('quizSettings').style.display = 'block';
+            document.getElementById('quizCard').classList.remove('active');
+            document.getElementById('flashcardCard').classList.remove('active');
+            document.getElementById('quizResults').classList.remove('active');
+            document.getElementById('quizSidebar').style.display = 'none';
+        }
+
+        function startQuiz() {
+            let allControls = [];
+            for (const [domainName, domain] of Object.entries(DOMAINS)) {
+                domain.controls.forEach(c => {
+                    const controlKey = domain.id + '-' + c.id;
+                    const isStudied = studiedControls.includes(controlKey);
+                    
+                    // Filter based on focus
+                    if (quizFocus === 'all' || 
+                        (quizFocus === 'studied' && isStudied) || 
+                        (quizFocus === 'unstudied' && !isStudied)) {
+                        allControls.push({ ...c, domain: domainName });
+                    }
+                });
+            }
+            
+            // Check if we have enough questions
+            if (allControls.length === 0) {
+                alert(quizFocus === 'studied' 
+                    ? "You haven't marked any controls as studied yet! Go to Controls mode and check some off first." 
+                    : "All controls are already studied! Try 'All Controls' or 'Studied Only' instead.");
+                return;
+            }
+            
+            const actualCount = Math.min(questionCount, allControls.length);
+            quizQuestions = shuffle(allControls).slice(0, actualCount);
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            
+            document.getElementById('quizSettings').style.display = 'none';
+            document.getElementById('quizSidebar').style.display = 'block';
+            
+            if (selectedQuizType === 'flashcard') {
+                document.getElementById('flashcardCard').classList.add('active');
+                showFlashcard();
+            } else {
+                document.getElementById('quizCard').classList.add('active');
+                showQuestion();
+            }
+            updateQuizStats();
+        }
+
+        function showQuestion() {
+            answered = false;
+            const q = quizQuestions[currentQuestionIndex];
+            
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = quizQuestions.length;
+            
+            let questionLabel, questionText, questionSub, correctAnswer;
+            
+            if (selectedQuizType === 'multiple-choice') {
+                questionLabel = 'What control matches this requirement?';
+                questionText = q.req;
+                questionSub = '';
+                correctAnswer = q.id;
+                
+                const wrongAnswers = shuffle(quizQuestions.filter(x => x.id !== q.id)).slice(0, 3);
+                const answers = shuffle([q, ...wrongAnswers]);
+                
+                document.getElementById('quizAnswers').innerHTML = answers.map(a => `
+                    <div class="quiz-answer" data-answer="${a.id}" onclick="selectAnswer('${a.id}', '${correctAnswer}')">
+                        <strong>${a.id}</strong> - ${a.name}
+                    </div>
+                `).join('');
+                
+            } else if (selectedQuizType === 'type-match') {
+                questionLabel = 'What implementation type is this control?';
+                questionText = `${q.id} - ${q.name}`;
+                questionSub = q.meaning;
+                correctAnswer = q.type;
+                
+                const types = ['policy', 'config', 'software', 'hardware', 'mixed'];
+                document.getElementById('quizAnswers').innerHTML = types.map(t => `
+                    <div class="quiz-answer" data-answer="${t}" onclick="selectAnswer('${t}', '${correctAnswer}')">
+                        <span class="impl-badge" style="background: ${TYPE_STYLES[t].bg}">${TYPE_STYLES[t].label}</span>
+                    </div>
+                `).join('');
+                
+            } else if (selectedQuizType === 'domain-match') {
+                questionLabel = 'Which domain does this control belong to?';
+                questionText = `${q.id} - ${q.name}`;
+                questionSub = q.meaning;
+                correctAnswer = q.domain;
+                
+                const domains = shuffle(DOMAIN_NAMES).slice(0, 4);
+                if (!domains.includes(q.domain)) domains[0] = q.domain;
+                
+                document.getElementById('quizAnswers').innerHTML = shuffle(domains).map(d => `
+                    <div class="quiz-answer" data-answer="${d}" onclick="selectAnswer('${d.replace(/'/g, "\\'")}', '${correctAnswer.replace(/'/g, "\\'")}')">
+                        ${d}
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('questionLabel').textContent = questionLabel;
+            document.getElementById('questionText').textContent = questionText;
+            document.getElementById('questionSub').textContent = questionSub;
+            document.getElementById('quizFeedback').classList.remove('show', 'correct', 'incorrect');
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function selectAnswer(selected, correct) {
+            if (answered) return;
+            answered = true;
+            
+            const isCorrect = selected === correct;
+            if (isCorrect) correctAnswers++;
+            else incorrectAnswers++;
+            
+            document.querySelectorAll('.quiz-answer').forEach(el => {
+                el.classList.add('disabled');
+                if (el.dataset.answer === correct) el.classList.add('correct');
+                else if (el.dataset.answer === selected && !isCorrect) el.classList.add('incorrect');
+            });
+            
+            const feedback = document.getElementById('quizFeedback');
+            feedback.classList.add('show', isCorrect ? 'correct' : 'incorrect');
+            feedback.textContent = isCorrect ? '✓ Correct!' : `✗ Incorrect. Answer: ${correct}`;
+            
+            document.getElementById('correctScore').textContent = correctAnswers;
+            document.getElementById('incorrectScore').textContent = incorrectAnswers;
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            document.getElementById('nextBtn').textContent = currentQuestionIndex < quizQuestions.length - 1 ? 'Next →' : 'Results';
+            updateQuizStats();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= quizQuestions.length) showResults();
+            else showQuestion();
+        }
+
+        function showFlashcard() {
+            document.getElementById('quizCard').classList.remove('active');
+            document.getElementById('flashcardCard').classList.add('active');
+            
+            const q = quizQuestions[currentQuestionIndex];
+            document.getElementById('fcCurrentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('fcTotalQuestions').textContent = quizQuestions.length;
+            document.getElementById('fcControlId').textContent = q.id;
+            document.getElementById('fcFront').textContent = q.name + ': ' + q.req;
+            document.getElementById('fcBack').textContent = q.meaning;
+            document.getElementById('flashcard').classList.remove('flipped');
+            updateQuizStats();
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function markFlashcard(gotIt) {
+            if (gotIt) correctAnswers++;
+            else incorrectAnswers++;
+            currentQuestionIndex++;
+            updateQuizStats();
+            if (currentQuestionIndex >= quizQuestions.length) showResults();
+            else showFlashcard();
+        }
+
+        function showResults() {
+            document.getElementById('quizCard').classList.remove('active');
+            document.getElementById('flashcardCard').classList.remove('active');
+            document.getElementById('quizResults').classList.add('active');
+            
+            const total = correctAnswers + incorrectAnswers;
+            const percent = Math.round((correctAnswers / total) * 100);
+            
+            document.getElementById('resultsScore').textContent = percent + '%';
+            document.getElementById('resultsCorrect').textContent = correctAnswers;
+            document.getElementById('resultsIncorrect').textContent = incorrectAnswers;
+            
+            let icon, message;
+            if (percent >= 90) { icon = '🏆'; message = 'Outstanding! Exam ready!'; }
+            else if (percent >= 80) { icon = '🎉'; message = 'Great job!'; }
+            else if (percent >= 70) { icon = '👍'; message = 'Good progress!'; }
+            else { icon = '💪'; message = 'Keep studying!'; }
+            
+            document.getElementById('resultsIcon').textContent = icon;
+            document.getElementById('resultsMessage').textContent = message;
+        }
+
+        function restartQuiz() { showQuizSettings(); }
+        function endQuiz() { if (confirm('End quiz?')) showQuizSettings(); }
+        
+        function updateQuizStats() {
+            document.getElementById('quizCorrectCount').textContent = correctAnswers;
+            document.getElementById('quizIncorrectCount').textContent = incorrectAnswers;
+        }
+
+        // ==================== CCA MODES ====================
+        function startCCAMode(mode, questions) {
+            ccaMode = mode;
+            ccaQuestions = shuffle([...questions]);
+            ccaIndex = 0;
+            ccaCorrect = 0;
+            ccaIncorrect = 0;
+            renderCCAQuestion();
+        }
+
+        function renderCCAQuestion() {
+            const containerId = ccaMode + 'Container';
+            const container = document.getElementById(containerId);
+            const q = ccaQuestions[ccaIndex];
+            
+            updateCCAStats();
+            
+            let html = `
+                <div class="header">
+                    <h2>${ccaMode === 'ethics' ? '⚖️ Ethics & Code of Conduct' : ccaMode === 'gotcha' ? '⚡ Gotcha Questions' : '🎯 Assessor Judgment'}</h2>
+                    <p>Question ${ccaIndex + 1} of ${ccaQuestions.length}</p>
+                </div>
+                <div class="cca-card">
+                    <span class="cca-category ${ccaMode}">${q.category}</span>
+            `;
+            
+            if (ccaMode === 'judgment') {
+                html += `
+                    <div class="cca-scenario">${q.scenario}</div>
+                    <div class="cca-options" id="ccaOptions">
+                        ${q.options.map((opt, i) => `
+                            <div class="cca-option" data-index="${i}" onclick="selectCCAAnswer(${i})">${opt}</div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="cca-question">${q.q}</div>
+                    <div class="cca-options" id="ccaOptions">
+                        ${q.options.map((opt, i) => `
+                            <div class="cca-option" data-index="${i}" onclick="selectCCAAnswer(${i})">${opt}</div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            html += `
+                    <div class="cca-explanation" id="ccaExplanation">
+                        <h4>📚 Explanation</h4>
+                        <p>${q.explanation}</p>
+                        ${q.mindset ? `<div class="cca-mindset"><h5>🎯 Assessor Mindset</h5><p>${q.mindset}</p></div>` : ''}
+                    </div>
+                    <button class="quiz-btn quiz-btn-primary" id="ccaNextBtn" style="display: none; margin-top: 20px;" onclick="nextCCAQuestion()">
+                        ${ccaIndex < ccaQuestions.length - 1 ? 'Next Question →' : 'See Results'}
+                    </button>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function selectCCAAnswer(index) {
+            const q = ccaQuestions[ccaIndex];
+            const options = document.querySelectorAll('#ccaOptions .cca-option');
+            const isCorrect = index === q.correct;
+            
+            options.forEach((opt, i) => {
+                opt.classList.add('disabled');
+                if (i === q.correct) opt.classList.add('correct');
+                else if (i === index && !isCorrect) opt.classList.add('incorrect');
+            });
+            
+            if (isCorrect) ccaCorrect++;
+            else ccaIncorrect++;
+            
+            document.getElementById('ccaExplanation').classList.add('show');
+            document.getElementById('ccaNextBtn').style.display = 'inline-block';
+            updateCCAStats();
+        }
+
+        function nextCCAQuestion() {
+            ccaIndex++;
+            if (ccaIndex >= ccaQuestions.length) {
+                showCCAResults();
+            } else {
+                renderCCAQuestion();
+            }
+        }
+
+        function showCCAResults() {
+            const containerId = ccaMode + 'Container';
+            const container = document.getElementById(containerId);
+            const percent = Math.round((ccaCorrect / ccaQuestions.length) * 100);
+            
+            let icon, message;
+            if (percent >= 90) { icon = '🏆'; message = 'Outstanding!'; }
+            else if (percent >= 80) { icon = '🎉'; message = 'Great job!'; }
+            else if (percent >= 70) { icon = '👍'; message = 'Good progress!'; }
+            else { icon = '💪'; message = 'Keep studying!'; }
+            
+            container.innerHTML = `
+                <div class="quiz-results active">
+                    <div class="results-icon">${icon}</div>
+                    <div class="results-score">${percent}%</div>
+                    <div class="results-message">${message}</div>
+                    <div class="results-stats">
+                        <div class="results-stat">
+                            <div class="results-stat-value correct">${ccaCorrect}</div>
+                            <div class="results-stat-label">Correct</div>
+                        </div>
+                        <div class="results-stat">
+                            <div class="results-stat-value incorrect">${ccaIncorrect}</div>
+                            <div class="results-stat-label">Incorrect</div>
+                        </div>
+                    </div>
+                    <button class="quiz-btn quiz-btn-primary" onclick="restartCCAMode()">Try Again</button>
+                </div>
+            `;
+        }
+
+        function restartCCAMode() {
+            if (ccaMode === 'ethics') startCCAMode('ethics', ETHICS_QUESTIONS);
+            else if (ccaMode === 'gotcha') startCCAMode('gotcha', GOTCHA_QUESTIONS);
+            else if (ccaMode === 'judgment') startCCAMode('judgment', JUDGMENT_SCENARIOS);
+        }
+
+        function updateCCAStats() {
+            document.getElementById('ccaProgress').textContent = `${ccaIndex + 1} / ${ccaQuestions.length}`;
+            document.getElementById('ccaCorrect').textContent = ccaCorrect;
+            document.getElementById('ccaIncorrect').textContent = ccaIncorrect;
+        }
+
+        // ==================== DEEP DIVE MODE ====================
+        function renderDeepDive() {
+            const container = document.getElementById('deepdiveContainer');
+            
+            let html = `
+                <div class="header">
+                    <h2>🔬 Control Deep Dives</h2>
+                    <p>Key takeaways from Further Discussion sections</p>
+                </div>
+                <input type="text" class="deepdive-search" placeholder="Search controls..." oninput="filterDeepDive(this.value)">
+            `;
+            
+            for (const [domainName, domain] of Object.entries(DOMAINS)) {
+                html += `
+                    <div class="deepdive-domain" data-domain="${domain.id}">
+                        <div class="deepdive-domain-header domain-${domain.id}" onclick="toggleDeepDiveDomain('${domain.id}')" style="background: linear-gradient(135deg, var(--domain-color), var(--domain-color-dark));">
+                            <span>${domainName}</span>
+                            <span class="dd-chevron">▼</span>
+                        </div>
+                        <div class="deepdive-domain-content">
+                            ${domain.controls.map(c => `
+                                <div class="deepdive-control" data-search="${c.id} ${c.name} ${c.req} ${c.meaning}".toLowerCase()>
+                                    <div class="dd-control-header">
+                                        <div>
+                                            <span class="dd-control-id">${c.id}</span>
+                                            <span class="dd-control-name">${c.name}</span>
+                                        </div>
+                                        <span class="impl-badge" style="background: ${TYPE_STYLES[c.type].bg}">${TYPE_STYLES[c.type].label}</span>
+                                    </div>
+                                    <div class="dd-statement">${c.req}</div>
+                                    <div class="dd-takeaways">
+                                        <h4>📌 What It Means</h4>
+                                        <p style="color: #334155; font-size: 0.9rem; line-height: 1.6;">${c.meaning}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function toggleDeepDiveDomain(domainId) {
+            const domain = document.querySelector(`.deepdive-domain[data-domain="${domainId}"]`);
+            domain.classList.toggle('expanded');
+        }
+
+        function filterDeepDive(term) {
+            term = term.toLowerCase();
+            document.querySelectorAll('.deepdive-control').forEach(control => {
+                const text = control.textContent.toLowerCase();
+                control.classList.toggle('hidden', term && !text.includes(term));
+            });
+            
+            document.querySelectorAll('.deepdive-domain').forEach(domain => {
+                const visibleControls = domain.querySelectorAll('.deepdive-control:not(.hidden)').length;
+                domain.style.display = visibleControls > 0 || !term ? 'block' : 'none';
+                if (term && visibleControls > 0) domain.classList.add('expanded');
+            });
+        }
+
+        // ==================== UTILITIES ====================
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ==================== MOBILE ====================
+        function toggleMobileSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('show');
+        }
+        
+        function closeMobileSidebar() {
+            document.querySelector('.sidebar').classList.remove('open');
+            document.querySelector('.sidebar-overlay').classList.remove('show');
+        }
+        
+        function mobileSetMode(mode) {
+            setMode(mode);
+            closeMobileSidebar();
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => btn.classList.remove('active'));
+        }
+
+        // ==================== INIT ====================
+        renderDomains();
+        updateProgressDisplay();
+        
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>

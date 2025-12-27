@@ -39,7 +39,7 @@ A comprehensive Progressive Web App for CMMC Certified CMMC Assessor (CCA) exam 
 - Inheritance requirements
 - "Reasonable assessor" mindset training
 
-### 6. 🔬 Deep Dive Reference
+### 6. Deep Dive Reference
 - All 110 controls with expandable details
 - Quick search across all controls
 - Domain-organized accordion view
@@ -56,7 +56,7 @@ BUILT BY
 Charnice Tatum
 Check out my portfolio on LinkedIn: https://www.linkedin.com/in/charnice-tatum 
 
-*******Biggest tip that has helped me so far:**********
+*******Biggest tip that has helped me so far:*******
 
 Each domain tells a coherent story.  
 Instead of memorizing 110 disconnected facts, you're learning 14 stories:

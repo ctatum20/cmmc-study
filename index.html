@@ -1079,6 +1079,204 @@
             { category: "NOT MET Determination", scenario: "Objective states: 'Determine if privileged accounts are identified.' Contractor shows list of 50 privileged accounts. During testing, you discover 3 service accounts with admin rights not on the list.", options: ["MET — they have a process for identifying", "NOT MET — privileged accounts not fully identified", "MET with observation to update list", "Partially MET"], correct: 1, explanation: "The objective requires accounts to BE identified. If accounts with privileged access aren't on the list, objective isn't satisfied.", mindset: "Test claims. 'We have a list' isn't enough — verify it's complete." }
         ];
 
+        // ==================== CONTROL DEEP DIVES (110 controls with key takeaways) ====================
+        const controlDeepDives = {
+            "AC": {
+                name: "Access Control",
+                color: "#2563eb",
+                controls: [
+                    { id: "AC.L1-3.1.1", name: "Authorized Access Control", points: 1, keyTakeaways: ["Identify ALL users, processes, and devices allowed to use company systems", "Automated processes must be associated with the user who authorized them", "Maintain a list of authorized personnel supporting ID/authentication activities"], assessmentTips: "Look for: maintained user lists, device authorization records, account request approval workflows" },
+                    { id: "AC.L1-3.1.2", name: "Transaction & Function Control", points: 1, keyTakeaways: ["Limit users to ONLY systems, roles, or applications needed for their job", "Common function types: Create, Read, Update, Delete (CRUD)", "Access based on roles AND responsibilities"], assessmentTips: "Verify ACLs match documented roles; test that users can't access unauthorized functions" },
+                    { id: "AC.L1-3.1.20", name: "External Connections", points: 1, keyTakeaways: ["External = outside direct supervision (internet, partner networks, personal devices)", "Use firewalls, allow/deny lists, VPNs to control external access", "Cloud services count as external systems"], assessmentTips: "Check for documented external connection inventory, VPN policies, BYOD controls" },
+                    { id: "AC.L1-3.1.22", name: "Control Public Information", points: 1, keyTakeaways: ["Never allow FCI/CUI to become public", "Identify WHO is authorized to post to public systems", "Implement review process BEFORE posting public content"], assessmentTips: "Look for: designated posting authorities, pre-publication review process" },
+                    { id: "AC.L2-3.1.3", name: "Control CUI Flow", points: 1, keyTakeaways: ["Information FLOW control (where data travels) vs ACCESS control (who can see it)", "Use firewalls, proxies, network segmentation to control flow", "Encryption required for CUI flowing across internet"], assessmentTips: "Review network diagrams, firewall rules, DLP policies, encryption for data in transit" },
+                    { id: "AC.L2-3.1.4", name: "Separation of Duties", points: 1, keyTakeaways: ["No single person in charge of entire critical task", "Divide mission functions AND system support functions", "Security admins managing access should NOT also manage audit functions"], assessmentTips: "Document which functions require separation; verify access privileges enforce separation" },
+                    { id: "AC.L2-3.1.5", name: "Least Privilege", points: 1, keyTakeaways: ["Restrict user access to ONLY machines and information needed for job", "Limit who can change system configuration settings", "Privileged accounts must be identified and documented"], assessmentTips: "Review privileged account list; verify default accounts are non-privileged" },
+                    { id: "AC.L2-3.1.6", name: "Non-Privileged Account Use", points: 1, keyTakeaways: ["Admins must NOT use privileged accounts for everyday tasks", "Web browsing, email = use non-privileged account", "Separating accounts limits blast radius of compromise"], assessmentTips: "Interview admins about account usage habits; check for separate admin and user accounts" },
+                    { id: "AC.L2-3.1.7", name: "Privileged Functions", points: 1, keyTakeaways: ["Privileged functions = control, monitoring, administration of system security", "Non-privileged users must be PREVENTED from executing these", "ALL privileged function execution must be LOGGED"], assessmentTips: "Test that non-privileged users can't access admin functions; verify logging" },
+                    { id: "AC.L2-3.1.8", name: "Unsuccessful Logon Attempts", points: 1, keyTakeaways: ["Define maximum number of failed attempts before lockout", "Define lockout duration or unlock procedure", "Protects against brute force attacks"], assessmentTips: "Check lockout threshold settings; verify lockout triggers; review unlock procedures" },
+                    { id: "AC.L2-3.1.9", name: "Privacy & Security Notices", points: 1, keyTakeaways: ["Display notice/banner BEFORE granting access", "Notice must reference monitoring, recording, and auditing", "User must acknowledge notice before proceeding"], assessmentTips: "Verify login banners exist on all systems; confirm acknowledgment required" },
+                    { id: "AC.L2-3.1.10", name: "Session Lock", points: 1, keyTakeaways: ["Lock screen after organizationally-defined inactivity period", "Pattern-hiding = can't see data on locked screen", "User must re-authenticate to unlock"], assessmentTips: "Test inactivity timeout; verify screen lock engages; confirm re-auth required" },
+                    { id: "AC.L2-3.1.11", name: "Session Termination", points: 1, keyTakeaways: ["Different from session LOCK - this ENDS the session entirely", "Conditions: time of day, inactivity duration, concurrent session limits", "Forces re-authentication for new session"], assessmentTips: "Identify termination conditions; test sessions terminate; verify new auth required" },
+                    { id: "AC.L2-3.1.12", name: "Control Remote Access", points: 1, keyTakeaways: ["Remote access = access from outside controlled facility", "Automated monitoring required (not just manual review)", "Control methods: session limits, time restrictions, encryption"], assessmentTips: "Review remote access logs; verify monitoring is automated; check session controls" },
+                    { id: "AC.L2-3.1.13", name: "Remote Access Confidentiality", points: 1, keyTakeaways: ["ALL remote access must be encrypted", "VPN, TLS, SSH are common mechanisms", "Applies to both incoming and outgoing remote connections"], assessmentTips: "Verify encryption on VPN, RDP, SSH; check TLS versions (1.2+)" },
+                    { id: "AC.L2-3.1.14", name: "Remote Access Routing", points: 1, keyTakeaways: ["All remote access through controlled entry points (jump servers, VPN concentrators)", "No direct connections bypassing access control points", "Enables monitoring and enforcement at single point"], assessmentTips: "Review network architecture; verify no backdoor remote access paths" },
+                    { id: "AC.L2-3.1.15", name: "Privileged Remote Access", points: 1, keyTakeaways: ["Privileged remote commands need EXPLICIT authorization", "Document which commands are allowed remotely", "More restrictive than standard remote access"], assessmentTips: "Review privileged remote access authorization; verify logging" },
+                    { id: "AC.L2-3.1.16", name: "Wireless Access Authorization", points: 1, keyTakeaways: ["Wireless access requires authorization BEFORE connection", "Establish usage restrictions and implementation guidance", "Applies to both corporate WiFi and personal hotspots"], assessmentTips: "Review wireless authorization process; verify unauthorized devices can't connect" },
+                    { id: "AC.L2-3.1.17", name: "Wireless Access Protection", points: 1, keyTakeaways: ["WPA2/WPA3 Enterprise with EAP-TLS recommended", "Pre-shared keys (PSK) less secure than enterprise auth", "Rogue access point detection recommended"], assessmentTips: "Verify WPA2/3 in use; check authentication method; test for rogue AP detection" },
+                    { id: "AC.L2-3.1.18", name: "Mobile Device Connection", points: 1, keyTakeaways: ["Mobile = laptops, tablets, phones that connect to multiple networks", "May require MDM (Mobile Device Management) solution", "Define what's allowed: company-owned only vs BYOD"], assessmentTips: "Review mobile device policy; verify MDM enforcement; check connection controls" },
+                    { id: "AC.L2-3.1.19", name: "Encrypt CUI on Mobile", points: 1, keyTakeaways: ["Full disk encryption required for mobile devices with CUI", "FIPS-validated encryption recommended for CUI", "Complemented by SC.L2-3.13.10 (key management)"], assessmentTips: "Verify encryption enabled on all mobile devices; check FIPS validation" },
+                    { id: "AC.L2-3.1.21", name: "Portable Storage Use", points: 1, keyTakeaways: ["Portable storage = USB drives, external hard drives", "External systems = systems not controlled by organization", "Risk: malware introduction, data exfiltration"], assessmentTips: "Review portable storage policy; verify technical controls (USB blocking); check DLP" }
+                ]
+            },
+            "AT": {
+                name: "Awareness and Training",
+                color: "#059669",
+                controls: [
+                    { id: "AT.L2-3.2.1", name: "Role-Based Risk Awareness", points: 1, keyTakeaways: ["AWARENESS training (general security) - different from role-based TRAINING", "Must cover: risks of activities, applicable policies/standards/procedures", "Initial AND refresher training required"], assessmentTips: "Review training materials and completion records; check refresher schedule" },
+                    { id: "AT.L2-3.2.2", name: "Role-Based Training", points: 1, keyTakeaways: ["Role-based TRAINING = skills/knowledge for specific job function", "Different from awareness training - this is job-specific", "Examples: firewall admin training, incident responder training"], assessmentTips: "Identify security-related roles; verify training exists for each role" },
+                    { id: "AT.L2-3.2.3", name: "Insider Threat Awareness", points: 1, keyTakeaways: ["Insider threat = authorized access used to do harm (intentional or not)", "Indicators: unusual access patterns, policy violations, behavior changes", "Training must cover how to REPORT potential threats"], assessmentTips: "Review insider threat training content; verify reporting mechanisms covered" }
+                ]
+            },
+            "AU": {
+                name: "Audit and Accountability",
+                color: "#7c3aed",
+                controls: [
+                    { id: "AU.L2-3.3.1", name: "System Auditing", points: 5, keyTakeaways: ["5-POINT CONTROL - critical for CUI protection", "Define WHAT to log: event types, content needed", "Minimum content: timestamps, source/dest, user/process IDs, success/fail"], assessmentTips: "Verify logging enabled on ALL CUI systems; check retention period" },
+                    { id: "AU.L2-3.3.2", name: "User Accountability", points: 1, keyTakeaways: ["Logs must link actions to INDIVIDUAL users", "No shared accounts for accountability-sensitive functions", "Enables investigation and attribution"], assessmentTips: "Verify logs contain user IDs; check for shared account usage" },
+                    { id: "AU.L2-3.3.3", name: "Event Review", points: 1, keyTakeaways: ["Logs must be REVIEWED (not just collected)", "Update what's logged based on review findings", "Anomalies and suspicious events must be investigated"], assessmentTips: "Review log review procedures; check for documented review activities" },
+                    { id: "AU.L2-3.3.4", name: "Audit Failure Alerting", points: 1, keyTakeaways: ["If logging fails, you must know immediately", "Alert appropriate personnel (not just log it)", "May include: disk full, service stopped, log corruption"], assessmentTips: "Test alerting for log failures; verify alerts go to appropriate personnel" },
+                    { id: "AU.L2-3.3.5", name: "Audit Correlation", points: 1, keyTakeaways: ["Correlate logs from MULTIPLE sources for better visibility", "SIEM tools commonly used for correlation", "Enables detection of distributed attacks"], assessmentTips: "Check for log aggregation/SIEM; verify correlation rules exist" },
+                    { id: "AU.L2-3.3.6", name: "Reduction & Reporting", points: 1, keyTakeaways: ["Raw logs often too voluminous for direct analysis", "Reduction = filtering, summarizing, normalizing data", "Support on-demand queries and reports"], assessmentTips: "Verify ability to search/filter logs; check reporting capabilities" },
+                    { id: "AU.L2-3.3.7", name: "Authoritative Time Source", points: 1, keyTakeaways: ["All systems must sync to authoritative time source (NTP)", "Consistent timestamps critical for log correlation", "Check for time drift regularly"], assessmentTips: "Verify NTP configuration; check time source is authoritative" },
+                    { id: "AU.L2-3.3.8", name: "Audit Protection", points: 1, keyTakeaways: ["Attackers often try to modify/delete logs to cover tracks", "Restrict access to logs and logging tools", "Consider write-once storage or off-site backup"], assessmentTips: "Check log file permissions; verify access restrictions" },
+                    { id: "AU.L2-3.3.9", name: "Audit Management", points: 1, keyTakeaways: ["Only specific privileged users can manage logging", "Supports separation of duties", "Prevents users from disabling their own audit trail"], assessmentTips: "Identify who can manage logging; verify it's a limited subset" }
+                ]
+            },
+            "CM": {
+                name: "Configuration Management",
+                color: "#dc2626",
+                controls: [
+                    { id: "CM.L2-3.4.1", name: "System Baselining", points: 1, keyTakeaways: ["Baseline = known good configuration state", "Must include: hardware, software, firmware, documentation", "Enables detection of unauthorized changes"], assessmentTips: "Review baseline documentation; verify inventory is current" },
+                    { id: "CM.L2-3.4.2", name: "Security Configuration Enforcement", points: 1, keyTakeaways: ["Security settings must be documented AND enforced", "Use industry benchmarks (CIS, DISA STIGs) as starting point", "Enforce through technical controls, not just policy"], assessmentTips: "Review security configuration standards; verify enforcement mechanisms" },
+                    { id: "CM.L2-3.4.3", name: "System Change Management", points: 1, keyTakeaways: ["All changes must go through formal process", "Track: who, what, when, why", "Review and approve BEFORE implementation"], assessmentTips: "Review change management process; check change logs" },
+                    { id: "CM.L2-3.4.4", name: "Security Impact Analysis", points: 1, keyTakeaways: ["Analyze security impact BEFORE making changes", "Consider effects on confidentiality, integrity, availability", "Part of change management process"], assessmentTips: "Review security impact analysis procedures; check for documented analyses" },
+                    { id: "CM.L2-3.4.5", name: "Access Restrictions for Change", points: 1, keyTakeaways: ["Limit who can make changes to systems", "Both physical AND logical access restrictions", "Enforce through technical controls"], assessmentTips: "Identify who has change access; verify restrictions are enforced" },
+                    { id: "CM.L2-3.4.6", name: "Least Functionality", points: 1, keyTakeaways: ["Disable/remove unnecessary functions, ports, protocols, services", "Reduces attack surface", "Document what's essential vs what's disabled"], assessmentTips: "Review enabled services/ports; verify unnecessary functions disabled" },
+                    { id: "CM.L2-3.4.7", name: "Nonessential Programs", points: 1, keyTakeaways: ["Identify essential vs nonessential software/services", "Multiple options: restrict, disable, or prevent", "Technical controls preferred over policy alone"], assessmentTips: "Review installed software; check for nonessential services" },
+                    { id: "CM.L2-3.4.8", name: "Application Execution Policy", points: 1, keyTakeaways: ["Whitelisting (deny-all, permit-by-exception) is more secure", "Blacklisting blocks known bad, allows unknown", "Technical enforcement required"], assessmentTips: "Identify which approach is used; test that unauthorized software blocked" },
+                    { id: "CM.L2-3.4.9", name: "User-Installed Software", points: 1, keyTakeaways: ["Users shouldn't install software without authorization", "Monitor for unauthorized installations", "Balance usability with security"], assessmentTips: "Review user software installation policy; verify monitoring in place" }
+                ]
+            },
+            "IA": {
+                name: "Identification and Authentication",
+                color: "#0891b2",
+                controls: [
+                    { id: "IA.L1-3.5.1", name: "Identification", points: 1, keyTakeaways: ["Every user, process, and device must have unique identifier", "Foundation for authentication and access control", "Device identification supports network access control"], assessmentTips: "Verify unique identifiers for users; check process authorization" },
+                    { id: "IA.L1-3.5.2", name: "Authentication", points: 1, keyTakeaways: ["Authentication verifies claimed identity", "Must occur BEFORE access is granted", "Strength should match sensitivity of access"], assessmentTips: "Verify authentication required before access; check auth strength" },
+                    { id: "IA.L2-3.5.3", name: "Multifactor Authentication", points: "3 or 5", keyTakeaways: ["★ PARTIAL SCORING CONTROL ★", "MFA required for: privileged accounts (local & network) AND non-privileged network access", "3 points if MFA only for remote/privileged; 5 points if no MFA"], assessmentTips: "Test MFA on all required access paths; verify factors are independent" },
+                    { id: "IA.L2-3.5.4", name: "Replay-Resistant Authentication", points: 1, keyTakeaways: ["Prevent captured authentication from being reused", "Kerberos, TLS, OTP are replay-resistant", "Simple password over unencrypted connection is NOT"], assessmentTips: "Verify authentication protocols are replay-resistant" },
+                    { id: "IA.L2-3.5.5", name: "Identifier Reuse", points: 1, keyTakeaways: ["Don't reassign user IDs to new users immediately", "Define period before reuse is allowed", "Prevents confusion in audit trails"], assessmentTips: "Check identifier reuse policy; verify enforcement" },
+                    { id: "IA.L2-3.5.6", name: "Identifier Handling", points: 1, keyTakeaways: ["Inactive accounts are security risk", "Define inactivity period (e.g., 45-90 days)", "Disable (not delete) to preserve audit trail"], assessmentTips: "Review inactivity policy; verify automated detection" },
+                    { id: "IA.L2-3.5.7", name: "Password Complexity", points: 1, keyTakeaways: ["Define minimum length and character types", "Require change of characters on password update", "Technical enforcement (not just policy)"], assessmentTips: "Test password complexity enforcement; verify requirements documented" },
+                    { id: "IA.L2-3.5.8", name: "Password Reuse", points: 1, keyTakeaways: ["Define number of password generations before reuse", "Technical enforcement in directory/authentication system", "Prevents cycling through passwords"], assessmentTips: "Test password history enforcement; verify generation count" },
+                    { id: "IA.L2-3.5.9", name: "Temporary Passwords", points: 1, keyTakeaways: ["Temporary passwords only valid for first login", "Force immediate change to permanent password", "Avoid predictable temporary password patterns"], assessmentTips: "Test temporary password process; verify forced change" },
+                    { id: "IA.L2-3.5.10", name: "Cryptographically-Protected Passwords", points: 1, keyTakeaways: ["Passwords must be hashed for storage (one-way function)", "Passwords must be encrypted in transit", "Use salting to prevent rainbow table attacks"], assessmentTips: "Verify password storage is hashed; check transmission encrypted" },
+                    { id: "IA.L2-3.5.11", name: "Obscure Feedback", points: 1, keyTakeaways: ["Display asterisks or dots when entering passwords", "Prevents shoulder surfing", "Mobile devices may briefly show characters (acceptable)"], assessmentTips: "Test password entry feedback; verify obscuring on all systems" }
+                ]
+            },
+            "IR": {
+                name: "Incident Response",
+                color: "#ea580c",
+                controls: [
+                    { id: "IR.L2-3.6.1", name: "Incident Handling", points: 5, keyTakeaways: ["5-POINT CONTROL", "Must cover ALL phases: preparation, detection, analysis, containment, recovery, user response", "Establishes CAPABILITY - doesn't require actual incidents"], assessmentTips: "Review IR plan for all phases; verify roles are assigned" },
+                    { id: "IR.L2-3.6.2", name: "Incident Reporting", points: 5, keyTakeaways: ["5-POINT CONTROL", "CUI incidents must be reported to DIBNet within 72 hours", "Document ALL incidents (not just major ones)"], assessmentTips: "Review reporting procedures; verify DIBNet 72-hour requirement" },
+                    { id: "IR.L2-3.6.3", name: "Incident Response Testing", points: 5, keyTakeaways: ["5-POINT CONTROL", "Testing validates capability actually works", "Methods: tabletop exercises, simulations, actual exercises"], assessmentTips: "Review testing records; verify testing frequency" }
+                ]
+            },
+            "MA": {
+                name: "Maintenance",
+                color: "#4f46e5",
+                controls: [
+                    { id: "MA.L2-3.7.1", name: "Perform Maintenance", points: 1, keyTakeaways: ["Maintenance keeps systems secure and operational", "Includes patches, updates, hardware servicing", "Schedule based on vendor recommendations and risk"], assessmentTips: "Review maintenance schedules; verify maintenance is performed" },
+                    { id: "MA.L2-3.7.2", name: "System Maintenance Control", points: 5, keyTakeaways: ["5-POINT CONTROL", "Control WHO performs maintenance", "Control WHAT tools are used", "Inspect tools before and after use"], assessmentTips: "Review maintenance personnel authorization; verify tool controls" },
+                    { id: "MA.L2-3.7.3", name: "Equipment Sanitization", points: 1, keyTakeaways: ["Remove ALL CUI before equipment leaves facility", "Sanitize storage media, memory, configuration data", "Verify sanitization before release"], assessmentTips: "Review sanitization procedures; verify process before removal" },
+                    { id: "MA.L2-3.7.4", name: "Media Inspection", points: 1, keyTakeaways: ["Scan maintenance media BEFORE use", "Applies to diagnostic tools, firmware updates", "Prevents introduction of malware via maintenance"], assessmentTips: "Verify scanning procedures for maintenance media" },
+                    { id: "MA.L2-3.7.5", name: "Nonlocal Maintenance", points: 5, keyTakeaways: ["5-POINT CONTROL", "Remote maintenance requires MFA", "Sessions must be terminated when complete"], assessmentTips: "Verify MFA for remote maintenance; check session termination" },
+                    { id: "MA.L2-3.7.6", name: "Maintenance Personnel", points: 1, keyTakeaways: ["Uncleared personnel must be supervised during maintenance", "Escort and observe at all times", "Review and approve work performed"], assessmentTips: "Review supervision procedures; verify escort requirements" }
+                ]
+            },
+            "MP": {
+                name: "Media Protection",
+                color: "#be185d",
+                controls: [
+                    { id: "MP.L2-3.8.1", name: "Media Protection", points: 1, keyTakeaways: ["Applies to BOTH paper and digital media", "Physical control = know where media is", "Secure storage = locked cabinets, safes, secure areas"], assessmentTips: "Review media storage locations; verify access controls" },
+                    { id: "MP.L2-3.8.2", name: "Media Access", points: 1, keyTakeaways: ["Only authorized users can access CUI media", "Both physical and logical access controls", "Review access periodically"], assessmentTips: "Review access authorization; verify access controls enforced" },
+                    { id: "MP.L2-3.8.3", name: "Media Disposal", points: 5, keyTakeaways: ["5-POINT CONTROL", "Sanitization methods depend on media type", "Destruction may be required for highest sensitivity"], assessmentTips: "Review sanitization/destruction procedures; verify methods appropriate" },
+                    { id: "MP.L2-3.8.4", name: "Media Markings", points: 1, keyTakeaways: ["CUI markings per NARA guidelines", "Distribution limitations must be visible", "Enables proper handling"], assessmentTips: "Review marking procedures; verify markings applied" },
+                    { id: "MP.L2-3.8.5", name: "Media Accountability", points: 1, keyTakeaways: ["Track media during transport", "Know who has custody at all times", "Document chain of custody"], assessmentTips: "Review transport procedures; verify chain of custody" },
+                    { id: "MP.L2-3.8.6", name: "Portable Storage Encryption", points: 1, keyTakeaways: ["Encrypt CUI on portable digital media", "FIPS-validated encryption recommended", "Alternative: physical safeguards (courier, locked container)"], assessmentTips: "Verify encryption on portable media; check encryption strength" },
+                    { id: "MP.L2-3.8.7", name: "Removable Media", points: 5, keyTakeaways: ["5-POINT CONTROL", "USB drives, external drives, optical media", "May restrict, disable, or prohibit"], assessmentTips: "Review removable media policy; verify technical controls" },
+                    { id: "MP.L2-3.8.8", name: "Shared Media", points: 1, keyTakeaways: ["No anonymous/shared USB drives", "All portable storage must have identifiable owner", "Supports accountability"], assessmentTips: "Review portable storage ownership requirements" },
+                    { id: "MP.L2-3.8.9", name: "Protect Backups", points: 1, keyTakeaways: ["Backups contain CUI - must be protected", "Encryption for offsite backups", "Physical security for onsite backups"], assessmentTips: "Review backup protection; verify encryption" }
+                ]
+            },
+            "PS": {
+                name: "Personnel Security",
+                color: "#0d9488",
+                controls: [
+                    { id: "PS.L2-3.9.1", name: "Screen Individuals", points: 1, keyTakeaways: ["Screen BEFORE granting CUI access", "Background checks, reference checks", "Level of screening based on sensitivity"], assessmentTips: "Review screening procedures; verify screening before access" },
+                    { id: "PS.L2-3.9.2", name: "Personnel Actions", points: 5, keyTakeaways: ["5-POINT CONTROL", "Termination: revoke access immediately", "Transfer: adjust access for new role", "Return all equipment and media"], assessmentTips: "Review termination/transfer procedures; verify timely access revocation" }
+                ]
+            },
+            "PE": {
+                name: "Physical Protection",
+                color: "#9333ea",
+                controls: [
+                    { id: "PE.L2-3.10.1", name: "Limit Physical Access", points: 5, keyTakeaways: ["5-POINT CONTROL - cannot be POA&M'd", "Control access to facilities with CUI systems", "Badges, locks, guards, fences"], assessmentTips: "Review physical access controls; verify authorization process" },
+                    { id: "PE.L2-3.10.2", name: "Monitor Facility", points: 5, keyTakeaways: ["5-POINT CONTROL - cannot be POA&M'd", "Monitoring = cameras, intrusion detection, guards", "Cover both facility and infrastructure"], assessmentTips: "Review monitoring systems; verify coverage" },
+                    { id: "PE.L2-3.10.3", name: "Escort Visitors", points: 1, keyTakeaways: ["Visitors must be escorted in secure areas", "Monitor visitor activity at all times", "Log visitor access"], assessmentTips: "Review visitor procedures; verify escort requirements" },
+                    { id: "PE.L2-3.10.4", name: "Physical Access Logs", points: 1, keyTakeaways: ["Cannot be POA&M'd at Level 2", "Log entry/exit to secure areas", "Include visitor access"], assessmentTips: "Review physical access logs; verify retention" },
+                    { id: "PE.L2-3.10.5", name: "Manage Physical Access", points: 1, keyTakeaways: ["Cannot be POA&M'd at Level 2", "Physical access devices = keys, badges, cards", "Revoke lost/stolen devices immediately"], assessmentTips: "Review device inventory; verify tracking" },
+                    { id: "PE.L2-3.10.6", name: "Alternative Work Sites", points: 1, keyTakeaways: ["Remote work/home offices need protection", "Define safeguarding requirements", "May include physical security, encryption, VPN"], assessmentTips: "Review telework policy; verify safeguards" }
+                ]
+            },
+            "RA": {
+                name: "Risk Assessment",
+                color: "#ca8a04",
+                controls: [
+                    { id: "RA.L2-3.11.1", name: "Risk Assessments", points: 1, keyTakeaways: ["Assess risk periodically (at least annually)", "Cover: operations, assets, individuals", "Consider CUI processing, storage, transmission"], assessmentTips: "Review risk assessment; verify currency" },
+                    { id: "RA.L2-3.11.2", name: "Vulnerability Scan", points: 5, keyTakeaways: ["5-POINT CONTROL", "Scan periodically (define frequency)", "Also scan when new vulnerabilities announced"], assessmentTips: "Review scanning frequency; verify coverage" },
+                    { id: "RA.L2-3.11.3", name: "Vulnerability Remediation", points: 1, keyTakeaways: ["Prioritize remediation based on risk", "Define remediation timeframes", "Track remediation progress"], assessmentTips: "Review remediation process; verify prioritization" }
+                ]
+            },
+            "CA": {
+                name: "Security Assessment",
+                color: "#2563eb",
+                controls: [
+                    { id: "CA.L2-3.12.1", name: "Security Control Assessment", points: 5, keyTakeaways: ["5-POINT CONTROL", "Assess periodically (not just once)", "Determine if controls are EFFECTIVE"], assessmentTips: "Review security assessment schedule; verify assessments performed" },
+                    { id: "CA.L2-3.12.2", name: "Plan of Action", points: 1, keyTakeaways: ["POA&M for identified deficiencies", "Must be actionable with timelines", "Different from CMMC assessment POA&M"], assessmentTips: "Review POA&M; verify items have timelines" },
+                    { id: "CA.L2-3.12.3", name: "Security Control Monitoring", points: 5, keyTakeaways: ["5-POINT CONTROL", "Continuous monitoring (not just periodic assessment)", "Detect changes that affect control effectiveness"], assessmentTips: "Review monitoring procedures; verify ongoing activities" },
+                    { id: "CA.L2-3.12.4", name: "System Security Plan", points: 1, keyTakeaways: ["★ REQUIRED AT ASSESSMENT - CANNOT BE POA&M'd ★", "Must include: boundary, environment, implementation methods, connections", "Foundation document for CMMC assessment"], assessmentTips: "Verify SSP exists; check accuracy against actual environment" }
+                ]
+            },
+            "SC": {
+                name: "System and Communications Protection",
+                color: "#dc2626",
+                controls: [
+                    { id: "SC.L1-3.13.1", name: "Boundary Protection", points: 5, keyTakeaways: ["5-POINT CONTROL", "External boundaries = perimeter (internet-facing)", "Internal boundaries = network segmentation"], assessmentTips: "Review network architecture; verify boundary controls" },
+                    { id: "SC.L2-3.13.2", name: "Security Engineering", points: 5, keyTakeaways: ["5-POINT CONTROL", "Security built into design (not bolted on)", "Defense in depth architecture"], assessmentTips: "Review architecture documentation; verify security design principles" },
+                    { id: "SC.L2-3.13.3", name: "Security Function Isolation", points: 1, keyTakeaways: ["Users can't access admin functions", "Physical or logical separation", "Reduces attack surface"], assessmentTips: "Verify separation of user and admin functions" },
+                    { id: "SC.L2-3.13.4", name: "Shared Resource Control", points: 1, keyTakeaways: ["Shared resources = memory, storage in multi-tenant", "Prevent data leakage between users/processes", "Apply to virtualization environments"], assessmentTips: "Review shared resource controls; verify isolation" },
+                    { id: "SC.L1-3.13.5", name: "Public-Access System Separation", points: 1, keyTakeaways: ["DMZ for public-facing systems", "Physically or logically separated", "May be N/A if no public systems"], assessmentTips: "Review network segmentation; verify DMZ implementation" },
+                    { id: "SC.L2-3.13.6", name: "Network Communication by Exception", points: 5, keyTakeaways: ["5-POINT CONTROL", "Default deny = whitelist approach", "Only explicitly allowed traffic permitted"], assessmentTips: "Review firewall rules; verify default deny" },
+                    { id: "SC.L2-3.13.7", name: "Split Tunneling", points: 1, keyTakeaways: ["Split tunneling = VPN user accessing corporate and internet directly", "Creates bypass around corporate security", "Disable or control split tunneling"], assessmentTips: "Review VPN configuration; verify split tunneling controls" },
+                    { id: "SC.L2-3.13.8", name: "Data in Transit", points: 1, keyTakeaways: ["Encrypt CUI in transit", "TLS 1.2+ for web traffic", "Alternative: protected distribution system (PDS)"], assessmentTips: "Verify encryption for CUI transmission; check TLS versions" },
+                    { id: "SC.L2-3.13.9", name: "Connections Termination", points: 1, keyTakeaways: ["Define inactivity timeout", "Terminate sessions when complete", "Prevents hijacking of idle sessions"], assessmentTips: "Verify timeout configuration; test session termination" },
+                    { id: "SC.L2-3.13.10", name: "Key Management", points: 1, keyTakeaways: ["Key generation must be secure", "Key storage must be protected", "Include key rotation and revocation"], assessmentTips: "Review key management procedures; verify key protection" },
+                    { id: "SC.L2-3.13.11", name: "CUI Encryption", points: "3 or 5", keyTakeaways: ["★ PARTIAL SCORING CONTROL ★", "3 points if encryption exists but not FIPS-validated", "FIPS 140-2/3 VALIDATED module required (not just algorithm)"], assessmentTips: "Check CMVP database for validation; verify FIPS mode enabled" },
+                    { id: "SC.L2-3.13.12", name: "Collaborative Device Control", points: 1, keyTakeaways: ["Collaborative devices = cameras, mics in meeting rooms", "Prevent remote activation without user knowledge", "Users must know if being recorded"], assessmentTips: "Review collaborative device controls; verify indicators" },
+                    { id: "SC.L2-3.13.13", name: "Mobile Code", points: 1, keyTakeaways: ["Mobile code = JavaScript, ActiveX, Flash", "Control what mobile code can execute", "May block or restrict by type"], assessmentTips: "Review mobile code controls; check browser settings" },
+                    { id: "SC.L2-3.13.14", name: "Voice over IP", points: 1, keyTakeaways: ["VoIP has unique security considerations", "Separate VoIP and data traffic", "Encrypt VoIP when carrying CUI"], assessmentTips: "Review VoIP implementation; verify segmentation" },
+                    { id: "SC.L2-3.13.15", name: "Communications Authenticity", points: 5, keyTakeaways: ["5-POINT CONTROL", "Verify both endpoints are who they claim", "TLS with certificates provides authenticity"], assessmentTips: "Verify session authentication; check certificate validation" },
+                    { id: "SC.L2-3.13.16", name: "Data at Rest", points: 1, keyTakeaways: ["CUI must be protected when stored", "Encryption is primary method", "Applies to all storage locations"], assessmentTips: "Verify CUI storage protection; check encryption" }
+                ]
+            },
+            "SI": {
+                name: "System and Information Integrity",
+                color: "#65a30d",
+                controls: [
+                    { id: "SI.L1-3.14.1", name: "Flaw Remediation", points: 5, keyTakeaways: ["5-POINT CONTROL", "Timely patching is critical", "Define what 'timely' means for different severity"], assessmentTips: "Review patching procedures; verify patch currency" },
+                    { id: "SI.L1-3.14.2", name: "Malicious Code Protection", points: 5, keyTakeaways: ["5-POINT CONTROL", "Antivirus/antimalware at endpoints and gateways", "'Appropriate locations' = entry/exit points, workstations, servers"], assessmentTips: "Verify AV/AM deployment; check coverage" },
+                    { id: "SI.L2-3.14.3", name: "Security Alerts", points: 5, keyTakeaways: ["5-POINT CONTROL", "Subscribe to security advisory sources", "Take appropriate action (patch, mitigate, accept)"], assessmentTips: "Review advisory monitoring; verify action process" },
+                    { id: "SI.L1-3.14.4", name: "Update Malicious Code Protection", points: 5, keyTakeaways: ["5-POINT CONTROL", "Signature updates must be current", "Automate updates where possible"], assessmentTips: "Verify signature currency; check update automation" },
+                    { id: "SI.L1-3.14.5", name: "System & File Scanning", points: 1, keyTakeaways: ["Periodic full system scans", "Real-time scanning for files from external sources", "Scan downloads, email attachments, external media"], assessmentTips: "Verify scan schedules; check real-time scanning" },
+                    { id: "SI.L2-3.14.6", name: "Monitor Communications", points: 5, keyTakeaways: ["5-POINT CONTROL", "Monitor both inbound AND outbound", "IDS/IPS, SIEM, network monitoring tools"], assessmentTips: "Review monitoring capabilities; verify inbound/outbound coverage" },
+                    { id: "SI.L2-3.14.7", name: "Identify Unauthorized Use", points: 1, keyTakeaways: ["Detect when systems used without authorization", "Monitor for policy violations", "User behavior analytics can help"], assessmentTips: "Review detection mechanisms; verify log analysis" }
+                ]
+            }
+        };
+
         // ==================== STATE ====================
         let currentMode = 'study';
         let studiedControls = JSON.parse(localStorage.getItem('studiedControls') || '[]');
@@ -1198,7 +1396,7 @@
                                         const hidden = !filteredControls.includes(c);
                                         return `
                                             <tr class="${isStudied ? 'studied' : ''} ${hidden ? 'hidden' : ''}">
-                                                <td><input type="checkbox" class="study-checkbox" ${isStudied ? 'checked' : ''} onchange="toggleStudied('${controlKey}')"></td>
+                                                <td><input type="checkbox" class="study-checkbox" data-control="${controlKey}" ${isStudied ? 'checked' : ''} onchange="toggleStudied('${controlKey}')"></td>
                                                 <td><div class="control-id">${c.id}</div><div class="control-name">${c.name}</div></td>
                                                 <td class="control-req">${c.req}</td>
                                                 <td class="control-meaning">${c.meaning}</td>
@@ -1228,7 +1426,48 @@
             }
             localStorage.setItem('studiedControls', JSON.stringify(studiedControls));
             updateProgressDisplay();
-            renderDomains();
+            
+            // Update just this control's checkbox without re-rendering everything
+            const checkbox = document.querySelector(`[data-control="${controlKey}"]`);
+            if (checkbox) {
+                checkbox.checked = studiedControls.includes(controlKey);
+            }
+            
+            // Update domain count
+            const domainId = controlKey.split('-')[0];
+            updateDomainCount(domainId);
+            
+            // Only re-render if filter requires it (studied/unstudied filter active)
+            if (studyFilter !== 'all') {
+                // Save expanded states before re-render
+                const expandedDomains = [];
+                document.querySelectorAll('.domain-section.expanded').forEach(el => {
+                    expandedDomains.push(el.dataset.domain);
+                });
+                
+                renderDomains();
+                
+                // Restore expanded states after re-render
+                expandedDomains.forEach(domainId => {
+                    const section = document.querySelector(`.domain-section[data-domain="${domainId}"]`);
+                    if (section) section.classList.add('expanded');
+                });
+            }
+        }
+        
+        function updateDomainCount(domainId) {
+            for (const [domainName, domain] of Object.entries(DOMAINS)) {
+                if (domain.id === domainId) {
+                    const studiedInDomain = domain.controls.filter(c => 
+                        studiedControls.includes(domain.id + '-' + c.id)
+                    ).length;
+                    const progressEl = document.querySelector(`.domain-section[data-domain="${domainId}"] .domain-progress`);
+                    if (progressEl) {
+                        progressEl.textContent = `${studiedInDomain}/${domain.count} studied`;
+                    }
+                    break;
+                }
+            }
         }
 
         function updateProgressDisplay() {
@@ -1623,32 +1862,38 @@
             let html = `
                 <div class="header">
                     <h2>🔬 Control Deep Dives</h2>
-                    <p>Key takeaways from Further Discussion sections</p>
+                    <p>Key takeaways from Further Discussion sections - 110 controls with assessor tips</p>
                 </div>
                 <input type="text" class="deepdive-search" placeholder="Search controls..." oninput="filterDeepDive(this.value)">
             `;
             
-            for (const [domainName, domain] of Object.entries(DOMAINS)) {
+            for (const [domainKey, domain] of Object.entries(controlDeepDives)) {
+                const fivePointCount = domain.controls.filter(c => c.points === 5 || c.points === "3 or 5").length;
                 html += `
-                    <div class="deepdive-domain" data-domain="${domain.id}">
-                        <div class="deepdive-domain-header domain-${domain.id}" onclick="toggleDeepDiveDomain('${domain.id}')" style="background: linear-gradient(135deg, var(--domain-color), var(--domain-color-dark));">
-                            <span>${domainName}</span>
+                    <div class="deepdive-domain" data-domain="${domainKey}">
+                        <div class="deepdive-domain-header" onclick="toggleDeepDiveDomain('${domainKey}')" style="background: ${domain.color};">
+                            <span>${domain.name} (${domainKey}) - ${domain.controls.length} controls${fivePointCount > 0 ? ' • ' + fivePointCount + ' high-value' : ''}</span>
                             <span class="dd-chevron">▼</span>
                         </div>
                         <div class="deepdive-domain-content">
                             ${domain.controls.map(c => `
-                                <div class="deepdive-control" data-search="${c.id} ${c.name} ${c.req} ${c.meaning}".toLowerCase()>
+                                <div class="deepdive-control" data-search="${c.id} ${c.name} ${c.keyTakeaways.join(' ')}".toLowerCase()>
                                     <div class="dd-control-header">
                                         <div>
-                                            <span class="dd-control-id">${c.id}</span>
+                                            <span class="dd-control-id" style="color: ${domain.color};">${c.id}</span>
                                             <span class="dd-control-name">${c.name}</span>
                                         </div>
-                                        <span class="impl-badge" style="background: ${TYPE_STYLES[c.type].bg}">${TYPE_STYLES[c.type].label}</span>
+                                        ${c.points === 5 ? '<span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700;">5 PT</span>' : c.points === "3 or 5" ? '<span style="background: #f59e0b; color: #1a1a2e; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700;">PARTIAL</span>' : ''}
                                     </div>
-                                    <div class="dd-statement">${c.req}</div>
                                     <div class="dd-takeaways">
-                                        <h4>📌 What It Means</h4>
-                                        <p style="color: #334155; font-size: 0.9rem; line-height: 1.6;">${c.meaning}</p>
+                                        <h4>📌 Key Takeaways</h4>
+                                        <ul style="margin: 8px 0; padding-left: 20px; color: #334155; font-size: 0.9rem; line-height: 1.6;">
+                                            ${c.keyTakeaways.map(t => `<li>${t}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                    <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; border-radius: 8px; padding: 10px; margin-top: 10px;">
+                                        <div style="font-weight: 600; color: #f59e0b; font-size: 0.8rem;">🎯 Assessment Tips</div>
+                                        <div style="color: #92400e; font-size: 0.85rem; margin-top: 4px;">${c.assessmentTips}</div>
                                     </div>
                                 </div>
                             `).join('')}

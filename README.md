@@ -54,6 +54,7 @@ A comprehensive Progressive Web App for CMMC Certified CMMC Assessor (CCA) exam 
 BUILT BY
 
 Charnice Tatum
+
 Check out my portfolio on LinkedIn: https://www.linkedin.com/in/charnice-tatum 
 
 *******Biggest tip that has helped me so far:*******

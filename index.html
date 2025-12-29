@@ -1773,7 +1773,7 @@
                     <div class="cca-scenario">${q.scenario}</div>
                     <div class="cca-options" id="ccaOptions">
                         ${q.options.map((opt, i) => `
-                            <div class="cca-option" data-index="${i}" onclick="selectCCAAnswer(${i})">${opt}</div>
+                            <div class="cca-option" data-index="${i}">${opt}</div>
                         `).join('')}
                     </div>
                 `;
@@ -1782,7 +1782,7 @@
                     <div class="cca-question">${q.q}</div>
                     <div class="cca-options" id="ccaOptions">
                         ${q.options.map((opt, i) => `
-                            <div class="cca-option" data-index="${i}" onclick="selectCCAAnswer(${i})">${opt}</div>
+                            <div class="cca-option" data-index="${i}">${opt}</div>
                         `).join('')}
                     </div>
                 `;
@@ -1801,6 +1801,18 @@
             `;
             
             container.innerHTML = html;
+            
+            // Add click handlers using event delegation
+            const optionsContainer = document.getElementById('ccaOptions');
+            if (optionsContainer) {
+                optionsContainer.addEventListener('click', function(e) {
+                    const option = e.target.closest('.cca-option');
+                    if (option && !option.classList.contains('disabled')) {
+                        const index = parseInt(option.dataset.index);
+                        selectCCAAnswer(index);
+                    }
+                });
+            }
         }
 
         function selectCCAAnswer(index) {

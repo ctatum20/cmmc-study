@@ -1,4 +1,4 @@
-# CMMC CCA Exam Study Guide - Complete PWA
+# CMMC CCA Exam Study Guide App
 
 A comprehensive Progressive Web App for CMMC Certified CMMC Assessor (CCA) exam preparation.
 

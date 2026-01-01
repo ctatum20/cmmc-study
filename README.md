@@ -57,6 +57,31 @@ A comprehensive Progressive Web App for CMMC Certified CMMC Assessor (CCA) exam 
 - **Progress Tracking**: LocalStorage saves your progress
 - **No Account Required**: Everything runs locally
 
+---
+*******Biggest tip that has helped me so far:**********
+
+Each domain tells a coherent story.  
+Instead of memorizing 110 disconnected facts, you're learning 14 stories:
+
+Domain --- The Story It Tells  
+AC --- "Who gets in, and what can they do once they're in?"  
+AT --- "Do people know what they're supposed to do?"  
+AU --- "Can we prove what happened?"  
+CM --- "Is the system configured correctly and controlled?"  
+IA --- "Are you who you say you are?"  
+IR --- "What happens when things go wrong?"  
+MA --- "How do we keep things running safely?"  
+MP --- "How do we protect the actual data containers?"  
+PE --- "Who can physically touch stuff?"  
+PS --- "Can we trust the people?"  
+RA --- "What could go wrong and how bad?"  
+CA --- "Are we actually doing what we say we're doing?"  
+SC --- "How do we protect data moving and sitting?"  
+SI --- "Is the system healthy and clean?"
+
+
+
+Not affiliated with The Cyber AB or CAICO or DoD. Just a study tool.
 
 ---
 

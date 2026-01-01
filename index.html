@@ -80,6 +80,16 @@
         .mode-btn.gotcha:hover, .mode-btn.gotcha.active { background: #ef4444; border-color: #ef4444; color: white; }
         .mode-btn.judgment { border-color: #f59e0b; }
         .mode-btn.judgment:hover, .mode-btn.judgment.active { background: #f59e0b; border-color: #f59e0b; color: #1a1a2e; }
+        .mode-btn.cap { border-color: #10b981; }
+        .mode-btn.cap:hover, .mode-btn.cap.active { background: #10b981; border-color: #10b981; color: white; }
+        .mode-btn.scoping { border-color: #6366f1; }
+        .mode-btn.scoping:hover, .mode-btn.scoping.active { background: #6366f1; border-color: #6366f1; color: white; }
+        .mode-btn.terminology { border-color: #ec4899; }
+        .mode-btn.terminology:hover, .mode-btn.terminology.active { background: #ec4899; border-color: #ec4899; color: white; }
+        .mode-btn.bestanswer { border-color: #14b8a6; }
+        .mode-btn.bestanswer:hover, .mode-btn.bestanswer.active { background: #14b8a6; border-color: #14b8a6; color: white; }
+        .mode-btn.tips { border-color: #f97316; }
+        .mode-btn.tips:hover, .mode-btn.tips.active { background: #f97316; border-color: #f97316; color: white; }
         .mode-btn.deepdive { border-color: #06b6d4; }
         .mode-btn.deepdive:hover, .mode-btn.deepdive.active { background: #06b6d4; border-color: #06b6d4; color: #1a1a2e; }
         
@@ -399,6 +409,10 @@
         .cca-category.ethics { background: #8b5cf6; color: white; }
         .cca-category.gotcha { background: #ef4444; color: white; }
         .cca-category.judgment { background: #f59e0b; color: #1a1a2e; }
+        .cca-category.cap { background: #10b981; color: white; }
+        .cca-category.scoping { background: #6366f1; color: white; }
+        .cca-category.terminology { background: #ec4899; color: white; }
+        .cca-category.bestanswer { background: #14b8a6; color: white; }
         
         .cca-question { font-size: 1.2rem; font-weight: 600; color: #1a1a2e; line-height: 1.5; margin-bottom: 20px; }
         .cca-scenario { font-size: 1rem; color: #444; line-height: 1.6; margin-bottom: 25px; padding: 20px; background: #f8fafc; border-radius: 12px; border-left: 4px solid #2563EB; }
@@ -526,6 +540,39 @@
             .flashcard { height: 250px; }
             .quiz-card, .cca-card { padding: 20px; }
         }
+        
+        /* Confetti Animation */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+        @keyframes confetti-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100%) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+        .confetti:nth-child(odd) { animation-duration: 2.5s; }
+        .confetti:nth-child(3n) { animation-duration: 3.5s; }
+        .confetti:nth-child(4n) { width: 8px; height: 16px; border-radius: 2px; }
+        .confetti:nth-child(5n) { width: 12px; height: 12px; border-radius: 50%; }
     </style>
 </head>
 <body>
@@ -555,6 +602,21 @@
                 </button>
                 <button class="mode-btn judgment" id="modeJudgment" onclick="setMode('judgment')">
                     <span class="icon">🎯</span> Judgment
+                </button>
+                <button class="mode-btn cap" id="modeCap" onclick="setMode('cap')">
+                    <span class="icon">📋</span> CAP
+                </button>
+                <button class="mode-btn scoping" id="modeScoping" onclick="setMode('scoping')">
+                    <span class="icon">🗺️</span> Scoping
+                </button>
+                <button class="mode-btn terminology" id="modeTerminology" onclick="setMode('terminology')">
+                    <span class="icon">📚</span> Terms
+                </button>
+                <button class="mode-btn bestanswer" id="modeBestanswer" onclick="setMode('bestanswer')">
+                    <span class="icon">🧠</span> Best Answer
+                </button>
+                <button class="mode-btn tips" id="modeTips" onclick="setMode('tips')">
+                    <span class="icon">💡</span> Tips
                 </button>
                 <button class="mode-btn deepdive" id="modeDeepDive" onclick="setMode('deepdive')">
                     <span class="icon">🔬</span> Deep Dive
@@ -793,6 +855,21 @@
             <!-- Judgment Mode -->
             <div id="judgmentContainer" class="mode-panel"></div>
             
+            <!-- CAP Process Mode -->
+            <div id="capContainer" class="mode-panel"></div>
+            
+            <!-- Scoping Mode -->
+            <div id="scopingContainer" class="mode-panel"></div>
+            
+            <!-- Terminology Mode -->
+            <div id="terminologyContainer" class="mode-panel"></div>
+            
+            <!-- Best Answer Mode -->
+            <div id="bestanswerContainer" class="mode-panel"></div>
+            
+            <!-- Tips Mode -->
+            <div id="tipsContainer" class="mode-panel"></div>
+            
             <!-- Deep Dive Mode -->
             <div id="deepdiveContainer" class="mode-panel"></div>
         </main>
@@ -817,6 +894,534 @@
     </nav>
 
     <script>
+        // ==================== CONFETTI CELEBRATION ====================
+        function launchConfetti() {
+            const container = document.createElement('div');
+            container.className = 'confetti-container';
+            document.body.appendChild(container);
+            
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dfe6e9', '#fd79a8', '#a29bfe', '#00b894', '#fdcb6e'];
+            const shapes = ['square', 'circle', 'rectangle'];
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                container.appendChild(confetti);
+            }
+            
+            // Clean up after animation
+            setTimeout(() => {
+                container.remove();
+            }, 5000);
+        }
+        
+        // ==================== ASSESSMENT OBJECTIVES ====================
+        const ASSESSMENT_OBJECTIVES = {
+            // ACCESS CONTROL (AC) - 22 controls
+            '3.1.1': [
+                '[a] Authorized users are identified',
+                '[b] Processes acting on behalf of authorized users are identified',
+                '[c] Devices (and other systems) authorized to connect are identified',
+                '[d] System access is limited to authorized users',
+                '[e] System access is limited to processes acting on behalf of authorized users',
+                '[f] System access is limited to authorized devices (including other systems)'
+            ],
+            '3.1.2': [
+                '[a] Types of transactions and functions that authorized users are permitted to execute are defined',
+                '[b] System access is limited to the defined types of transactions and functions for authorized users'
+            ],
+            '3.1.3': [
+                '[a] Information flow control policies are defined',
+                '[b] Methods and enforcement mechanisms for controlling CUI flow are defined',
+                '[c] Designated sources and destinations for CUI within and between systems are identified',
+                '[d] Authorizations for controlling the flow of CUI are defined',
+                '[e] Approved authorizations for controlling the flow of CUI are enforced'
+            ],
+            '3.1.4': [
+                '[a] Duties of individuals requiring separation are defined',
+                '[b] Responsibilities for duties requiring separation are assigned to separate individuals',
+                '[c] Access privileges enabling individuals to exercise duties requiring separation are granted to separate individuals'
+            ],
+            '3.1.5': [
+                '[a] Privileged accounts are identified',
+                '[b] Access to privileged accounts is authorized per least privilege',
+                '[c] Security functions are identified',
+                '[d] Access to security functions is authorized per least privilege'
+            ],
+            '3.1.6': [
+                '[a] Non-security functions are identified',
+                '[b] Users are required to use non-privileged accounts when accessing non-security functions'
+            ],
+            '3.1.7': [
+                '[a] Privileged functions are defined',
+                '[b] Non-privileged users are defined',
+                '[c] Non-privileged users are prevented from executing privileged functions',
+                '[d] Execution of privileged functions is captured in audit logs'
+            ],
+            '3.1.8': [
+                '[a] Means of limiting unsuccessful logon attempts is defined',
+                '[b] Defined means of limiting unsuccessful logon attempts is implemented'
+            ],
+            '3.1.9': [
+                '[a] Privacy and security notices required by CUI rules are identified and consistent',
+                '[b] Privacy and security notices are displayed'
+            ],
+            '3.1.10': [
+                '[a] Period of inactivity after which system initiates session lock is defined',
+                '[b] Access to system and viewing of data is prevented by initiating session lock after defined period',
+                '[c] Previously visible information is concealed via pattern-hiding display after defined period'
+            ],
+            '3.1.11': [
+                '[a] Conditions requiring a user session to terminate are defined',
+                '[b] User session is automatically terminated after any defined conditions occur'
+            ],
+            '3.1.12': [
+                '[a] Allowed remote access types are identified',
+                '[b] Restrictions on use of allowed remote access types are defined',
+                '[c] Remote access to the system is authorized prior to connection',
+                '[d] Remote access to the system is monitored'
+            ],
+            '3.1.13': [
+                '[a] Cryptographic mechanisms to protect confidentiality of remote access sessions are identified',
+                '[b] Cryptographic mechanisms to protect confidentiality of remote access sessions are implemented'
+            ],
+            '3.1.14': [
+                '[a] Managed access control points are identified and implemented',
+                '[b] Remote access is routed through managed network access control points'
+            ],
+            '3.1.15': [
+                '[a] Privileged commands authorized for remote execution are identified',
+                '[b] Security-relevant information authorized to be accessed remotely is identified',
+                '[c] Execution of identified privileged commands via remote access is authorized',
+                '[d] Access to identified security-relevant information via remote access is authorized'
+            ],
+            '3.1.16': [
+                '[a] Wireless access points are identified',
+                '[b] Wireless access is authorized prior to allowing such connections'
+            ],
+            '3.1.17': [
+                '[a] Wireless access is protected using authentication and encryption'
+            ],
+            '3.1.18': [
+                '[a] Mobile devices that process, store, or transmit CUI are identified',
+                '[b] Mobile device connections are authorized',
+                '[c] Mobile device connections are monitored and logged'
+            ],
+            '3.1.19': [
+                '[a] Mobile devices and mobile computing platforms that process, store, or transmit CUI are identified',
+                '[b] Encryption is employed to protect CUI on identified mobile devices and platforms'
+            ],
+            '3.1.20': [
+                '[a] Use of external systems to access the system or process/store/transmit CUI is identified',
+                '[b] Limits on use of external systems by authorized individuals are defined',
+                '[c] Use of external systems to access the system is controlled per defined limits',
+                '[d] Connection/processing of CUI on external systems is identified',
+                '[e] Limits on connection/processing of CUI on external systems are defined',
+                '[f] Connection/processing of CUI on external systems is controlled per defined limits'
+            ],
+            '3.1.21': [
+                '[a] Use of portable storage devices containing CUI on external systems is identified',
+                '[b] Limits on use of portable storage devices containing CUI on external systems are defined',
+                '[c] Use of portable storage devices containing CUI on external systems is limited as defined'
+            ],
+            '3.1.22': [
+                '[a] Individuals authorized to post/process information on publicly accessible systems are identified',
+                '[b] Procedures to ensure FCI is not posted/processed on publicly accessible systems are identified',
+                '[c] A review process is in place prior to posting content to publicly accessible systems',
+                '[d] Content on publicly accessible systems is reviewed to ensure it does not include FCI',
+                '[e] Mechanisms are in place to remove and address improper posting of FCI'
+            ],
+            // AWARENESS AND TRAINING (AT) - 3 controls
+            '3.2.1': [
+                '[a] Security risks associated with organizational activities involving CUI are identified',
+                '[b] Managers, systems administrators, and users of the system are identified',
+                '[c] Identified personnel are made aware of security risks associated with their activities',
+                '[d] Identified personnel are made aware of applicable policies, standards, and procedures'
+            ],
+            '3.2.2': [
+                '[a] Information security-related duties, roles, and responsibilities are defined',
+                '[b] Information security-related duties, roles, and responsibilities are assigned to designated personnel',
+                '[c] Personnel are adequately trained to carry out their assigned security-related duties'
+            ],
+            '3.2.3': [
+                '[a] Potential indicators associated with insider threats are identified',
+                '[b] Security awareness training on recognizing and reporting potential indicators of insider threat is provided'
+            ],
+            // AUDIT AND ACCOUNTABILITY (AU) - 9 controls
+            '3.3.1': [
+                '[a] Auditable events are defined',
+                '[b] Content of audit records needed to support auditing is defined',
+                '[c] Audit records are created (generated)',
+                '[d] Audit records, once created, contain the defined content',
+                '[e] Retention requirements for audit records are defined',
+                '[f] Audit records are retained as defined'
+            ],
+            '3.3.2': [
+                '[a] Content of audit records needed to support unique user traceability is defined',
+                '[b] Audit records, once created, contain the defined content'
+            ],
+            '3.3.3': [
+                '[a] Process for determining when to review logged events is defined',
+                '[b] Event types being logged are reviewed per the defined process',
+                '[c] Event types being logged are updated based on the review'
+            ],
+            '3.3.4': [
+                '[a] Personnel or roles to be alerted in event of audit logging process failure are identified',
+                '[b] Types of audit logging process failures for which alert will be generated are defined',
+                '[c] Identified personnel or roles are alerted in event of audit logging process failure'
+            ],
+            '3.3.5': [
+                '[a] Audit record review, analysis, and reporting processes for investigation/response are defined',
+                '[b] Defined audit record review, analysis, and reporting processes are correlated'
+            ],
+            '3.3.6': [
+                '[a] Audit record reduction capability that supports on-demand analysis is provided',
+                '[b] Report generation capability that supports on-demand reporting is provided'
+            ],
+            '3.3.7': [
+                '[a] Internal system clocks are used to generate time stamps for audit records',
+                '[b] Internal system clocks used to generate time stamps are synchronized to an authoritative time source'
+            ],
+            '3.3.8': [
+                '[a] Audit information is protected from unauthorized access',
+                '[b] Audit information is protected from unauthorized modification',
+                '[c] Audit information is protected from unauthorized deletion',
+                '[d] Audit logging tools are protected from unauthorized access, modification, and deletion'
+            ],
+            '3.3.9': [
+                '[a] Subset of privileged users granted access to manage audit logging functionality is defined',
+                '[b] Management of audit logging functionality is limited to the defined subset of privileged users'
+            ],
+            // CONFIGURATION MANAGEMENT (CM) - 9 controls
+            '3.4.1': [
+                '[a] A baseline configuration is established',
+                '[b] The baseline configuration includes hardware, software, firmware, and documentation',
+                '[c] The baseline configuration is maintained (reviewed and updated) throughout SDLC',
+                '[d] A system inventory is established',
+                '[e] The system inventory includes hardware, software, firmware, and documentation',
+                '[f] The inventory is maintained (reviewed and updated) throughout SDLC'
+            ],
+            '3.4.2': [
+                '[a] Security configuration settings for IT products employed in the system are established/documented',
+                '[b] Security configuration settings for IT products are enforced'
+            ],
+            '3.4.3': [
+                '[a] Changes to the system are tracked',
+                '[b] Changes to the system are reviewed',
+                '[c] Changes to the system are approved or disapproved',
+                '[d] Changes to the system are logged'
+            ],
+            '3.4.4': [
+                '[a] Security impact of changes to the system is analyzed prior to implementation'
+            ],
+            '3.4.5': [
+                '[a] Physical access restrictions associated with changes to the system are defined',
+                '[b] Logical access restrictions associated with changes to the system are defined',
+                '[c] Physical access restrictions associated with changes to the system are enforced',
+                '[d] Logical access restrictions associated with changes to the system are enforced'
+            ],
+            '3.4.6': [
+                '[a] Essential system capabilities are defined based on the principle of least functionality',
+                '[b] The system is configured to provide only the defined essential capabilities'
+            ],
+            '3.4.7': [
+                '[a] Essential programs are defined',
+                '[b] Use of nonessential programs is defined',
+                '[c] Use of nonessential programs is restricted, disabled, or prevented as defined',
+                '[d] Essential functions are defined',
+                '[e] Use of nonessential functions is defined',
+                '[f] Use of nonessential functions is restricted, disabled, or prevented as defined',
+                '[g] Essential ports are defined',
+                '[h] Use of nonessential ports is defined',
+                '[i] Use of nonessential ports is restricted, disabled, or prevented as defined',
+                '[j] Essential protocols are defined',
+                '[k] Use of nonessential protocols is defined',
+                '[l] Use of nonessential protocols is restricted, disabled, or prevented as defined',
+                '[m] Essential services are defined',
+                '[n] Use of nonessential services is defined',
+                '[o] Use of nonessential services is restricted, disabled, or prevented as defined'
+            ],
+            '3.4.8': [
+                '[a] Software programs authorized to execute on the system are identified',
+                '[b] Rules authorizing software program execution are defined',
+                '[c] Rules authorizing software program execution are enforced'
+            ],
+            '3.4.9': [
+                '[a] A policy for controlling installation of software by users is established',
+                '[b] Installation of software by users is controlled based on the established policy',
+                '[c] Installation of software by users is monitored'
+            ],
+            // IDENTIFICATION AND AUTHENTICATION (IA) - 11 controls
+            '3.5.1': [
+                '[a] System users are identified',
+                '[b] Processes acting on behalf of users are identified',
+                '[c] Devices accessing the system are identified'
+            ],
+            '3.5.2': [
+                '[a] Users are authenticated as a prerequisite to system access',
+                '[b] Processes acting on behalf of users are authenticated as a prerequisite to system access',
+                '[c] Devices are authenticated as a prerequisite to system access'
+            ],
+            '3.5.3': [
+                '[a] Privileged accounts are identified',
+                '[b] MFA is implemented for local access to privileged accounts',
+                '[c] MFA is implemented for network access to privileged accounts',
+                '[d] MFA is implemented for network access to non-privileged accounts'
+            ],
+            '3.5.4': [
+                '[a] Replay-resistant authentication mechanisms are implemented for network access to privileged and non-privileged accounts'
+            ],
+            '3.5.5': [
+                '[a] Period within which identifiers cannot be reused is defined',
+                '[b] Reuse of identifiers is prevented within the defined period'
+            ],
+            '3.5.6': [
+                '[a] Period of inactivity after which an identifier is disabled is defined',
+                '[b] Identifiers are disabled after the defined period of inactivity'
+            ],
+            '3.5.7': [
+                '[a] Password complexity requirements are defined',
+                '[b] Password change of character requirements are defined',
+                '[c] Minimum password complexity requirements as defined are enforced when new passwords are created',
+                '[d] Minimum password change of character requirements as defined are enforced when new passwords are created'
+            ],
+            '3.5.8': [
+                '[a] Number of generations during which a password cannot be reused is specified',
+                '[b] Reuse of passwords is prohibited for the specified number of generations'
+            ],
+            '3.5.9': [
+                '[a] Period for which temporary passwords are valid is defined',
+                '[b] Use of temporary passwords is allowed only for an immediate change to a permanent password'
+            ],
+            '3.5.10': [
+                '[a] Passwords are cryptographically protected in storage',
+                '[b] Passwords are cryptographically protected in transit'
+            ],
+            '3.5.11': [
+                '[a] Authentication information is obscured during the authentication process'
+            ],
+            // INCIDENT RESPONSE (IR) - 3 controls
+            '3.6.1': [
+                '[a] An operational incident-handling capability is established',
+                '[b] The operational incident-handling capability includes preparation',
+                '[c] The operational incident-handling capability includes detection',
+                '[d] The operational incident-handling capability includes analysis',
+                '[e] The operational incident-handling capability includes containment',
+                '[f] The operational incident-handling capability includes recovery',
+                '[g] The operational incident-handling capability includes user response activities'
+            ],
+            '3.6.2': [
+                '[a] Incidents are tracked',
+                '[b] Incidents are documented',
+                '[c] Incidents are reported to designated officials and/or authorities'
+            ],
+            '3.6.3': [
+                '[a] The incident response capability is tested'
+            ],
+            // MAINTENANCE (MA) - 6 controls
+            '3.7.1': [
+                '[a] System maintenance is performed'
+            ],
+            '3.7.2': [
+                '[a] Controls are provided on tools, techniques, mechanisms, and personnel for system maintenance',
+                '[b] Media containing diagnostic/test programs are checked for malicious code before use'
+            ],
+            '3.7.3': [
+                '[a] Equipment to be removed from site for off-site maintenance is sanitized of CUI'
+            ],
+            '3.7.4': [
+                '[a] Media containing diagnostic/test programs are checked for malicious code before use on the system'
+            ],
+            '3.7.5': [
+                '[a] Sessions and network connections are terminated when nonlocal maintenance is complete',
+                '[b] MFA is employed for establishing nonlocal maintenance sessions',
+                '[c] Nonlocal maintenance sessions are established using FIPS-validated cryptography'
+            ],
+            '3.7.6': [
+                '[a] Maintenance personnel without required access authorization are supervised during maintenance'
+            ],
+            // MEDIA PROTECTION (MP) - 9 controls
+            '3.8.1': [
+                '[a] Paper media containing CUI is protected',
+                '[b] Digital media containing CUI is protected'
+            ],
+            '3.8.2': [
+                '[a] Access to CUI on system media is limited to authorized users'
+            ],
+            '3.8.3': [
+                '[a] CUI media is sanitized or destroyed before disposal',
+                '[b] CUI media is sanitized before release for reuse'
+            ],
+            '3.8.4': [
+                '[a] CUI media is marked with applicable CUI markings',
+                '[b] CUI media is marked with distribution limitations'
+            ],
+            '3.8.5': [
+                '[a] Access to CUI media is controlled',
+                '[b] Accountability for CUI media during transport is maintained outside of controlled areas'
+            ],
+            '3.8.6': [
+                '[a] Cryptographic mechanisms are implemented to protect confidentiality of CUI stored on digital media during transport (unless otherwise protected by alternative physical safeguards)'
+            ],
+            '3.8.7': [
+                '[a] Use of removable media on system components is controlled'
+            ],
+            '3.8.8': [
+                '[a] Use of portable storage devices is prohibited when such devices have no identifiable owner'
+            ],
+            '3.8.9': [
+                '[a] Paper CUI in storage is protected',
+                '[b] Digital CUI in storage is protected'
+            ],
+            // PERSONNEL SECURITY (PS) - 2 controls
+            '3.9.1': [
+                '[a] Individuals are screened prior to authorizing access to systems containing CUI'
+            ],
+            '3.9.2': [
+                '[a] CUI and systems containing CUI are protected during and after personnel actions such as terminations and transfers'
+            ],
+            // PHYSICAL PROTECTION (PE) - 6 controls
+            '3.10.1': [
+                '[a] Authorized individuals with access to systems are identified',
+                '[b] Physical access to the system is limited to authorized individuals'
+            ],
+            '3.10.2': [
+                '[a] The physical facility where systems reside is monitored to detect/respond to physical security incidents'
+            ],
+            '3.10.3': [
+                '[a] Visitors are escorted',
+                '[b] Visitor activity is monitored'
+            ],
+            '3.10.4': [
+                '[a] Audit logs of physical access are maintained'
+            ],
+            '3.10.5': [
+                '[a] Physical access devices (keys, locks, combinations, card readers) are controlled'
+            ],
+            '3.10.6': [
+                '[a] CUI at alternate work sites is safeguarded'
+            ],
+            // RISK ASSESSMENT (RA) - 3 controls
+            '3.11.1': [
+                '[a] Risk to organizational operations, assets, and individuals is assessed periodically'
+            ],
+            '3.11.2': [
+                '[a] Systems and applications are scanned for vulnerabilities periodically',
+                '[b] Systems and applications are scanned when new vulnerabilities affecting the system are identified'
+            ],
+            '3.11.3': [
+                '[a] Vulnerabilities are remediated in accordance with risk assessments'
+            ],
+            // SECURITY ASSESSMENT (CA) - 4 controls
+            '3.12.1': [
+                '[a] Security controls are assessed periodically to determine if controls are effective'
+            ],
+            '3.12.2': [
+                '[a] Deficiencies and weaknesses in security controls are addressed through a POA&M'
+            ],
+            '3.12.3': [
+                '[a] Security controls are monitored on an ongoing basis to ensure continued effectiveness'
+            ],
+            '3.12.4': [
+                '[a] A system security plan (SSP) is developed and documented',
+                '[b] The SSP describes the system boundary',
+                '[c] The SSP describes operational environment',
+                '[d] The SSP describes how security requirements are implemented',
+                '[e] The SSP describes relationships with or connections to other systems'
+            ],
+            // SYSTEM AND COMMUNICATIONS PROTECTION (SC) - 16 controls
+            '3.13.1': [
+                '[a] Communications at the external boundary of the system are monitored',
+                '[b] Communications at key internal boundaries of the system are monitored',
+                '[c] Communications at the external boundary of the system are controlled',
+                '[d] Communications at key internal boundaries of the system are controlled'
+            ],
+            '3.13.2': [
+                '[a] Security functions are separated from nonsecurity functions',
+                '[b] Architectural designs, software development techniques, and systems engineering principles that promote effective information security are employed'
+            ],
+            '3.13.3': [
+                '[a] User functionality is separated from system management functionality'
+            ],
+            '3.13.4': [
+                '[a] Shared system resources are prevented from transferring unauthorized information between users'
+            ],
+            '3.13.5': [
+                '[a] Publicly accessible system components are identified',
+                '[b] Subnetworks for publicly accessible components are physically or logically separated from internal networks'
+            ],
+            '3.13.6': [
+                '[a] Network communications traffic is denied by default',
+                '[b] Network communications traffic is allowed by exception'
+            ],
+            '3.13.7': [
+                '[a] Split tunneling is prevented for remote devices connecting to organizational systems'
+            ],
+            '3.13.8': [
+                '[a] Cryptographic mechanisms are implemented to prevent unauthorized disclosure of CUI during transmission (unless otherwise protected by alternative physical safeguards)'
+            ],
+            '3.13.9': [
+                '[a] Network connections are terminated at the end of sessions',
+                '[b] Network connections are terminated after defined period of inactivity'
+            ],
+            '3.13.10': [
+                '[a] Cryptographic keys are established and managed when cryptography is employed'
+            ],
+            '3.13.11': [
+                '[a] FIPS-validated cryptography is employed when used to protect confidentiality of CUI'
+            ],
+            '3.13.12': [
+                '[a] Use of collaborative computing devices is controlled',
+                '[b] Remote activation of collaborative computing devices is prohibited'
+            ],
+            '3.13.13': [
+                '[a] Use of mobile code is controlled'
+            ],
+            '3.13.14': [
+                '[a] Use of Voice over Internet Protocol (VoIP) technologies is controlled'
+            ],
+            '3.13.15': [
+                '[a] Communications sessions are protected for authenticity'
+            ],
+            '3.13.16': [
+                '[a] Confidentiality of CUI at rest is protected'
+            ],
+            // SYSTEM AND INFORMATION INTEGRITY (SI) - 7 controls
+            '3.14.1': [
+                '[a] System flaws are identified',
+                '[b] System flaws are reported',
+                '[c] System flaws are corrected'
+            ],
+            '3.14.2': [
+                '[a] Malicious code protection mechanisms are employed at designated locations',
+                '[b] Malicious code protection mechanisms are updated when new releases are available'
+            ],
+            '3.14.3': [
+                '[a] Security alerts/advisories are received',
+                '[b] Security alerts/advisories are acted upon'
+            ],
+            '3.14.4': [
+                '[a] The system is monitored to detect attacks and indicators of potential attacks',
+                '[b] Inbound communications traffic is monitored to detect attacks and indicators of potential attacks',
+                '[c] Outbound communications traffic is monitored to detect attacks and indicators of potential attacks'
+            ],
+            '3.14.5': [
+                '[a] Incoming communications from external sources are identified',
+                '[b] Incoming communications from external sources are analyzed to determine potential security threats'
+            ],
+            '3.14.6': [
+                '[a] Communications are monitored to detect attacks and indicators of potential attacks'
+            ],
+            '3.14.7': [
+                '[a] Authorized use of the system is defined',
+                '[b] Unauthorized use of the system is identified'
+            ]
+        };
+        
         // ==================== CONTROL DATA ====================
         const DOMAINS = {
             'ACCESS CONTROL (AC)': {
@@ -1026,6 +1631,88 @@
             { q: "May a CCA use AI tools to process OSC customer data during an assessment?", options: ["Yes, if efficient", "Only with encryption", "No - prohibited for customer data", "Only for non-CUI data"], correct: 2, explanation: "Customer data must not be submitted to Internet-accessible AI/ML tools per the Code of Professional Conduct.", category: "AI Restrictions" },
             { q: "How often must a CCA report their continuing education and qualifications?", options: ["Monthly", "Quarterly", "Annually", "Only at renewal"], correct: 2, explanation: "CCAs must annually report to the Accreditation Body/CAICO demonstrating continued qualification requirements.", category: "Disclosure Requirements" }
         ];
+        
+        // ==================== CAP PROCESS QUIZ ====================
+        const CAP_QUESTIONS = [
+            { q: "What are the FOUR phases of the CMMC Assessment Process (CAP)?", options: ["Planning, Execution, Reporting, Closure", "Pre-Assessment, Assessment, Results, Certificate/POA&M", "Scoping, Testing, Validation, Certification", "Discovery, Evaluation, Remediation, Certification"], correct: 1, explanation: "The 4 phases are: Phase 1 (Pre-Assessment), Phase 2 (Assessment), Phase 3 (Complete/Report Results), Phase 4 (Issue Certificate & Close-Out POA&M).", category: "CAP Phases" },
+            { q: "Who leads the Assessment Team and serves as counterpart to the Affirming Official?", options: ["Quality Assurance Individual", "Authorized Certifying Official", "Lead CCA", "OSC POC"], correct: 2, explanation: "The Lead CCA oversees and manages the Assessment Team on behalf of the C3PAO. They serve as counterpart to the OSC's Affirming Official.", category: "CAP Roles" },
+            { q: "Who is responsible for uploading assessment results into CMMC eMASS?", options: ["Lead CCA", "Affirming Official", "Quality Assurance Individual", "Any CCA on the team"], correct: 2, explanation: "The C3PAO Quality Assurance Individual uploads certification assessment results into CMMC eMASS after conducting quality review.", category: "CAP Roles" },
+            { q: "Can a QA individual be a member of the Assessment Team they're reviewing?", options: ["Yes, if they're the Lead CCA", "Yes, but only for Phase 1", "No, they must be separate", "Only with C3PAO approval"], correct: 2, explanation: "A QA individual must be a CCA and CANNOT be a member of the Assessment Team for which they're performing QA.", category: "CAP Roles" },
+            { q: "When must the In-Brief Meeting occur?", options: ["Before Phase 1 begins", "At the start of Phase 2, before assessing requirements", "After Phase 2 testing completes", "It's optional"], correct: 1, explanation: "The Lead CCA shall convene an In-Brief Meeting prior to commencement of assessing security requirements (start of Phase 2).", category: "CAP Process" },
+            { q: "What must the Assessment Team use when assessing CMMC Level 2 requirements?", options: ["ANY reasonable sampling approach", "FOCUSED assessment method", "100% testing of all controls", "Statistical sampling"], correct: 1, explanation: "For Level 2 certification assessments, the Assessment Team SHALL use FOCUSED assessment methods as defined in the methodology.", category: "Assessment Method" },
+            { q: "How long after Phase 2 can assessors re-evaluate NOT MET requirements?", options: ["5 business days", "10 business days", "30 calendar days", "Until the Out-Brief Meeting"], correct: 1, explanation: "Assessors may re-evaluate NOT MET security requirements for 10 business days following the conclusion of Phase 2 assessment activities.", category: "Assessment Process" },
+            { q: "Who must approve and sign the Certificate of CMMC Status?", options: ["Lead CCA", "Quality Assurance Individual", "Authorized Certifying Official", "The Cyber AB"], correct: 2, explanation: "An Authorized Certifying Official reviews and signs the Certificate to convey formal issuance on behalf of the C3PAO.", category: "Certificate Issuance" },
+            { q: "Within how many days must an OSC close out a POA&M to obtain FINAL certification?", options: ["90 days", "180 days", "365 days", "No time limit"], correct: 1, explanation: "All POA&M requirements must be remedied within 180 days of receiving Conditional certification.", category: "POA&M Rules" },
+            { q: "Can an OSC use a different C3PAO for POA&M close-out than the one that did the original assessment?", options: ["No, must use same C3PAO", "Yes, any authorized C3PAO", "Only with DoD approval", "Only if original C3PAO agrees"], correct: 1, explanation: "The OSC may engage a C3PAO different from the one that conducted Phases 1-3. The POA&M close-out C3PAO assumes responsibility for FINAL status.", category: "POA&M Rules" },
+            { q: "What minimum attendance is required at the Out-Brief Meeting?", options: ["Lead CCA only", "Lead CCA and Affirming Official only", "Lead CCA, Affirming Official, OSC POC, and all Assessment Team members", "Anyone the C3PAO designates"], correct: 2, explanation: "Attendees shall include Lead CCA, Affirming Official, OSC POC, and ALL Assessment Team members. OSC can insist all attend.", category: "Out-Brief Meeting" },
+            { q: "How long must the OSC retain hashed artifacts used as evidence?", options: ["3 years from assessment date", "6 years from CMMC Status Date", "Until next assessment", "Indefinitely"], correct: 1, explanation: "The OSC must retain hashed artifacts used as evidence for 6 years from the CMMC Status Date on their certificate.", category: "Evidence Retention" },
+            { q: "Is the CMMC Level 2 Certificate of CMMC Status considered CUI?", options: ["Yes, always", "Only if marked", "No, it is not CUI", "Only during assessment"], correct: 2, explanation: "The CMMC Level 2 Certificate of CMMC Status is NOT considered CUI and is not required to be stored, processed, or transmitted as such.", category: "Certificate Rules" },
+            { q: "Who initiates the engagement for a CMMC Level 2 certification assessment?", options: ["DoD", "The Cyber AB", "The C3PAO", "The OSC"], correct: 3, explanation: "An OSC generally initiates the engagement by contacting an authorized or accredited C3PAO.", category: "Assessment Initiation" },
+            { q: "What is required before the CMMC Level 2 certification assessment can proceed to Phase 2?", options: ["OSC payment in full", "Resolution of any CMMC Assessment Scope disagreements", "DoD approval", "The Cyber AB notification"], correct: 1, explanation: "Any disagreements concerning the CMMC Assessment Scope must be resolved between C3PAO and OSC before proceeding to Phase 2.", category: "Phase 1 Requirements" },
+            { q: "Can the C3PAO offer 'pay for pass' arrangements?", options: ["Yes, if disclosed", "Only for small businesses", "No, strictly prohibited", "Yes, with OSC consent"], correct: 2, explanation: "The C3PAO is prohibited from offering any 'pay for pass' arrangements relating to assessment results.", category: "Contract Rules" },
+            { q: "During Phase 2, who convenes the Daily Checkpoint Meeting?", options: ["The Affirming Official", "The OSC POC", "The Assessment Team", "The QA Individual"], correct: 2, explanation: "The Assessment Team shall host a Daily Checkpoint Meeting with the OSC POC and other OSC representatives during assessment.", category: "Phase 2 Process" },
+            { q: "What happens if the Assessment Team cannot confirm proper incorporation of an ESP in the assessment scope?", options: ["Proceed without assessing ESP", "Mark all ESP controls N/A", "Discuss with Affirming Official about not proceeding", "Automatically fail the OSC"], correct: 2, explanation: "If ESP incorporation cannot be confirmed, the C3PAO should confer with the OSC Affirming Official and discuss not proceeding.", category: "ESP Handling" }
+        ];
+        
+        // ==================== SCOPING QUIZ ====================
+        const SCOPING_QUESTIONS = [
+            { q: "Which asset category includes assets that process, store, or transmit CUI?", options: ["Security Protection Assets", "Contractor Risk Managed Assets", "CUI Assets", "Specialized Assets"], correct: 2, explanation: "CUI Assets are assets that process, store, or transmit CUI. They must be documented in inventory, SSP, and network diagrams.", category: "Asset Categories" },
+            { q: "What is the key distinction between Out-of-Scope assets and Contractor Risk Managed Assets (CRMA)?", options: ["CRMA requires assessment, Out-of-Scope doesn't", "Out-of-Scope CUI can NEVER flow there; CRMA CUI COULD flow there", "They're functionally equivalent", "CRMA is for cloud, Out-of-Scope is for on-prem"], correct: 1, explanation: "Out-of-Scope = CUI can NEVER flow there (physical/logical separation). CRMA = CUI COULD flow there but organization ensures it doesn't through policy.", category: "Asset Categories" },
+            { q: "What are Security Protection Assets?", options: ["Assets storing CUI backups", "Assets providing security functions regardless of CUI handling", "Encrypted storage devices", "Cloud security services only"], correct: 1, explanation: "Security Protection Assets provide security functions or capabilities to the CMMC Assessment Scope, WHETHER OR NOT they process/store/transmit CUI.", category: "Asset Categories" },
+            { q: "Which of the following is an example of a Specialized Asset?", options: ["Domain controller", "Firewall", "IoT sensor that cannot support endpoint protection", "Encrypted laptop"], correct: 2, explanation: "Specialized Assets include IoT/IIoT, OT, test equipment, and other systems that cannot support standard security capabilities due to technical limitations.", category: "Asset Categories" },
+            { q: "An ESP that stores CUI must have what to be acceptable for use by an OSC?", options: ["ISO 27001 certification", "SOC 2 Type II report", "FedRAMP Moderate authorization OR equivalency, or Level 2 Certificate", "NIST CSF assessment"], correct: 2, explanation: "ESPs handling CUI must demonstrate FedRAMP Moderate (or higher) authorization, FedRAMP equivalency, OR hold a valid Level 2 Certificate of CMMC Status.", category: "ESP Requirements" },
+            { q: "What document must an ESP provide to support the OSC's assessment?", options: ["Service Level Agreement (SLA)", "Customer Responsibility Matrix (CRM)", "Statement of Work (SOW)", "Master Service Agreement (MSA)"], correct: 1, explanation: "A Customer Responsibility Matrix (CRM) identifies which CMMC requirements are performed wholly, partially, or jointly by the ESP.", category: "ESP Requirements" },
+            { q: "What does CMMC Assessment Scope define?", options: ["Only the CUI-handling systems", "The set of ALL assets to be assessed against CMMC requirements", "The security controls to be tested", "The assessment timeline"], correct: 1, explanation: "The CMMC Assessment Scope is the set of ALL assets in the OSC's environment that will be assessed against CMMC security requirements.", category: "Scoping Fundamentals" },
+            { q: "Which of these 18 security requirements may require on-site validation?", options: ["Password complexity requirements", "Physical protection and maintenance controls", "Audit logging requirements", "Awareness training controls"], correct: 1, explanation: "Physical protection (PE) and maintenance (MA) controls are among the 18 requirements that may require in-person on-site validation.", category: "On-Site Requirements" },
+            { q: "Can CMMC Assessment Scope include multiple CAGE codes?", options: ["No, one CAGE code per assessment", "Yes, if associated with a singular assessment scope", "Only with DoD approval", "Only for Level 1"], correct: 1, explanation: "A single CMMC assessment may cover multiple entities if more than one CAGE code is associated with a singular CMMC Level 2 Assessment Scope.", category: "Scope Boundaries" },
+            { q: "Where must the OSC document their CUI Assets?", options: ["Only in the SSP", "Asset inventory, SSP, AND network diagram", "Only in network diagrams", "In SPRS only"], correct: 1, explanation: "CUI Assets must be documented in the asset inventory, the System Security Plan (SSP), AND the network diagram of the CMMC Assessment Scope.", category: "Documentation Requirements" },
+            { q: "If an OSC's ESP is FedRAMP Authorized at Moderate baseline, what must the Assessment Team verify?", options: ["Nothing - FedRAMP is automatically accepted", "That the specific cloud service offering is listed in the FedRAMP Marketplace", "That the OSC paid for the authorization", "Only the authorization date"], correct: 1, explanation: "The Assessment Team must verify the authorization AND that the specific cloud service offering is documented in the FedRAMP Marketplace.", category: "FedRAMP Verification" },
+            { q: "What does FedRAMP 'equivalency' mean in CMMC context?", options: ["SOC 2 Type II certification", "CSP meets FedRAMP Moderate requirements but isn't authorized", "ISO 27001 certification", "DoD-specific cloud authorization"], correct: 1, explanation: "FedRAMP equivalency means the CSP meets FedRAMP Moderate security requirements but hasn't gone through official FedRAMP authorization.", category: "FedRAMP Equivalency" }
+        ];
+        
+        // ==================== TERMINOLOGY TRAPS (Exam gotcha questions!) ====================
+        const TERMINOLOGY_QUESTIONS = [
+            { q: "What is the difference between 'Lead CCA' and 'Lead Assessor'?", options: ["They're the same thing", "Lead CCA is formal designation; Lead Assessor is informal", "Lead Assessor is higher rank", "Lead CCA is for Level 3 only"], correct: 1, explanation: "Lead CCA is the formal qualified designation issued by CAICO. 'Lead Assessor' is sometimes used informally but Lead CCA is the correct term.", category: "Role Terminology" },
+            { q: "What is the difference between the 'Affirming Official' and the 'Authorized Certifying Official'?", options: ["Same person, different phases", "Affirming Official is OSC side; Authorized Certifying Official is C3PAO side", "Affirming Official issues certificate", "They're interchangeable terms"], correct: 1, explanation: "Affirming Official = OSC executive who affirms assessment. Authorized Certifying Official = C3PAO official who signs the certificate.", category: "Role Terminology" },
+            { q: "What is the difference between 'adequate' and 'sufficient' evidence?", options: ["They mean the same thing", "Adequate = right kind/quality; Sufficient = enough quantity/coverage", "Adequate = quantity; Sufficient = quality", "Neither term is used in CMMC"], correct: 1, explanation: "Adequate evidence is the RIGHT KIND/QUALITY. Sufficient evidence means ENOUGH coverage across the scope. You need BOTH.", category: "Evidence Terminology" },
+            { q: "CUI vs FCI: Which requires Level 2 certification?", options: ["FCI requires Level 2", "CUI requires Level 2", "Both require Level 2", "Neither - both are Level 1"], correct: 1, explanation: "CUI requires Level 2. FCI only requires Level 1. CUI is a subset of FCI with additional protection requirements.", category: "Data Classification" },
+            { q: "What's the difference between EO 13526 and EO 13556?", options: ["Both establish CUI Program", "13526 = Classified info; 13556 = CUI Program", "13526 = CUI Program; 13556 = Classified info", "They're the same Executive Order"], correct: 1, explanation: "EO 13556 (2010) established the CUI Program. EO 13526 covers CLASSIFIED information. Common exam trap!", category: "Regulatory References" },
+            { q: "NIST SP 800-171 vs NIST SP 800-171A: What's the difference?", options: ["Same document, different versions", "800-171 = requirements; 800-171A = assessment procedures", "800-171A replaced 800-171", "800-171 is for government; 800-171A is for contractors"], correct: 1, explanation: "800-171 contains the REQUIREMENTS. 800-171A contains the ASSESSMENT PROCEDURES for evaluating those requirements.", category: "Standards" },
+            { q: "What is the difference between 'MET' and 'NOT APPLICABLE (N/A)'?", options: ["Both mean the control passes", "MET = implemented; N/A = control doesn't apply to the environment", "N/A means partially implemented", "MET requires evidence; N/A doesn't"], correct: 1, explanation: "MET = control is implemented and meets all objectives. N/A = control doesn't apply to this assessment scope (with documented justification).", category: "Assessment Findings" },
+            { q: "What's the difference between a C3PAO and The Cyber AB?", options: ["Same organization", "C3PAO assesses OSCs; Cyber AB accredits C3PAOs", "Cyber AB assesses OSCs", "C3PAO accredits Cyber AB"], correct: 1, explanation: "C3PAOs conduct assessments of OSCs. The Cyber AB is the sole Accreditation Body that accredits C3PAOs and certifies assessors.", category: "Ecosystem Roles" },
+            { q: "Basic Security Requirements vs Derived Security Requirements: Where do they come from?", options: ["Both from NIST 800-171", "Basic from FIPS 200; Derived from NIST 800-53", "Both from FIPS 200", "Basic from 800-53; Derived from FIPS 200"], correct: 1, explanation: "Basic requirements come from FIPS 200. Derived requirements are tailored from NIST SP 800-53 moderate baseline.", category: "Standards Origin" },
+            { q: "Examine vs Test assessment methods: What's the key difference?", options: ["Examine is faster", "Examine reviews documentation/mechanisms; Test exercises them under conditions", "Test is only for technical controls", "They're interchangeable"], correct: 1, explanation: "EXAMINE = reviewing, inspecting, studying documentation and mechanisms. TEST = exercising mechanisms under specified conditions to compare actual vs expected behavior.", category: "Assessment Methods" },
+            { q: "CONDITIONAL vs FINAL Certificate of CMMC Status: What's the difference?", options: ["CONDITIONAL is temporary with POA&M; FINAL means all requirements MET", "CONDITIONAL is for Level 1; FINAL is for Level 2", "They're the same validity period", "CONDITIONAL requires re-assessment"], correct: 0, explanation: "CONDITIONAL = some NOT MET items in POA&M (must close within 180 days). FINAL = all requirements MET or POA&M successfully closed.", category: "Certification Types" },
+            { q: "What differentiates 'interview' from 'examine' assessment methods?", options: ["Interview is for technical staff only", "Interview = discussions with individuals; Examine = reviewing objects", "Examine is for people; Interview is for documents", "They're both documentation review"], correct: 1, explanation: "INTERVIEW = holding discussions with individuals to obtain evidence. EXAMINE = reviewing specifications, mechanisms, activities (objects, not people).", category: "Assessment Methods" }
+        ];
+        
+        // ==================== BEST ANSWER SCENARIOS (Multiple plausible options!) ====================
+        const BEST_ANSWER_QUESTIONS = [
+            { q: "During assessment, you find the OSC has a policy requiring MFA but technical implementation only covers 80% of privileged accounts. What is the BEST assessment finding?", options: ["MET - they have a policy and mostly implemented", "NOT MET - implementation doesn't match policy across all accounts", "CONDITIONAL MET - good progress shown", "N/A - partial implementation doesn't count"], correct: 1, explanation: "NOT MET is correct. The control requires MFA for ALL privileged accounts. 80% is not full implementation regardless of policy existence.", category: "Assessment Judgment" },
+            { q: "The OSC presents a 200-page SSP. During review, you notice it's mostly copy/pasted templates with minimal customization. What's the BEST approach?", options: ["Accept it - SSP exists as required", "Fail them immediately for poor documentation", "Interview staff to verify actual implementation beyond the document", "Request they rewrite the entire SSP"], correct: 2, explanation: "Interview and examine actual implementation. Documents show intent; testing shows reality. A template SSP isn't automatic failure but requires verification.", category: "Assessment Judgment" },
+            { q: "An OSC's 90-day password expiration policy conflicts with current NIST guidance recommending against arbitrary expiration. How should you assess IA.L2-3.5.7?", options: ["NOT MET - doesn't follow NIST best practices", "MET - complexity requirements are defined and enforced", "Recommend they change policy first", "Cannot assess until policy is updated"], correct: 1, explanation: "Assess against the CMMC requirement (password complexity), not general best practices. If complexity requirements ARE defined and enforced, it's MET.", category: "Standards Application" },
+            { q: "You discover the OSC's CUI boundary includes a subnet they forgot to document in their SSP. The systems ARE properly protected. BEST action?", options: ["Automatically NOT MET for CA.L2-3.12.4 (SSP)", "MET - systems are protected even if documentation gap exists", "Document the finding but assess technical controls normally", "Stop assessment until SSP is corrected"], correct: 2, explanation: "Document the SSP gap (may affect CA.L2-3.12.4), but assess the technical controls on those systems. Documentation issues don't automatically fail technical implementation.", category: "Documentation vs Implementation" },
+            { q: "The OSC uses a cloud ESP that claims 'FedRAMP equivalent' security but isn't in the FedRAMP Marketplace. What's the BEST approach?", options: ["Accept their claim - they said it's equivalent", "Automatically reject - must be FedRAMP Authorized", "Request the Body of Evidence (BoE) demonstrating equivalency", "Ignore the ESP and assess only on-prem systems"], correct: 2, explanation: "FedRAMP equivalency is acceptable, but requires verifiable BoE. Request evidence including all required elements per the scoping guide.", category: "ESP Verification" },
+            { q: "During interview, a system administrator gives conflicting information about their backup procedures compared to the documented policy. BEST action?", options: ["Trust the documentation over verbal statements", "Trust the administrator over documentation", "Test the actual backup system to verify which is accurate", "Average the two accounts for your finding"], correct: 2, explanation: "When documentation and interviews conflict, TEST the actual implementation. Testing provides objective evidence of actual behavior.", category: "Evidence Hierarchy" },
+            { q: "The OSC shows you audit logs, but the retention period is 60 days instead of policy-required 90 days. However, they DO have offline backups extending to 90+ days. BEST assessment?", options: ["NOT MET - primary system doesn't meet 90 days", "MET - combination of online and offline meets retention requirement", "Partial credit for effort", "Cannot determine without more testing"], correct: 1, explanation: "The REQUIREMENT is retention for the defined period. If offline backups extend retention to meet the policy, the objective is satisfied.", category: "Compensating Controls" },
+            { q: "An OSC has excellent technical controls but their employees couldn't articulate the security awareness training they received. How assess AT.L2-3.2.1?", options: ["MET - training records exist", "NOT MET - employees must demonstrate awareness", "Test a sample of employees with security questions", "Trust the documentation of completed training"], correct: 2, explanation: "Interview method tests whether training was EFFECTIVE. If employees can't articulate basic awareness, additional sampling or testing may be warranted.", category: "Training Verification" },
+            { q: "You find the OSC's vulnerability scanning runs weekly, but policy states 'regularly' without defining frequency. Is this sufficient for RA.L2-3.11.2?", options: ["NOT MET - 'regularly' must be defined with specific frequency", "MET - weekly is reasonable and regular", "Cannot assess without defined frequency in policy", "NOT MET - must be daily scanning"], correct: 1, explanation: "Weekly scanning IS regular. The policy not defining 'regularly' is a documentation issue but doesn't fail the technical implementation if scanning occurs consistently.", category: "Policy Interpretation" },
+            { q: "During testing, you find a single workstation with outdated antivirus signatures (3 days old) in a population of 500 systems. BEST assessment for SI.L2-3.14.2?", options: ["NOT MET - any gap fails the control", "MET - 499/500 is acceptable sampling", "MET with observation about the outlier", "Expand testing before determination"], correct: 3, explanation: "One outlier in sampling could be anomaly or systemic issue. Expand testing to determine if this is isolated incident or pattern before final determination.", category: "Sampling Decisions" }
+        ];
+        
+        // ==================== TEST STRATEGY TIPS ====================
+        const TEST_STRATEGY_TIPS = [
+            { tip: "Read the QUESTION before the scenario", detail: "Read what they're actually asking FIRST, then read the scenario. It helps you focus on what matters and avoid getting lost in details." },
+            { tip: "Questions may be poorly worded", detail: "Some questions have grammatical issues or confusing phrasing. Focus on the INTENT of the question, not perfect grammar." },
+            { tip: "Look for the BEST answer, not just a correct answer", detail: "Often 2-3 answers seem correct. Pick the MOST complete or MOST accurate answer, not just one that's technically true." },
+            { tip: "Watch for terminology traps", detail: "C3PAO Certified Assessor vs Lead Assessor, Affirming Official vs Authorized Certifying Official - know the exact terms." },
+            { tip: "CAP and Scoping Guide are heavily tested", detail: "The exam is built from foundational documents: CAP + Scoping Guide + Assessment Guide. Don't rely solely on LTP slides." },
+            { tip: "Controls are spelled out on the exam", detail: "You don't need to memorize control numbers or objectives word-for-word. They'll be provided. Focus on HOW TO ASSESS them." },
+            { tip: "Understand MET vs NOT MET logic", detail: "ALL objectives must be satisfied for MET. No partial credit at objective level. One failure = NOT MET for that practice." },
+            { tip: "Know the 4 phases of CAP", detail: "Phase 1: Pre-Assessment, Phase 2: Assessment, Phase 3: Results, Phase 4: Certificate/POA&M. Know what happens in each." },
+            { tip: "POA&M rules matter", detail: "180 days to close out. Cannot exceed 80% of requirements in POA&M. Only certain controls are POA&M-eligible." },
+            { tip: "Evidence hierarchy: Test > Interview > Examine", detail: "Testing shows what IS. Interviews show what people BELIEVE. Documents show INTENT. Know when to escalate." }
+        ];
 
         const GOTCHA_QUESTIONS = [
             { q: "When was NIST SP 800-171 FIRST published?", options: ["December 2017", "June 2015", "November 2021", "February 2020"], correct: 1, explanation: "NIST SP 800-171 was first published in June 2015. December 2017 is when DFARS 7012 went into effect - a common confusion!", category: "Regulatory History" },
@@ -1058,6 +1745,18 @@
             { category: "Evidence Evaluation", scenario: "A contractor's vulnerability scan report is 8 months old. They say they scan quarterly but didn't bring more recent reports. The scan shows a clean environment.", options: ["MET — the scan shows compliance", "NOT MET — evidence is too old", "Request current scan results before making a determination", "MET with observation to improve retention"], correct: 2, explanation: "An 8-month-old scan doesn't demonstrate CURRENT security posture. However, request current evidence — assessors can ask for additional evidence during assessment.", mindset: "Evidence staleness matters. A reasonable assessor asks: 'Does this evidence prove the control is implemented NOW?'" },
             { category: "Evidence Evaluation", scenario: "The System Administrator confidently describes their patch management process. However, when you examine WSUS, you see the last sync was 6 months ago and most systems show 'Update Status: Unknown.'", options: ["Trust the interview — the admin knows their environment", "Trust the technical evidence — WSUS shows reality", "Split the difference — partially MET", "Ask for clarification before making a determination"], correct: 3, explanation: "When interview and technical evidence conflict, dig deeper. Perhaps they use a different tool. A reasonable assessor asks clarifying questions before assuming NOT MET.", mindset: "Conflicting evidence is a signal to investigate, not immediately conclude. Ask: 'I see WSUS shows X — can you explain?'" },
             { category: "Evidence Evaluation", scenario: "A contractor shows their Incident Response Plan covering preparation, detection, analysis, containment, recovery, and user response. However, they admit they've never actually had a security incident.", options: ["NOT MET — no evidence of actual incident handling", "MET — the plan establishes the CAPABILITY as required", "Require a tabletop exercise to prove capability", "NOT MET without evidence of plan testing"], correct: 1, explanation: "IR.L2-3.6.1 requires establishing an incident-handling CAPABILITY, not proving you've handled incidents. The plan IS the capability. Testing is separate (3.6.3).", mindset: "Read the requirement precisely. 'Establish an operational incident-handling capability' doesn't require actual incidents." },
+            
+            // === ADEQUATE vs SUFFICIENT EVIDENCE (CRITICAL CONCEPT!) ===
+            { category: "Adequate vs Sufficient", scenario: "For IA.L2-3.5.3 (MFA), a contractor provides their MFA policy document stating 'All users must use multifactor authentication.' No other evidence is provided.", options: ["ADEQUATE and SUFFICIENT — policy covers requirement", "ADEQUATE but NOT SUFFICIENT — right type but not enough", "NOT ADEQUATE and NOT SUFFICIENT — policy alone shows intent, not implementation", "SUFFICIENT but NOT ADEQUATE — enough quantity but wrong type"], correct: 2, explanation: "A policy document shows INTENT, not implementation. Evidence must prove MFA is actually deployed. This is neither adequate (wrong kind) nor sufficient (doesn't cover scope).", mindset: "ADEQUATE = right KIND of evidence. SUFFICIENT = enough COVERAGE. A policy alone fails both tests — you need proof of implementation." },
+            { category: "Adequate vs Sufficient", scenario: "For IA.L2-3.5.3 (MFA), a contractor shows you a screenshot of their MFA login prompt from ONE workstation in the Accounting department.", options: ["ADEQUATE and SUFFICIENT — shows MFA is implemented", "ADEQUATE but NOT SUFFICIENT — right evidence type but only covers one area", "NOT ADEQUATE — screenshots aren't valid evidence", "SUFFICIENT but NOT ADEQUATE — covers scope but wrong evidence type"], correct: 1, explanation: "A screenshot of MFA working IS the right kind of evidence (adequate), but one department doesn't prove organization-wide implementation (not sufficient).", mindset: "This is the classic trap! Evidence can be the RIGHT KIND but not ENOUGH. One screenshot proves MFA exists somewhere — not that it's deployed everywhere in scope." },
+            { category: "Adequate vs Sufficient", scenario: "For IA.L2-3.5.3 (MFA), a contractor provides screenshots of MFA login prompts from all 5 departments, plus system configuration showing MFA is enforced organization-wide via Conditional Access policy.", options: ["ADEQUATE but NOT SUFFICIENT — need more evidence types", "SUFFICIENT but NOT ADEQUATE — need different evidence", "ADEQUATE and SUFFICIENT — right evidence type with full coverage", "Neither — need live demonstration"], correct: 2, explanation: "Multiple screenshots across all departments (coverage) plus system config (enforcement proof) = both adequate (right kind) AND sufficient (full scope).", mindset: "This is what GOOD evidence looks like: correct type AND comprehensive coverage. Screenshots + config + all departments = both tests passed." },
+            { category: "Adequate vs Sufficient", scenario: "For AU.L2-3.3.1 (System Auditing), a contractor shows comprehensive audit logs from their domain controller. However, they have 50 CUI assets and only showed logs from 1 system.", options: ["ADEQUATE and SUFFICIENT — DC logs are comprehensive", "ADEQUATE but NOT SUFFICIENT — right evidence but only 1 of 50 systems", "NOT ADEQUATE — need different log types", "SUFFICIENT — DC captures all domain activity"], correct: 1, explanation: "Audit logs ARE the right kind of evidence (adequate), but 1 of 50 systems doesn't demonstrate organization-wide implementation (not sufficient). Need representative sample.", mindset: "Even great evidence from one system doesn't prove the control works everywhere. Sufficient = coverage across the FULL assessment scope." },
+            { category: "Adequate vs Sufficient", scenario: "For AT.L2-3.2.1 (Security Awareness Training), contractor shows a spreadsheet listing all 200 employees with 'Training Complete' checkmarks. No other evidence provided.", options: ["ADEQUATE and SUFFICIENT — shows all employees trained", "ADEQUATE but NOT SUFFICIENT — need training from more departments", "NOT ADEQUATE but SUFFICIENT — covers everyone but wrong evidence type", "Neither adequate nor sufficient"], correct: 2, explanation: "A self-reported spreadsheet isn't adequate evidence — it shows a CLAIM, not proof. You need training records, completion certificates, or LMS reports. Coverage is there, but evidence type is weak.", mindset: "A spreadsheet someone typed up isn't proof of training. ADEQUATE evidence would be LMS completion records, signed acknowledgments, or training certificates." },
+            { category: "Adequate vs Sufficient", scenario: "For AT.L2-3.2.1 (Security Awareness Training), contractor provides LMS completion reports showing training records for 180 of 200 employees.", options: ["ADEQUATE and SUFFICIENT — LMS reports are valid evidence", "ADEQUATE but NOT SUFFICIENT — right evidence type but missing 20 employees", "NOT ADEQUATE — LMS reports aren't acceptable", "SUFFICIENT — 90% is good enough"], correct: 1, explanation: "LMS completion reports ARE adequate evidence (right kind), but 180/200 means 20 employees aren't covered. That's not sufficient — you need 100% of in-scope personnel.", mindset: "90% isn't 100%. If 20 people with CUI access haven't completed training, the control isn't fully implemented. Close doesn't count in CMMC." },
+            { category: "Adequate vs Sufficient", scenario: "Assessing SC.L2-3.13.16 (Data at Rest Encryption). Contractor shows BitLocker status for all 75 laptops (all encrypted). However, you notice they also have 3 file servers storing CUI that weren't mentioned.", options: ["ADEQUATE and SUFFICIENT — laptops are encrypted", "ADEQUATE but NOT SUFFICIENT — missed the file servers", "NOT ADEQUATE — need different encryption evidence", "Ask about file server encryption before determining"], correct: 3, explanation: "The laptop evidence is adequate AND sufficient for laptops. But the assessor noticed assets not covered. Good assessor instinct — investigate before concluding.", mindset: "Sufficient means covering the FULL scope. If you discover assets not in the evidence, you haven't achieved sufficient coverage yet. Investigate!" },
+            { category: "Adequate vs Sufficient", scenario: "For CM.L2-3.4.1 (Baseline Configurations), contractor provides a 200-page document titled 'System Baseline Standards' that describes configurations in detail. When you ask to see actual system configs, they say 'just look at the document.'", options: ["ADEQUATE and SUFFICIENT — detailed baseline document", "ADEQUATE but NOT SUFFICIENT — need to verify on actual systems", "NOT ADEQUATE — documentation alone doesn't prove implementation", "SUFFICIENT but NOT ADEQUATE — covers scope but wrong evidence"], correct: 2, explanation: "A baseline DOCUMENT shows what SHOULD be configured, not what IS configured. You need to examine/test actual systems to verify the baseline is applied.", mindset: "Baseline documentation is necessary but not sufficient. 'We have a standard' isn't 'systems match the standard.' Verify implementation!" },
+            { category: "Adequate vs Sufficient", scenario: "You're assessing AC.L2-3.1.7 (Privileged Functions). Contractor shows that Domain Admins can't browse the web (technical restriction). However, they have 8 different privileged roles and only demonstrated restriction for one.", options: ["ADEQUATE and SUFFICIENT — demonstrated the control works", "ADEQUATE but NOT SUFFICIENT — only showed 1 of 8 privileged roles", "NOT ADEQUATE — need policy documentation too", "MET — one example proves the concept"], correct: 1, explanation: "The demonstration IS adequate evidence (shows technical enforcement), but 1 of 8 roles isn't sufficient coverage. Need to verify restrictions apply to ALL privileged roles.", mindset: "Sampling is acceptable, but 1 of 8 isn't a representative sample. Either test more roles or get evidence that the same restriction applies to all." },
+            { category: "Adequate vs Sufficient", scenario: "For PS.L2-3.9.1 (Screen Individuals), contractor shows background check results for their 5 most recent hires. They have 150 employees total with CUI access.", options: ["ADEQUATE and SUFFICIENT — shows screening process works", "ADEQUATE but NOT SUFFICIENT — only 5 of 150 employees", "NOT ADEQUATE — need HR policy documentation", "SUFFICIENT — recent hires prove current process"], correct: 1, explanation: "Background check results ARE adequate evidence. But 5 of 150 raises the question: what about the other 145? Need evidence that ALL personnel with CUI access were screened.", mindset: "Recent hires prove the current process works, but CMMC requires ALL personnel be screened. Ask: 'Can you show screening for longer-tenured employees too?'" },
             
             // === PARTIAL IMPLEMENTATION ===
             { category: "Partial Implementation", scenario: "An organization has MFA for all remote access and privileged accounts, but local non-privileged users in the office don't use MFA.", options: ["MET — they have MFA implemented", "NOT MET — all users must have MFA", "Partial credit — 3 points subtracted instead of 5", "NOT MET with no scoring impact"], correct: 2, explanation: "IA.L2-3.5.3 is one of only TWO practices with partial scoring. MFA for remote/privileged = 3 points subtracted. No MFA = 5 points.", mindset: "Know which practices have partial scoring — it's ONLY MFA and FIPS encryption." },
@@ -1095,7 +1794,36 @@
             // === NOT MET DETERMINATIONS ===
             { category: "NOT MET Determination", scenario: "Contractor has 100 CUI assets. For AU.L2-3.3.1, 95 systems have proper audit logging, but 5 recently added systems don't have logging enabled.", options: ["MET — 95% is excellent", "NOT MET — all CUI assets must have auditing", "Conditional MET with POA&M for 5 systems", "MET with observation"], correct: 1, explanation: "There is no 'percentage compliance' in CMMC. ALL CUI assets must meet ALL applicable controls. 5 systems without logging = NOT MET.", mindset: "CMMC doesn't grade on a curve. ALL in-scope assets must meet the control. 'Almost' isn't MET." },
             { category: "NOT MET Determination", scenario: "For AU.L2-3.3.1, objectives [a]-[e] fully satisfied, but [f] shows records deleted after 60 days instead of policy-required 90 days.", options: ["MET — 5 out of 6 objectives is passing", "NOT MET — ALL objectives must be satisfied", "Partial MET — deduct proportional points", "MET with observation about retention"], correct: 1, explanation: "ALL assessment objectives must be satisfied for MET. No partial credit at objective level. One failed objective = NOT MET.", mindset: "Objectives aren't a pick-list. Missing one fails the whole practice." },
-            { category: "NOT MET Determination", scenario: "Objective states: 'Determine if privileged accounts are identified.' Contractor shows list of 50 privileged accounts. During testing, you discover 3 service accounts with admin rights not on the list.", options: ["MET — they have a process for identifying", "NOT MET — privileged accounts not fully identified", "MET with observation to update list", "Partially MET"], correct: 1, explanation: "The objective requires accounts to BE identified. If accounts with privileged access aren't on the list, objective isn't satisfied.", mindset: "Test claims. 'We have a list' isn't enough — verify it's complete." }
+            { category: "NOT MET Determination", scenario: "Objective states: 'Determine if privileged accounts are identified.' Contractor shows list of 50 privileged accounts. During testing, you discover 3 service accounts with admin rights not on the list.", options: ["MET — they have a process for identifying", "NOT MET — privileged accounts not fully identified", "MET with observation to update list", "Partially MET"], correct: 1, explanation: "The objective requires accounts to BE identified. If accounts with privileged access aren't on the list, objective isn't satisfied.", mindset: "Test claims. 'We have a list' isn't enough — verify it's complete." },
+            
+            // === ACCESS CONTROL (AC) SCENARIOS ===
+            { category: "AC - Access Control", scenario: "For AC.L2-3.1.5 (Least Privilege), a contractor shows you their AD groups structure. The 'IT Staff' group has Domain Admin rights. When asked, they say 'All 12 IT staff need admin access for their jobs.'", options: ["MET — they have documented groups", "NOT MET — least privilege means minimum necessary, not everyone gets admin", "MET if all 12 truly need admin", "Request job descriptions before determining"], correct: 1, explanation: "Least privilege means users get the MINIMUM access necessary. It's highly unlikely all 12 IT staff need Domain Admin. This should be role-based with tiered access.", mindset: "Question 'everyone needs it' claims. Least privilege requires granular analysis of actual job functions." },
+            { category: "AC - Access Control", scenario: "Assessing AC.L2-3.1.7 (Privileged Functions). Contractor shows non-privileged users cannot access admin consoles. However, you discover local admin rights are granted to all users 'so they can install printer drivers.'", options: ["MET — admin consoles are restricted", "NOT MET — local admin IS a privileged function", "MET with observation about local admin", "Partial credit for console restriction"], correct: 1, explanation: "Local administrator rights allow execution of privileged functions. The requirement is to PREVENT non-privileged users from executing privileged functions AND log when they do.", mindset: "Local admin rights = privileged functions. 'Convenience' doesn't override security requirements." },
+            { category: "AC - Access Control", scenario: "For AC.L2-3.1.8 (Unsuccessful Logon Attempts), policy states accounts lock after 5 failed attempts. Testing shows lockout occurs at 5 attempts on Windows systems, but Linux servers allow unlimited attempts.", options: ["MET — Windows systems comply", "NOT MET — ALL systems must enforce lockout", "MET if Linux servers don't handle CUI", "NOT MET unless Linux servers are Out of Scope"], correct: 1, explanation: "If Linux servers are in scope (handle CUI or are SPAs), they must also enforce unsuccessful logon attempt limits. Partial implementation = NOT MET.", mindset: "Control applies to ALL in-scope systems. Check every platform type, not just the primary one." },
+            { category: "AC - Access Control", scenario: "Contractor has AC.L2-3.1.12 (Monitor Remote Access) implemented via VPN logs. However, they admit 'We collect the logs but nobody reviews them regularly.'", options: ["MET — logs are being collected", "NOT MET — monitoring requires both collection AND review", "MET with observation to improve review process", "Partial MET for collection only"], correct: 1, explanation: "The control requires MONITOR and control. Monitoring implies active review, not just passive collection. Logs that nobody looks at don't provide monitoring.", mindset: "'Monitor' is an active verb. Collection without review isn't monitoring." },
+            { category: "AC - Access Control", scenario: "For AC.L2-3.1.3 (Control CUI Flow), a contractor has firewalls between network segments. However, you discover users can email CUI attachments to personal Gmail accounts without restriction.", options: ["MET — network segmentation controls flow", "NOT MET — CUI flow via email is uncontrolled", "MET if email is encrypted", "NOT MET — need DLP or email restrictions"], correct: 1, explanation: "Controlling CUI flow means ALL flow paths, not just network segments. Unrestricted email to personal accounts = uncontrolled CUI flow.", mindset: "Think like data. Where can CUI actually GO? Network, email, USB, cloud, print — all flow paths need control." },
+            { category: "AC - Access Control", scenario: "Assessing AC.L2-3.1.4 (Separation of Duties). In a 5-person IT shop, the same person manages user accounts, approves access requests, AND reviews audit logs.", options: ["MET — small companies can't always separate duties", "NOT MET — critical functions aren't separated", "MET with compensating controls documented", "NOT MET unless they implement approval workflows"], correct: 2, explanation: "Small organizations can implement compensating controls (manager approval, periodic review by leadership, etc.) when true separation isn't possible. Document in SSP.", mindset: "Small companies get flexibility with COMPENSATING controls, not exemptions. What oversight exists?" },
+            { category: "AC - Access Control", scenario: "For AC.L2-3.1.19 (Encrypt CUI on Mobile), contractor shows BitLocker on laptops. You ask about phones — they say 'We don't allow CUI on phones' but have no MDM or technical enforcement.", options: ["MET — laptops are encrypted", "NOT MET — no technical enforcement of phone policy", "MET if policy prohibits phone use", "Request MDM evidence or phone encryption proof"], correct: 3, explanation: "If phones aren't used for CUI, that's acceptable. But verify: Is there technical enforcement (MDM blocking CUI apps)? Or just policy? Ask for evidence either way.", mindset: "Policy claims need verification. If phones aren't in scope, how do you KNOW CUI doesn't reach them?" },
+            { category: "AC - Access Control", scenario: "Contractor's wireless network (AC.L2-3.1.17) uses WPA2-Enterprise with RADIUS authentication. Guest WiFi is WPA2-Personal with posted password. Both networks reach the internet.", options: ["MET — corporate WiFi is properly secured", "NOT MET — guest network is insecure", "MET if guest network is isolated from CUI systems", "NOT MET — all WiFi must use Enterprise authentication"], correct: 2, explanation: "The control applies to wireless access to systems containing CUI. If guest network is properly isolated and can't reach CUI systems, it may be Out of Scope.", mindset: "Scope matters. Guest WiFi that's truly isolated from CUI environment may not need Enterprise auth." },
+            
+            // === AUDIT AND ACCOUNTABILITY (AU) SCENARIOS ===
+            { category: "AU - Audit", scenario: "For AU.L2-3.3.1 (System Auditing), contractor shows Windows Event Logs on all systems. However, logs only retain 7 days due to disk space constraints.", options: ["MET — they're logging events", "NOT MET — retention is insufficient for investigation", "MET if they can justify 7 days", "NOT MET — need to define adequate retention period"], correct: 3, explanation: "The control requires retention 'to the extent needed to enable monitoring, analysis, investigation.' 7 days likely isn't enough for investigation. What's their defined retention policy?", mindset: "Retention should match investigation needs. Ask: 'How long until you'd notice an incident? Can you investigate with 7 days of logs?'" },
+            { category: "AU - Audit", scenario: "Assessing AU.L2-3.3.2 (User Accountability). All users have unique accounts. However, you discover a shared 'ServiceDesk' account used by 4 help desk staff to reset passwords.", options: ["MET — user accounts are unique", "NOT MET — shared account prevents individual accountability", "MET if ServiceDesk actions are logged separately", "NOT MET — all actions must trace to individuals"], correct: 1, explanation: "The requirement is that actions can be 'uniquely traced to those users.' A shared account used by 4 people means password resets can't be traced to the individual who performed them.", mindset: "Shared accounts = accountability gap. Even for service functions, who specifically did what?" },
+            { category: "AU - Audit", scenario: "For AU.L2-3.3.5 (Audit Correlation), contractor has a SIEM that collects logs from all systems. When asked about correlation rules, they say 'We haven't configured any custom rules yet, we just collect everything.'", options: ["MET — SIEM provides correlation capability", "NOT MET — correlation capability exists but isn't used", "MET if default rules exist", "NOT MET — must demonstrate active correlation"], correct: 0, explanation: "The control requires 'correlate audit record review, analysis, and reporting.' Having a SIEM with correlation CAPABILITY that isn't being used for actual correlation is NOT MET.", mindset: "Capability ≠ implementation. A SIEM that just stores logs isn't correlating anything." },
+            { category: "AU - Audit", scenario: "AU.L2-3.3.4 (Audit Failure Alerting) — contractor's SIEM sends email alerts when log sources stop reporting. However, the alert goes to a shared mailbox that IT checks 'when they have time.'", options: ["MET — alerts are generated", "NOT MET — alerts must be actionable and monitored", "MET with observation to improve response", "MET if SLA exists for checking mailbox"], correct: 0, explanation: "The control requires 'alert in the event of an audit logging process failure.' If alerts aren't monitored timely, they don't provide the intended protection. Alerts need response procedures.", mindset: "Alerts that no one acts on aren't really alerts. What's the response process?" },
+            { category: "AU - Audit", scenario: "For AU.L2-3.3.8 (Audit Protection), audit logs are stored on the same servers that generate them. Admins who can modify systems can also delete the local logs.", options: ["MET — logs exist", "NOT MET — logs aren't protected from admin modification", "MET if logs are also sent to SIEM", "NOT MET — need write-once storage"], correct: 2, explanation: "If logs are ALSO forwarded to a protected central location (SIEM) where local admins can't modify them, protection exists. Local-only logs modifiable by admins = NOT MET.", mindset: "Who can tamper with evidence? Logs must be protected from those they're logging." },
+            { category: "AU - Audit", scenario: "AU.L2-3.3.7 (Time Synchronization) — all Windows systems sync to the domain controller. The DC syncs to time.windows.com. Linux systems sync to pool.ntp.org.", options: ["MET — all systems use NTP", "NOT MET — systems use different time sources", "MET if all sources are accurate", "NOT MET — need single authoritative source"], correct: 0, explanation: "The requirement is to 'compare and synchronize internal system clocks.' Different external sources that are both accurate still provide synchronized time for log correlation.", mindset: "The goal is correlated timestamps. Multiple accurate NTP sources achieve this. One internal source is cleaner but not required." },
+            { category: "AU - Audit", scenario: "Assessing AU.L2-3.3.9 (Audit Management). The SIEM admin can modify audit configurations. That same person is also a system administrator on CUI systems being audited.", options: ["MET — audit management is restricted to privileged users", "NOT MET — person auditing shouldn't be person being audited", "MET if they're the only qualified person", "NOT MET — conflict of interest in audit management"], correct: 1, explanation: "The control limits audit management to 'a subset of privileged users.' If the sysadmin manages their own audit trail, accountability is compromised. Separation needed.", mindset: "Would you let someone grade their own test? Audit managers shouldn't audit themselves." },
+            
+            // === IDENTIFICATION AND AUTHENTICATION (IA) SCENARIOS ===
+            { category: "IA - Authentication", scenario: "For IA.L2-3.5.3 (MFA), contractor uses Microsoft Authenticator for VPN and O365 access. However, local console logins to CUI servers don't require MFA.", options: ["MET — MFA covers remote and cloud access", "NOT MET — local privileged access also needs MFA", "MET for network access requirement only", "Partial credit — 3 points for remote MFA"], correct: 2, explanation: "IA.L2-3.5.3 requires MFA for 'local and network access to privileged accounts.' Physical console access to CUI servers by admins IS local privileged access. Partial scoring applies.", mindset: "Read the requirement carefully. LOCAL and network access. Console logins count as local." },
+            { category: "IA - Authentication", scenario: "Assessing IA.L2-3.5.5 (Identifier Reuse). Contractor's policy states usernames won't be reused for 90 days. AD is configured for 90-day account retention. However, you find an exception where a username was reused after 60 days 'because the new hire had the same name.'", options: ["MET — policy and technical control exist", "NOT MET — exception violates the control", "MET if exception was documented and approved", "NOT MET — no exceptions allowed"], correct: 2, explanation: "If the exception was documented, risk-assessed, and approved by appropriate authority, it may be acceptable. Undocumented exceptions = NOT MET.", mindset: "Exceptions happen. The question is: Was it managed properly or just done ad-hoc?" },
+            { category: "IA - Authentication", scenario: "For IA.L2-3.5.6 (Disable Inactive Identifiers), policy requires disabling accounts after 90 days of inactivity. You find 15 accounts that haven't logged in for 120+ days but are still active.", options: ["MET — policy exists", "NOT MET — policy isn't being enforced", "MET if accounts belong to on-leave employees", "NOT MET unless justified and documented"], correct: 1, explanation: "The control requires identifiers BE disabled after the defined period. 15 active accounts past the threshold means the control isn't implemented effectively.", mindset: "Policy without enforcement isn't implementation. Test actual account status." },
+            { category: "IA - Authentication", scenario: "IA.L2-3.5.7 (Password Complexity) — contractor requires 12 characters with mixed case, numbers, and symbols. You test and find the system accepts 'Password123!' despite being a common pattern.", options: ["MET — technical requirements are enforced", "NOT MET — common passwords should be blocked", "MET — CMMC doesn't require dictionary checks", "NOT MET — complexity without blocklist is insufficient"], correct: 2, explanation: "CMMC requires 'minimum password complexity' with character requirements. Blocking common passwords is a best practice but not explicitly required by the control.", mindset: "Assess against the requirement, not best practice. Complexity ≠ dictionary blocking (though it should)." },
+            { category: "IA - Authentication", scenario: "For IA.L2-3.5.10 (Cryptographically Protected Passwords), contractor shows passwords are hashed in AD using NTLM. They say 'We're planning to upgrade to Kerberos but haven't yet.'", options: ["MET — NTLM hashes passwords", "NOT MET — NTLM is cryptographically weak", "MET with observation to upgrade", "NOT MET — must use approved cryptography"], correct: 0, explanation: "NTLM does hash passwords (it uses MD4). While weak by modern standards, the control requires 'cryptographically protected' storage, which NTLM technically provides.", mindset: "The requirement is protection, not specific algorithm. NTLM is weak but IS cryptographic protection. Note as observation." },
+            { category: "IA - Authentication", scenario: "Assessing IA.L2-3.5.4 (Replay-Resistant Authentication). Contractor uses Kerberos for domain authentication. However, a legacy application uses basic authentication over HTTPS for a CUI database.", options: ["MET — Kerberos is replay-resistant", "NOT MET — basic auth is replayable", "MET if HTTPS prevents replay", "NOT MET — all network auth must be replay-resistant"], correct: 2, explanation: "Basic auth over HTTPS: the credentials could be replayed if captured, BUT TLS prevents interception. Combined, this provides replay resistance through transport security.", mindset: "Consider the full stack. Weak auth + strong transport can = adequate protection." },
+            { category: "IA - Authentication", scenario: "For IA.L2-3.5.1 (Identification), all users have unique usernames. However, automated backup jobs run under a generic 'BackupService' account shared across 5 backup servers.", options: ["MET — users are uniquely identified", "NOT MET — processes must also be identified", "MET if BackupService is documented", "NOT MET — each server needs unique service account"], correct: 2, explanation: "The control requires identifying 'processes acting on behalf of users.' A documented service account for backups, associated with the admin who authorized it, satisfies this.", mindset: "Service accounts are acceptable if documented and associated with responsible individuals." },
+            { category: "IA - Authentication", scenario: "IA.L2-3.5.9 (Temporary Passwords) — new users receive temporary passwords via encrypted email and must change at first login. However, password reset tickets include temp passwords in plain text in the ticketing system.", options: ["MET — temp passwords work correctly", "NOT MET — temp passwords exposed in ticketing system", "MET if ticketing system is access-controlled", "NOT MET — temp passwords must be protected everywhere"], correct: 2, explanation: "The control requires 'immediate change to permanent password.' If temp passwords are visible in an access-controlled system (IT staff only), and forced change works, the CONTROL is met.", mindset: "Focus on the control objective: can temp passwords be used indefinitely? No = working as intended." }
         ];
 
         // ==================== CONTROL DEEP DIVES (110 controls with key takeaways) ====================
@@ -1331,6 +2059,11 @@
             document.getElementById('ethicsContainer').classList.remove('active');
             document.getElementById('gotchaContainer').classList.remove('active');
             document.getElementById('judgmentContainer').classList.remove('active');
+            document.getElementById('capContainer').classList.remove('active');
+            document.getElementById('scopingContainer').classList.remove('active');
+            document.getElementById('terminologyContainer').classList.remove('active');
+            document.getElementById('bestanswerContainer').classList.remove('active');
+            document.getElementById('tipsContainer').classList.remove('active');
             document.getElementById('deepdiveContainer').classList.remove('active');
             
             // Hide all sidebars
@@ -1357,6 +2090,25 @@
                 document.getElementById('judgmentContainer').classList.add('active');
                 document.getElementById('ccaSidebar').style.display = 'block';
                 startCCAMode('judgment', JUDGMENT_SCENARIOS);
+            } else if (mode === 'cap') {
+                document.getElementById('capContainer').classList.add('active');
+                document.getElementById('ccaSidebar').style.display = 'block';
+                startCCAMode('cap', CAP_QUESTIONS);
+            } else if (mode === 'scoping') {
+                document.getElementById('scopingContainer').classList.add('active');
+                document.getElementById('ccaSidebar').style.display = 'block';
+                startCCAMode('scoping', SCOPING_QUESTIONS);
+            } else if (mode === 'terminology') {
+                document.getElementById('terminologyContainer').classList.add('active');
+                document.getElementById('ccaSidebar').style.display = 'block';
+                startCCAMode('terminology', TERMINOLOGY_QUESTIONS);
+            } else if (mode === 'bestanswer') {
+                document.getElementById('bestanswerContainer').classList.add('active');
+                document.getElementById('ccaSidebar').style.display = 'block';
+                startCCAMode('bestanswer', BEST_ANSWER_QUESTIONS);
+            } else if (mode === 'tips') {
+                document.getElementById('tipsContainer').classList.add('active');
+                renderTips();
             } else if (mode === 'deepdive') {
                 document.getElementById('deepdiveContainer').classList.add('active');
                 document.getElementById('studySidebar').style.display = 'block';
@@ -1725,7 +2477,7 @@
             document.getElementById('resultsIncorrect').textContent = incorrectAnswers;
             
             let icon, message;
-            if (percent >= 90) { icon = '🏆'; message = 'Outstanding! Exam ready!'; }
+            if (percent >= 90) { icon = '🏆'; message = 'Outstanding! Exam ready!'; launchConfetti(); }
             else if (percent >= 80) { icon = '🎉'; message = 'Great job!'; }
             else if (percent >= 70) { icon = '👍'; message = 'Good progress!'; }
             else { icon = '💪'; message = 'Keep studying!'; }
@@ -1759,18 +2511,28 @@
             
             updateCCAStats();
             
+            const modeTitles = {
+                'ethics': '⚖️ Ethics & Code of Conduct',
+                'gotcha': '⚡ Gotcha Questions',
+                'judgment': '🎯 Assessor Judgment',
+                'cap': '📋 CAP Process',
+                'scoping': '🗺️ Scoping & Assets',
+                'terminology': '📚 Terminology Traps',
+                'bestanswer': '🧠 Best Answer Training'
+            };
+            
             let html = `
                 <div class="header">
-                    <h2>${ccaMode === 'ethics' ? '⚖️ Ethics & Code of Conduct' : ccaMode === 'gotcha' ? '⚡ Gotcha Questions' : '🎯 Assessor Judgment'}</h2>
+                    <h2>${modeTitles[ccaMode] || ccaMode}</h2>
                     <p>Question ${ccaIndex + 1} of ${ccaQuestions.length}</p>
                 </div>
                 <div class="cca-card">
                     <span class="cca-category ${ccaMode}">${q.category}</span>
             `;
             
-            if (ccaMode === 'judgment') {
+            if (ccaMode === 'judgment' || ccaMode === 'bestanswer') {
                 html += `
-                    <div class="cca-scenario">${q.scenario}</div>
+                    <div class="cca-scenario">${q.scenario || q.q}</div>
                     <div class="cca-options" id="ccaOptions">
                         ${q.options.map((opt, i) => `
                             <div class="cca-option" data-index="${i}">${opt}</div>
@@ -1849,7 +2611,7 @@
             const percent = Math.round((ccaCorrect / ccaQuestions.length) * 100);
             
             let icon, message;
-            if (percent >= 90) { icon = '🏆'; message = 'Outstanding!'; }
+            if (percent >= 90) { icon = '🏆'; message = 'Outstanding!'; launchConfetti(); }
             else if (percent >= 80) { icon = '🎉'; message = 'Great job!'; }
             else if (percent >= 70) { icon = '👍'; message = 'Good progress!'; }
             else { icon = '💪'; message = 'Keep studying!'; }
@@ -1886,6 +2648,143 @@
             document.getElementById('ccaIncorrect').textContent = ccaIncorrect;
         }
 
+        // ==================== TEST STRATEGY TIPS MODE ====================
+        function renderTips() {
+            const container = document.getElementById('tipsContainer');
+            
+            let html = `
+                <div class="header">
+                    <h2>💡 Test-Taking Strategy Tips</h2>
+                    <p>Key strategies for CCA exam success</p>
+                </div>
+                <div style="max-width: 900px; margin: 0 auto;">
+                    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 2px solid #f59e0b;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #92400e; margin-bottom: 12px;">⚠️ Key Focus Areas</div>
+                        <div style="color: #78350f; line-height: 1.7;">
+                            <p style="margin-bottom: 8px;"><strong>Prioritize the CAP</strong> - The CMMC Assessment Process document is heavily tested and often underestimated.</p>
+                            <p style="margin-bottom: 8px;"><strong>Focus on foundational documents:</strong> CAP and Scoping Guide are primary sources. Don't rely solely on LTP slides.</p>
+                            <p><strong>CMMC Level 2 Practices</strong> - Focus on understanding HOW to assess controls, not just WHAT the controls say.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; gap: 16px;">
+                        ${TEST_STRATEGY_TIPS.map((t, i) => `
+                            <div style="background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <div style="display: flex; align-items: flex-start; gap: 16px;">
+                                    <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">${i + 1}</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 700; color: #1e293b; font-size: 1.1rem; margin-bottom: 8px;">${t.tip}</div>
+                                        <div style="color: #64748b; line-height: 1.6;">${t.detail}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #3b82f6;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #1e40af; margin-bottom: 12px;">📊 Exam Domain Difficulty</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+                            <div style="background: white; padding: 16px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #16a34a;">OSC Requirements</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">Understanding OSC obligations</div>
+                                <div style="color: #22c55e; font-size: 0.8rem;">✓ Generally well understood</div>
+                            </div>
+                            <div style="background: white; padding: 16px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #eab308;">Scoping</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">Asset categories & boundaries</div>
+                                <div style="color: #f59e0b; font-size: 0.8rem;">⚡ Can be tricky</div>
+                            </div>
+                            <div style="background: white; padding: 16px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #f97316;">CAP Process</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">4 phases, roles, procedures</div>
+                                <div style="color: #ea580c; font-size: 0.8rem;">⚠️ Often underestimated</div>
+                            </div>
+                            <div style="background: white; padding: 16px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: 700; color: #dc2626;">L2 Practices</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">Assessing the 110 controls</div>
+                                <div style="color: #ef4444; font-size: 0.8rem;">🔥 Most challenging</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #22c55e;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #166534; margin-bottom: 12px;">✅ Study Priorities</div>
+                        <ul style="color: #15803d; line-height: 1.8; margin: 0; padding-left: 20px;">
+                            <li><strong>CAP first</strong>, Assessment Guide second, Scoping Guide thoroughly (it's short)</li>
+                            <li>Browse and understand the Code of Professional Conduct (CoPC)</li>
+                            <li>Don't over-invest in NIST 800-171A - valuable but not heavily tested</li>
+                            <li>Know each practice/objective and how to assess them - what evidence demonstrates conformity?</li>
+                            <li>Writing out practices with their point values and objectives can help retention</li>
+                            <li><strong>Focus on assessment methodology</strong> - controls are provided on the exam, understanding how to evaluate conformity is key</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #fae8ff 0%, #e9d5ff 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #a855f7;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #6b21a8; margin-bottom: 16px;">📋 CRITICAL: Adequate vs Sufficient Evidence</div>
+                        <div style="color: #581c87; line-height: 1.7; margin-bottom: 16px;">
+                            <p style="margin-bottom: 12px;">Assessors must determine if evidence is <strong>BOTH</strong> adequate AND sufficient. These are TWO SEPARATE tests!</p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                            <div style="background: white; padding: 16px; border-radius: 10px; border-left: 4px solid #22c55e;">
+                                <div style="font-weight: 700; color: #166534; font-size: 1.1rem; margin-bottom: 8px;">✅ ADEQUATE Evidence</div>
+                                <div style="color: #15803d; font-size: 0.95rem; margin-bottom: 8px;"><strong>= The RIGHT KIND of evidence</strong></div>
+                                <div style="color: #64748b; font-size: 0.9rem; line-height: 1.5;">
+                                    <p><strong>Focus:</strong> Quality & Relevance</p>
+                                    <p><strong>Key Question:</strong> Does this evidence directly support the specific practice?</p>
+                                    <p style="margin-top: 8px;"><strong>Examples:</strong> Screenshots, configs, logs, test results, demonstrations</p>
+                                    <p style="margin-top: 8px; color: #dc2626;"><strong>NOT adequate:</strong> Policy alone (shows intent, not implementation)</p>
+                                </div>
+                            </div>
+                            <div style="background: white; padding: 16px; border-radius: 10px; border-left: 4px solid #3b82f6;">
+                                <div style="font-weight: 700; color: #1e40af; font-size: 1.1rem; margin-bottom: 8px;">📊 SUFFICIENT Evidence</div>
+                                <div style="color: #1d4ed8; font-size: 0.95rem; margin-bottom: 8px;"><strong>= ENOUGH of the right evidence</strong></div>
+                                <div style="color: #64748b; font-size: 0.9rem; line-height: 1.5;">
+                                    <p><strong>Focus:</strong> Quantity & Coverage</p>
+                                    <p><strong>Key Question:</strong> Does this cover the FULL assessment scope?</p>
+                                    <p style="margin-top: 8px;"><strong>Examples:</strong> Evidence from ALL in-scope systems, all departments, representative sampling</p>
+                                    <p style="margin-top: 8px; color: #dc2626;"><strong>NOT sufficient:</strong> One screenshot from one system when 50 exist</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: white; padding: 16px; border-radius: 10px; margin-top: 16px;">
+                            <div style="font-weight: 700; color: #6b21a8; margin-bottom: 12px;">🎯 Quick Examples for MFA (IA.L2-3.5.3)</div>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                <tr style="background: #f8fafc;">
+                                    <th style="padding: 8px; text-align: left; border-bottom: 2px solid #e2e8f0;">Evidence</th>
+                                    <th style="padding: 8px; text-align: center; border-bottom: 2px solid #e2e8f0;">Adequate?</th>
+                                    <th style="padding: 8px; text-align: center; border-bottom: 2px solid #e2e8f0;">Sufficient?</th>
+                                    <th style="padding: 8px; text-align: left; border-bottom: 2px solid #e2e8f0;">Why?</th>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Policy stating "MFA required"</td>
+                                    <td style="padding: 8px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #dc2626;">❌</td>
+                                    <td style="padding: 8px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #dc2626;">❌</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Shows intent, not implementation</td>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">MFA screenshot from ONE dept</td>
+                                    <td style="padding: 8px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #22c55e;">✅</td>
+                                    <td style="padding: 8px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #dc2626;">❌</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Right kind, but only partial coverage</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Screenshots from ALL depts + system config</td>
+                                    <td style="padding: 8px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #22c55e;">✅</td>
+                                    <td style="padding: 8px; text-align: center; border-bottom: 1px solid #e2e8f0; color: #22c55e;">✅</td>
+                                    <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Right kind AND full scope coverage</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin-top: 16px; color: #92400e; font-size: 0.9rem;">
+                            <strong>💡 Remember:</strong> Evidence can be ADEQUATE (right kind) but NOT SUFFICIENT (not enough coverage). BOTH conditions must be met for a practice to be MET!
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
         // ==================== DEEP DIVE MODE ====================
         function renderDeepDive() {
             const container = document.getElementById('deepdiveContainer');
@@ -1893,7 +2792,7 @@
             let html = `
                 <div class="header">
                     <h2>🔬 Control Deep Dives</h2>
-                    <p>Key takeaways from Further Discussion sections - 110 controls with assessor tips</p>
+                    <p>Key takeaways from Further Discussion sections + Assessment Objectives - 110 controls</p>
                 </div>
                 <input type="text" class="deepdive-search" placeholder="Search controls..." oninput="filterDeepDive(this.value)">
             `;
@@ -1907,7 +2806,9 @@
                             <span class="dd-chevron">▼</span>
                         </div>
                         <div class="deepdive-domain-content">
-                            ${domain.controls.map(c => `
+                            ${domain.controls.map(c => {
+                                const aos = ASSESSMENT_OBJECTIVES[c.id] || [];
+                                return `
                                 <div class="deepdive-control" data-search="${c.id} ${c.name} ${c.keyTakeaways.join(' ')}".toLowerCase()>
                                     <div class="dd-control-header">
                                         <div>
@@ -1916,6 +2817,14 @@
                                         </div>
                                         ${c.points === 5 ? '<span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700;">5 PT</span>' : c.points === "3 or 5" ? '<span style="background: #f59e0b; color: #1a1a2e; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700;">PARTIAL</span>' : ''}
                                     </div>
+                                    ${aos.length > 0 ? `
+                                    <div style="background: rgba(37, 99, 235, 0.08); border: 1px solid #2563eb; border-radius: 8px; padding: 12px; margin-bottom: 10px;">
+                                        <div style="font-weight: 600; color: #2563eb; font-size: 0.85rem; margin-bottom: 8px;">📋 Assessment Objectives (${aos.length})</div>
+                                        <div style="color: #1e40af; font-size: 0.85rem; line-height: 1.7;">
+                                            ${aos.map(ao => `<div style="margin-bottom: 4px;">${ao}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
                                     <div class="dd-takeaways">
                                         <h4>📌 Key Takeaways</h4>
                                         <ul style="margin: 8px 0; padding-left: 20px; color: #334155; font-size: 0.9rem; line-height: 1.6;">
@@ -1927,7 +2836,7 @@
                                         <div style="color: #92400e; font-size: 0.85rem; margin-top: 4px;">${c.assessmentTips}</div>
                                     </div>
                                 </div>
-                            `).join('')}
+                            `}).join('')}
                         </div>
                     </div>
                 `;

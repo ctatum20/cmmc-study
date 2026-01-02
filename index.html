@@ -2533,7 +2533,7 @@
             if (ccaMode === 'judgment' || ccaMode === 'bestanswer') {
                 html += `
                     <div class="cca-scenario">${q.scenario || q.q}</div>
-                    <div class="cca-options" id="ccaOptions">
+                    <div class="cca-options">
                         ${q.options.map((opt, i) => `
                             <div class="cca-option" data-index="${i}">${opt}</div>
                         `).join('')}
@@ -2542,7 +2542,7 @@
             } else {
                 html += `
                     <div class="cca-question">${q.q}</div>
-                    <div class="cca-options" id="ccaOptions">
+                    <div class="cca-options">
                         ${q.options.map((opt, i) => `
                             <div class="cca-option" data-index="${i}">${opt}</div>
                         `).join('')}
@@ -2551,12 +2551,12 @@
             }
             
             html += `
-                    <div class="cca-explanation" id="ccaExplanation">
+                    <div class="cca-explanation">
                         <h4>📚 Explanation</h4>
                         <p>${q.explanation}</p>
                         ${q.mindset ? `<div class="cca-mindset"><h5>🎯 Assessor Mindset</h5><p>${q.mindset}</p></div>` : ''}
                     </div>
-                    <button class="quiz-btn quiz-btn-primary" id="ccaNextBtn" style="display: none; margin-top: 20px;" onclick="nextCCAQuestion()">
+                    <button class="quiz-btn quiz-btn-primary cca-next-btn" style="display: none; margin-top: 20px;" onclick="nextCCAQuestion()">
                         ${ccaIndex < ccaQuestions.length - 1 ? 'Next Question →' : 'See Results'}
                     </button>
                 </div>
@@ -2564,8 +2564,8 @@
             
             container.innerHTML = html;
             
-            // Add click handlers using event delegation
-            const optionsContainer = document.getElementById('ccaOptions');
+            // Add click handlers using event delegation - search within THIS container
+            const optionsContainer = container.querySelector('.cca-options');
             if (optionsContainer) {
                 optionsContainer.addEventListener('click', function(e) {
                     const option = e.target.closest('.cca-option');
@@ -2579,7 +2579,9 @@
 
         function selectCCAAnswer(index) {
             const q = ccaQuestions[ccaIndex];
-            const options = document.querySelectorAll('#ccaOptions .cca-option');
+            const containerId = ccaMode + 'Container';
+            const container = document.getElementById(containerId);
+            const options = container.querySelectorAll('.cca-options .cca-option');
             const isCorrect = index === q.correct;
             
             options.forEach((opt, i) => {
@@ -2591,8 +2593,8 @@
             if (isCorrect) ccaCorrect++;
             else ccaIncorrect++;
             
-            document.getElementById('ccaExplanation').classList.add('show');
-            document.getElementById('ccaNextBtn').style.display = 'inline-block';
+            container.querySelector('.cca-explanation').classList.add('show');
+            container.querySelector('.cca-next-btn').style.display = 'inline-block';
             updateCCAStats();
         }
 
@@ -2640,6 +2642,10 @@
             if (ccaMode === 'ethics') startCCAMode('ethics', ETHICS_QUESTIONS);
             else if (ccaMode === 'gotcha') startCCAMode('gotcha', GOTCHA_QUESTIONS);
             else if (ccaMode === 'judgment') startCCAMode('judgment', JUDGMENT_SCENARIOS);
+            else if (ccaMode === 'cap') startCCAMode('cap', CAP_QUESTIONS);
+            else if (ccaMode === 'scoping') startCCAMode('scoping', SCOPING_QUESTIONS);
+            else if (ccaMode === 'terminology') startCCAMode('terminology', TERMINOLOGY_QUESTIONS);
+            else if (ccaMode === 'bestanswer') startCCAMode('bestanswer', BEST_ANSWER_QUESTIONS);
         }
 
         function updateCCAStats() {

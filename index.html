@@ -573,6 +573,121 @@
         .confetti:nth-child(3n) { animation-duration: 3.5s; }
         .confetti:nth-child(4n) { width: 8px; height: 16px; border-radius: 2px; }
         .confetti:nth-child(5n) { width: 12px; height: 12px; border-radius: 50%; }
+        
+        /* Missed Questions Carousel */
+        .missed-carousel {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 2px solid #f87171;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 24px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .missed-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .missed-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #991b1b;
+        }
+        .missed-counter {
+            font-size: 0.9rem;
+            color: #b91c1c;
+            font-weight: 600;
+        }
+        .missed-slide {
+            position: relative;
+            min-height: 150px;
+        }
+        .missed-content {
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .missed-content.fade-out {
+            opacity: 0;
+        }
+        .missed-question {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .missed-answer-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: flex-start;
+        }
+        .missed-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .missed-label.yours {
+            background: #fecaca;
+            color: #991b1b;
+        }
+        .missed-label.correct {
+            background: #bbf7d0;
+            color: #166534;
+        }
+        .missed-answer-text {
+            font-size: 0.95rem;
+            color: #334155;
+        }
+        .missed-explanation {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #475569;
+            line-height: 1.5;
+            border-left: 3px solid #3b82f6;
+        }
+        .missed-nav {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .missed-nav-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .missed-nav-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+        .missed-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .missed-nav-btn .arrow {
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+        }
+        .missed-nav-btn:hover .arrow.left { transform: translateX(-3px); }
+        .missed-nav-btn:hover .arrow.right { transform: translateX(3px); }
     </style>
 </head>
 <body>
@@ -1651,7 +1766,22 @@
             { q: "What is required before the CMMC Level 2 certification assessment can proceed to Phase 2?", options: ["OSC payment in full", "Resolution of any CMMC Assessment Scope disagreements", "DoD approval", "The Cyber AB notification"], correct: 1, explanation: "Any disagreements concerning the CMMC Assessment Scope must be resolved between C3PAO and OSC before proceeding to Phase 2.", category: "Phase 1 Requirements" },
             { q: "Can the C3PAO offer 'pay for pass' arrangements?", options: ["Yes, if disclosed", "Only for small businesses", "No, strictly prohibited", "Yes, with OSC consent"], correct: 2, explanation: "The C3PAO is prohibited from offering any 'pay for pass' arrangements relating to assessment results.", category: "Contract Rules" },
             { q: "During Phase 2, who convenes the Daily Checkpoint Meeting?", options: ["The Affirming Official", "The OSC POC", "The Assessment Team", "The QA Individual"], correct: 2, explanation: "The Assessment Team shall host a Daily Checkpoint Meeting with the OSC POC and other OSC representatives during assessment.", category: "Phase 2 Process" },
-            { q: "What happens if the Assessment Team cannot confirm proper incorporation of an ESP in the assessment scope?", options: ["Proceed without assessing ESP", "Mark all ESP controls N/A", "Discuss with Affirming Official about not proceeding", "Automatically fail the OSC"], correct: 2, explanation: "If ESP incorporation cannot be confirmed, the C3PAO should confer with the OSC Affirming Official and discuss not proceeding.", category: "ESP Handling" }
+            { q: "What happens if the Assessment Team cannot confirm proper incorporation of an ESP in the assessment scope?", options: ["Proceed without assessing ESP", "Mark all ESP controls N/A", "Discuss with Affirming Official about not proceeding", "Automatically fail the OSC"], correct: 2, explanation: "If ESP incorporation cannot be confirmed, the C3PAO should confer with the OSC Affirming Official and discuss not proceeding.", category: "ESP Handling" },
+            // NEW CAP QUESTIONS
+            { q: "What are the THREE assessment methods defined in the CMMC Assessment Guide?", options: ["Review, Observe, Validate", "Examine, Interview, Test", "Inspect, Question, Demonstrate", "Audit, Query, Verify"], correct: 1, explanation: "The three assessment methods are EXAMINE (reviewing documentation), INTERVIEW (discussions with staff), and TEST (exercising mechanisms).", category: "Assessment Methods" },
+            { q: "What does the EXAMINE method involve?", options: ["Exercising mechanisms under conditions", "Reviewing, inspecting, observing, studying assessment objects", "Holding discussions with individuals", "Demonstrating configurations"], correct: 1, explanation: "EXAMINE includes reviewing, inspecting, observing, studying, or analyzing assessment objects like documents, mechanisms, and activities.", category: "Assessment Methods" },
+            { q: "What does the INTERVIEW method achieve?", options: ["Proves technical implementation", "Facilitates understanding, achieves clarification, obtains evidence", "Replaces the need for testing", "Documents the assessment scope"], correct: 1, explanation: "The interview method holds discussions with individuals to facilitate understanding, achieve clarification, or obtain evidence.", category: "Assessment Methods" },
+            { q: "What does the TEST method demonstrate?", options: ["What contractor staff believe is true", "What documentation says should happen", "What has or has not been done - actual implementation", "Compliance with policies"], correct: 2, explanation: "Testing demonstrates what has or has not been done. It shows actual implementation by exercising mechanisms under specified conditions.", category: "Assessment Methods" },
+            { q: "What are 'assessment objects' in CMMC context?", options: ["Physical equipment only", "Specifications, mechanisms, activities, and individuals", "Only policy documents", "Only technical configurations"], correct: 1, explanation: "Assessment objects include specifications (documents), mechanisms (hardware/software/firmware), activities (protection-related actions), and individuals.", category: "Assessment Objects" },
+            { q: "Can documents in DRAFT form be accepted as evidence?", options: ["Yes, if content is complete", "Yes, with manager approval", "No, all evidence must be in final form", "Only for POA&M items"], correct: 2, explanation: "Per 32 CFR 170.24, documents must be in final form. Working papers, drafts, and unofficial policies are NOT acceptable as evidence.", category: "Evidence Requirements" },
+            { q: "What are the THREE possible assessment findings?", options: ["PASS, FAIL, PARTIAL", "MET, NOT MET, NOT APPLICABLE", "COMPLIANT, NON-COMPLIANT, EXEMPT", "YES, NO, N/A"], correct: 1, explanation: "The three possible findings are: MET (meets all objectives), NOT MET (doesn't meet one or more objectives), and NOT APPLICABLE (practice doesn't apply).", category: "Assessment Findings" },
+            { q: "For a practice to be marked MET, what must be true?", options: ["At least 80% of objectives satisfied", "Most objectives satisfied", "ALL assessment objectives must be satisfied", "Core objectives satisfied"], correct: 2, explanation: "For MET status, the contractor must demonstrate compliance with ALL assessment objectives. No partial credit exists.", category: "Assessment Findings" },
+            { q: "When can a practice objective be 'inherited'?", options: ["Never - all must be directly assessed", "When an ESP or enterprise performs the objective with adequate evidence", "Only for cloud services", "Only with government approval"], correct: 1, explanation: "A practice objective is MET if inherited when adequate evidence shows an enterprise or ESP performs the objective for in-scope assets.", category: "Inheritance" },
+            { q: "What must inherited evidence demonstrate?", options: ["Only that ESP has the capability", "That objectives are applicable to in-scope assets and how they were evaluated/inherited", "Only the ESP's certification", "Only the contractual relationship"], correct: 1, explanation: "Evidence must show objectives are applicable to in-scope assets AND include statements on how they were evaluated and from whom inherited.", category: "Inheritance" },
+            { q: "What is 'organizationally defined' in CMMC context?", options: ["Defined by DoD", "Defined by NIST", "Determined by the contractor being assessed", "Defined by the C3PAO"], correct: 2, explanation: "Organizationally defined means as determined by the contractor. It can apply to frequency, configuration, or other aspects they define.", category: "CMMC Terms" },
+            { q: "What does 'periodically' mean in CMMC requirements?", options: ["Weekly", "Monthly", "At regular intervals, organizationally defined, no more than one year", "Annually only"], correct: 2, explanation: "Periodically means at regular intervals. The interval is organizationally defined but must be no more than one year.", category: "CMMC Terms" },
+            { q: "What is an 'event' vs an 'incident' in CMMC terminology?", options: ["They're the same thing", "Event = any observable occurrence; Incident = actually jeopardizes confidentiality/integrity/availability", "Incident is less severe", "Event requires reporting"], correct: 1, explanation: "An EVENT is any observable occurrence. An INCIDENT actually or potentially jeopardizes confidentiality, integrity, or availability.", category: "CMMC Terms" },
+            { q: "What does 'monitor' mean in CMMC context?", options: ["Install monitoring software", "One-time review", "Continually checking, supervising, critically observing at organizationally defined frequency", "Annual assessment"], correct: 2, explanation: "Monitor means continually checking, supervising, critically observing, or determining status at an organizationally defined frequency and rate.", category: "CMMC Terms" }
         ];
         
         // ==================== SCOPING QUIZ ====================
@@ -1667,7 +1797,25 @@
             { q: "Can CMMC Assessment Scope include multiple CAGE codes?", options: ["No, one CAGE code per assessment", "Yes, if associated with a singular assessment scope", "Only with DoD approval", "Only for Level 1"], correct: 1, explanation: "A single CMMC assessment may cover multiple entities if more than one CAGE code is associated with a singular CMMC Level 2 Assessment Scope.", category: "Scope Boundaries" },
             { q: "Where must the OSC document their CUI Assets?", options: ["Only in the SSP", "Asset inventory, SSP, AND network diagram", "Only in network diagrams", "In SPRS only"], correct: 1, explanation: "CUI Assets must be documented in the asset inventory, the System Security Plan (SSP), AND the network diagram of the CMMC Assessment Scope.", category: "Documentation Requirements" },
             { q: "If an OSC's ESP is FedRAMP Authorized at Moderate baseline, what must the Assessment Team verify?", options: ["Nothing - FedRAMP is automatically accepted", "That the specific cloud service offering is listed in the FedRAMP Marketplace", "That the OSC paid for the authorization", "Only the authorization date"], correct: 1, explanation: "The Assessment Team must verify the authorization AND that the specific cloud service offering is documented in the FedRAMP Marketplace.", category: "FedRAMP Verification" },
-            { q: "What does FedRAMP 'equivalency' mean in CMMC context?", options: ["SOC 2 Type II certification", "CSP meets FedRAMP Moderate requirements but isn't authorized", "ISO 27001 certification", "DoD-specific cloud authorization"], correct: 1, explanation: "FedRAMP equivalency means the CSP meets FedRAMP Moderate security requirements but hasn't gone through official FedRAMP authorization.", category: "FedRAMP Equivalency" }
+            { q: "What does FedRAMP 'equivalency' mean in CMMC context?", options: ["SOC 2 Type II certification", "CSP meets FedRAMP Moderate requirements but isn't authorized", "ISO 27001 certification", "DoD-specific cloud authorization"], correct: 1, explanation: "FedRAMP equivalency means the CSP meets FedRAMP Moderate security requirements but hasn't gone through official FedRAMP authorization.", category: "FedRAMP Equivalency" },
+            // NEW ASSET CATEGORY DEEP DIVE QUESTIONS
+            { q: "Security Protection Assets (SPA) are assessed against which CMMC practices?", options: ["Only security-related practices", "No practices - they're exempt", "ALL CMMC practices, same as CUI Assets", "Only practices related to their function"], correct: 2, explanation: "SPAs are assessed against ALL CMMC practices, just like CUI Assets. The fact they don't handle CUI doesn't reduce their assessment requirements.", category: "SPA Assessment" },
+            { q: "A SIEM server that monitors CUI systems but never stores CUI itself is categorized as:", options: ["CUI Asset", "Security Protection Asset", "Out-of-Scope Asset", "Contractor Risk Managed Asset"], correct: 1, explanation: "A SIEM provides security functions to the CMMC Assessment Scope. It's a Security Protection Asset regardless of whether it processes CUI.", category: "SPA Examples" },
+            { q: "What is the assessment requirement for Contractor Risk Managed Assets (CRMA)?", options: ["Full assessment against all CMMC practices", "No assessment required", "Limited spot checks only", "Assessment against CA.L2-3.12.4 only"], correct: 2, explanation: "CRMAs receive limited spot checks if findings raise questions. They're reviewed per SSP (CA.L2-3.12.4) but not assessed against other CMMC practices.", category: "CRMA Assessment" },
+            { q: "What documentation is required for Contractor Risk Managed Assets?", options: ["None - they're not in scope", "Only network diagrams", "Asset inventory, SSP, AND network diagram", "Only the SSP"], correct: 2, explanation: "CRMAs must be documented in asset inventory, SSP, and network diagram - same as CUI Assets and SPAs. They show how risk-based policies manage them.", category: "CRMA Documentation" },
+            { q: "What separates Out-of-Scope Assets from assets in the CMMC Assessment Scope?", options: ["Documentation requirements", "Physical OR logical separation from CUI assets", "Management approval", "Cost considerations"], correct: 1, explanation: "Out-of-Scope Assets must be physically OR logically separated from CUI assets. This separation is what makes them out of scope.", category: "Out-of-Scope Requirements" },
+            { q: "Are Contractor Risk Managed Assets required to be physically or logically separated from CUI assets?", options: ["Yes, strict separation required", "No, separation is NOT required", "Only logical separation", "Only physical separation"], correct: 1, explanation: "CRMAs are NOT required to be physically or logically separated from CUI assets. That's what distinguishes them from Out-of-Scope assets.", category: "CRMA vs Out-of-Scope" },
+            { q: "What types of assets qualify as Specialized Assets?", options: ["Any legacy system", "Government property, IoT, OT, Restricted Info Systems, Test Equipment", "Only government-furnished equipment", "Cloud services only"], correct: 1, explanation: "Specialized Assets include: Government Property, IoT/IIoT devices, Operational Technology (OT), Restricted Information Systems, and Test Equipment.", category: "Specialized Asset Types" },
+            { q: "How are Specialized Assets assessed?", options: ["Against all CMMC practices", "Against the SSP per CA.L2-3.12.4 only, not other practices", "Not assessed at all", "Only against technical controls"], correct: 1, explanation: "Specialized Assets are reviewed against the SSP (CA.L2-3.12.4) but NOT assessed against other CMMC practices due to their unique limitations.", category: "Specialized Assessment" },
+            { q: "An employee's personal smartphone used to check work email (CUI possible) would be categorized as:", options: ["Out-of-Scope Asset", "CUI Asset if CUI flows through it", "Always exempt from scope", "Specialized Asset"], correct: 1, explanation: "If CUI can flow through a device, it's a CUI Asset. Personal devices accessing CUI-containing email become CUI Assets in scope.", category: "BYOD Scoping" },
+            { q: "A firewall protecting the CUI enclave but not processing CUI is categorized as:", options: ["CUI Asset", "Security Protection Asset", "Out-of-Scope Asset", "Specialized Asset"], correct: 1, explanation: "Firewalls providing security functions to the CMMC Assessment Scope are Security Protection Assets, assessed against ALL practices.", category: "SPA Examples" },
+            { q: "What happens if spot checks on CRMA reveal security concerns?", options: ["Automatic NOT MET finding", "Assessor can conduct limited spot checks to identify risks", "CRMA must be reclassified as CUI Asset", "Assessment must restart"], correct: 1, explanation: "If findings raise questions about CRMAs, the assessor can conduct limited spot checks. These shall not materially increase assessment duration or cost.", category: "CRMA Spot Checks" },
+            { q: "A Windows XP machine running CNC equipment that processes technical drawings (CUI) would be:", options: ["Out-of-Scope (too old)", "Specialized Asset with documented compensating controls", "CUI Asset requiring full compliance", "Contractor Risk Managed Asset"], correct: 1, explanation: "Legacy OT equipment that cannot meet standard controls is categorized as Specialized Asset. Compensating controls must be documented in SSP.", category: "Legacy Systems" },
+            { q: "Which asset category has NO assessment requirements?", options: ["Specialized Assets", "Contractor Risk Managed Assets", "Out-of-Scope Assets", "Security Protection Assets"], correct: 2, explanation: "Out-of-Scope Assets have NO assessment requirements because they cannot process, store, or transmit CUI and are separated from CUI assets.", category: "Assessment Requirements" },
+            { q: "A contractor's home router used for telework accessing CUI is:", options: ["Always Out-of-Scope", "In scope if used to access, store, or transfer CUI", "Never considered in assessment", "Only in scope if company-owned"], correct: 1, explanation: "Home routers ARE in scope if used to create, store, or transfer FCI/CUI. This is explicitly stated in CMMC guidance.", category: "Telework Scoping" },
+            { q: "What must CRMAs demonstrate in the SSP?", options: ["Full CMMC compliance", "That they're managed using risk-based security policies, procedures, and practices", "Physical separation from CUI", "Government approval"], correct: 1, explanation: "CRMAs must show in the SSP that they're managed using the contractor's risk-based security policies, procedures, and practices.", category: "CRMA SSP Requirements" },
+            { q: "An endpoint protection server that manages AV for CUI systems is categorized as:", options: ["CUI Asset", "Security Protection Asset", "Specialized Asset", "Out-of-Scope"], correct: 1, explanation: "Endpoint protection infrastructure provides security capabilities to the CMMC scope = Security Protection Asset, assessed against ALL practices.", category: "SPA Examples" },
+            { q: "The key question for determining if an asset is CRMA vs Out-of-Scope is:", options: ["Does it have CUI on it now?", "Can CUI potentially flow there, even if not intended?", "Is it documented?", "Is it company-owned?"], correct: 1, explanation: "CRMA = CUI CAN flow there (but policies prevent it). Out-of-Scope = CUI can NEVER flow there (separation enforced). The POTENTIAL for CUI flow is key.", category: "Scoping Decision" }
         ];
         
         // ==================== TERMINOLOGY TRAPS (Exam gotcha questions!) ====================
@@ -2038,11 +2186,14 @@
         let correctAnswers = 0;
         let incorrectAnswers = 0;
         let answered = false;
+        let missedQuestions = []; // Track missed questions for remediation
         let ccaMode = '';
         let ccaQuestions = [];
         let ccaIndex = 0;
         let ccaCorrect = 0;
         let ccaIncorrect = 0;
+        let ccaMissed = []; // Track missed CCA questions
+        let missedCarouselIndex = 0; // Current position in missed carousel
 
         // ==================== MODE SWITCHING ====================
         function setMode(mode) {
@@ -2332,6 +2483,7 @@
             currentQuestionIndex = 0;
             correctAnswers = 0;
             incorrectAnswers = 0;
+            missedQuestions = []; // Reset missed tracking
             
             document.getElementById('quizSettings').style.display = 'none';
             document.getElementById('quizSidebar').style.display = 'block';
@@ -2411,8 +2563,20 @@
             answered = true;
             
             const isCorrect = selected === correct;
-            if (isCorrect) correctAnswers++;
-            else incorrectAnswers++;
+            const q = quizQuestions[currentQuestionIndex];
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+                // Track missed question for remediation
+                missedQuestions.push({
+                    question: q,
+                    yourAnswer: selected,
+                    correctAnswer: correct,
+                    type: 'control'
+                });
+            }
             
             document.querySelectorAll('.quiz-answer').forEach(el => {
                 el.classList.add('disabled');
@@ -2484,6 +2648,82 @@
             
             document.getElementById('resultsIcon').textContent = icon;
             document.getElementById('resultsMessage').textContent = message;
+            
+            // Add missed questions carousel
+            const existingCarousel = document.getElementById('quizMissedCarousel');
+            if (existingCarousel) existingCarousel.remove();
+            
+            if (missedQuestions.length > 0) {
+                missedCarouselIndex = 0;
+                const missedHtml = `
+                    <div class="missed-carousel" id="quizMissedCarousel">
+                        <div class="missed-header">
+                            <div class="missed-title">📝 What You Missed</div>
+                            <div class="missed-counter"><span id="quizMissedCurrent">1</span> of ${missedQuestions.length}</div>
+                        </div>
+                        <div class="missed-slide">
+                            <div class="missed-content" id="quizMissedContent">
+                                ${renderMissedControlSlide(missedQuestions[0])}
+                            </div>
+                        </div>
+                        ${missedQuestions.length > 1 ? `
+                        <div class="missed-nav">
+                            <button class="missed-nav-btn" id="quizPrevBtn" onclick="navigateQuizMissed(-1)" disabled>
+                                <span class="arrow left">←</span> Prev
+                            </button>
+                            <button class="missed-nav-btn" id="quizNextBtn2" onclick="navigateQuizMissed(1)">
+                                Next <span class="arrow right">→</span>
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                document.getElementById('quizResults').insertAdjacentHTML('beforeend', missedHtml);
+            }
+        }
+        
+        function renderMissedControlSlide(missed) {
+            const q = missed.question;
+            const deepDive = controlDeepDives[q.domain]?.controls.find(c => c.id === q.id);
+            const explanation = deepDive?.keyTakeaway || q.meaning || 'Review this control in the Deep Dive section.';
+            
+            return `
+                <div class="missed-question"><strong>${q.id}</strong>: ${q.req}</div>
+                <div class="missed-answer-row">
+                    <span class="missed-label yours">Your Answer</span>
+                    <span class="missed-answer-text">${missed.yourAnswer}</span>
+                </div>
+                <div class="missed-answer-row">
+                    <span class="missed-label correct">Correct</span>
+                    <span class="missed-answer-text">${missed.correctAnswer}</span>
+                </div>
+                <div class="missed-explanation">${explanation}</div>
+            `;
+        }
+        
+        function navigateQuizMissed(direction) {
+            const contentEl = document.getElementById('quizMissedContent');
+            const counterEl = document.getElementById('quizMissedCurrent');
+            const prevBtn = document.getElementById('quizPrevBtn');
+            const nextBtn = document.getElementById('quizNextBtn2');
+            
+            // Fade out
+            contentEl.classList.add('fade-out');
+            
+            setTimeout(() => {
+                missedCarouselIndex += direction;
+                
+                // Update content
+                contentEl.innerHTML = renderMissedControlSlide(missedQuestions[missedCarouselIndex]);
+                counterEl.textContent = missedCarouselIndex + 1;
+                
+                // Update button states
+                prevBtn.disabled = missedCarouselIndex === 0;
+                nextBtn.disabled = missedCarouselIndex === missedQuestions.length - 1;
+                
+                // Fade in
+                contentEl.classList.remove('fade-out');
+            }, 150);
         }
 
         function restartQuiz() { showQuizSettings(); }
@@ -2501,6 +2741,7 @@
             ccaIndex = 0;
             ccaCorrect = 0;
             ccaIncorrect = 0;
+            ccaMissed = []; // Reset missed tracking
             renderCCAQuestion();
         }
 
@@ -2590,8 +2831,19 @@
                 else if (i === index && !isCorrect) opt.classList.add('incorrect');
             });
             
-            if (isCorrect) ccaCorrect++;
-            else ccaIncorrect++;
+            if (isCorrect) {
+                ccaCorrect++;
+            } else {
+                ccaIncorrect++;
+                // Track missed question for remediation
+                ccaMissed.push({
+                    question: q,
+                    yourAnswerIndex: index,
+                    yourAnswer: q.options[index],
+                    correctAnswer: q.options[q.correct],
+                    type: ccaMode
+                });
+            }
             
             container.querySelector('.cca-explanation').classList.add('show');
             container.querySelector('.cca-next-btn').style.display = 'inline-block';
@@ -2618,6 +2870,35 @@
             else if (percent >= 70) { icon = '👍'; message = 'Good progress!'; }
             else { icon = '💪'; message = 'Keep studying!'; }
             
+            // Build missed questions carousel HTML
+            let missedHtml = '';
+            if (ccaMissed.length > 0) {
+                missedCarouselIndex = 0;
+                missedHtml = `
+                    <div class="missed-carousel" id="ccaMissedCarousel">
+                        <div class="missed-header">
+                            <div class="missed-title">📝 What You Missed</div>
+                            <div class="missed-counter"><span id="ccaMissedCurrent">1</span> of ${ccaMissed.length}</div>
+                        </div>
+                        <div class="missed-slide">
+                            <div class="missed-content" id="ccaMissedContent">
+                                ${renderMissedSlide(ccaMissed[0], 'cca')}
+                            </div>
+                        </div>
+                        ${ccaMissed.length > 1 ? `
+                        <div class="missed-nav">
+                            <button class="missed-nav-btn" id="ccaPrevBtn" onclick="navigateMissed('cca', -1)" disabled>
+                                <span class="arrow left">←</span> Prev
+                            </button>
+                            <button class="missed-nav-btn" id="ccaNextBtn2" onclick="navigateMissed('cca', 1)">
+                                Next <span class="arrow right">→</span>
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
             container.innerHTML = `
                 <div class="quiz-results active">
                     <div class="results-icon">${icon}</div>
@@ -2634,8 +2915,52 @@
                         </div>
                     </div>
                     <button class="quiz-btn quiz-btn-primary" onclick="restartCCAMode()">Try Again</button>
+                    ${missedHtml}
                 </div>
             `;
+        }
+        
+        function renderMissedSlide(missed, type) {
+            const q = missed.question;
+            const questionText = q.scenario || q.q || `${q.id}: ${q.name}`;
+            return `
+                <div class="missed-question">${questionText}</div>
+                <div class="missed-answer-row">
+                    <span class="missed-label yours">Your Answer</span>
+                    <span class="missed-answer-text">${missed.yourAnswer}</span>
+                </div>
+                <div class="missed-answer-row">
+                    <span class="missed-label correct">Correct</span>
+                    <span class="missed-answer-text">${missed.correctAnswer}</span>
+                </div>
+                <div class="missed-explanation">${q.explanation || q.meaning || 'Review this control in the Deep Dive section.'}</div>
+            `;
+        }
+        
+        function navigateMissed(type, direction) {
+            const missed = type === 'cca' ? ccaMissed : missedQuestions;
+            const contentEl = document.getElementById(type === 'cca' ? 'ccaMissedContent' : 'quizMissedContent');
+            const counterEl = document.getElementById(type === 'cca' ? 'ccaMissedCurrent' : 'quizMissedCurrent');
+            const prevBtn = document.getElementById(type === 'cca' ? 'ccaPrevBtn' : 'quizPrevBtn');
+            const nextBtn = document.getElementById(type === 'cca' ? 'ccaNextBtn2' : 'quizNextBtn2');
+            
+            // Fade out
+            contentEl.classList.add('fade-out');
+            
+            setTimeout(() => {
+                missedCarouselIndex += direction;
+                
+                // Update content
+                contentEl.innerHTML = renderMissedSlide(missed[missedCarouselIndex], type);
+                counterEl.textContent = missedCarouselIndex + 1;
+                
+                // Update button states
+                prevBtn.disabled = missedCarouselIndex === 0;
+                nextBtn.disabled = missedCarouselIndex === missed.length - 1;
+                
+                // Fade in
+                contentEl.classList.remove('fade-out');
+            }, 150);
         }
 
         function restartCCAMode() {

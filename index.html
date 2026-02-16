@@ -86,10 +86,10 @@
         .mode-btn.scoping:hover, .mode-btn.scoping.active { background: #6366f1; border-color: #6366f1; color: white; }
         .mode-btn.terminology { border-color: #ec4899; }
         .mode-btn.terminology:hover, .mode-btn.terminology.active { background: #ec4899; border-color: #ec4899; color: white; }
-        .mode-btn.bestanswer { border-color: #14b8a6; }
-        .mode-btn.bestanswer:hover, .mode-btn.bestanswer.active { background: #14b8a6; border-color: #14b8a6; color: white; }
         .mode-btn.tips { border-color: #f97316; }
         .mode-btn.tips:hover, .mode-btn.tips.active { background: #f97316; border-color: #f97316; color: white; }
+        .mode-btn.stats { border-color: #8b5cf6; }
+        .mode-btn.stats:hover, .mode-btn.stats.active { background: #8b5cf6; border-color: #8b5cf6; color: white; }
         .mode-btn.deepdive { border-color: #06b6d4; }
         .mode-btn.deepdive:hover, .mode-btn.deepdive.active { background: #06b6d4; border-color: #06b6d4; color: #1a1a2e; }
         
@@ -412,7 +412,6 @@
         .cca-category.cap { background: #10b981; color: white; }
         .cca-category.scoping { background: #6366f1; color: white; }
         .cca-category.terminology { background: #ec4899; color: white; }
-        .cca-category.bestanswer { background: #14b8a6; color: white; }
         
         .cca-question { font-size: 1.2rem; font-weight: 600; color: #1a1a2e; line-height: 1.5; margin-bottom: 20px; }
         .cca-scenario { font-size: 1rem; color: #444; line-height: 1.6; margin-bottom: 25px; padding: 20px; background: #f8fafc; border-radius: 12px; border-left: 4px solid #2563EB; }
@@ -727,11 +726,8 @@
                 <button class="mode-btn terminology" id="modeTerminology" onclick="setMode('terminology')">
                     <span class="icon">📚</span> Terms
                 </button>
-                <button class="mode-btn bestanswer" id="modeBestanswer" onclick="setMode('bestanswer')">
-                    <span class="icon">🧠</span> Best Answer
-                </button>
-                <button class="mode-btn distinctions" id="modeDistinctions" onclick="setMode('distinctions')">
-                    <span class="icon">🔬</span> Distinctions
+                <button class="mode-btn stats" id="modeStats" onclick="setMode('stats')">
+                    <span class="icon">📊</span> Stats
                 </button>
                 <button class="mode-btn tips" id="modeTips" onclick="setMode('tips')">
                     <span class="icon">💡</span> Tips
@@ -838,7 +834,7 @@
                 </div>
                 <div class="stat-item">
                     <span>CCA Questions</span>
-                    <span class="stat-value">250</span>
+                    <span class="stat-value">211</span>
                 </div>
                 <div class="stat-item">
                     <span>Domains</span>
@@ -982,14 +978,12 @@
             <!-- Terminology Mode -->
             <div id="terminologyContainer" class="mode-panel"></div>
             
-            <!-- Best Answer Mode -->
-            <div id="bestanswerContainer" class="mode-panel"></div>
-            
-            <!-- Distinctions Mode -->
-            <div id="distinctionsContainer" class="mode-panel"></div>
             
             <!-- Tips Mode -->
             <div id="tipsContainer" class="mode-panel"></div>
+            
+            <!-- Stats Mode -->
+            <div id="statsContainer" class="mode-panel"></div>
             
             <!-- Deep Dive Mode -->
             <div id="deepdiveContainer" class="mode-panel"></div>
@@ -2278,6 +2272,102 @@
         // ==================== STATE ====================
         let currentMode = 'study';
         let studiedControls = JSON.parse(localStorage.getItem('studiedControls') || '[]');
+        
+        // ==================== QUESTION PERFORMANCE TRACKING ====================
+        // Tracks each question's right/wrong history for weighted selection
+        let questionStats = JSON.parse(localStorage.getItem('questionStats') || '{}');
+        
+        // Domain mapping for exam-weighted distribution
+        // D1 Environment: 15%, D2 Scoping: 20%, D3 CAP: 25%, D4 Evidence: 40%
+        const DOMAIN_WEIGHTS = {
+            'd1_environment': 0.15,
+            'd2_scoping': 0.20,
+            'd3_cap': 0.25,
+            'd4_evidence': 0.40
+        };
+        
+        const CATEGORY_TO_DOMAIN = {
+            'ethics': 'd3_cap',      // CoPC is part of CAP domain
+            'cap': 'd3_cap',
+            'scoping': 'd2_scoping',
+            'judgment': 'd4_evidence',
+            'gotcha': 'd4_evidence',
+            'terminology': 'd4_evidence'
+        };
+        
+        function getQuestionId(mode, index, question) {
+            // Create unique ID based on first 50 chars of question text
+            const qText = (question.q || question.scenario || '').substring(0, 50);
+            return `${mode}_${btoa(qText).substring(0, 20)}`;
+        }
+        
+        function recordAnswer(questionId, isCorrect) {
+            if (!questionStats[questionId]) {
+                questionStats[questionId] = { correct: 0, incorrect: 0, lastSeen: null };
+            }
+            if (isCorrect) {
+                questionStats[questionId].correct++;
+            } else {
+                questionStats[questionId].incorrect++;
+            }
+            questionStats[questionId].lastSeen = Date.now();
+            localStorage.setItem('questionStats', JSON.stringify(questionStats));
+        }
+        
+        function getQuestionWeight(questionId) {
+            const stats = questionStats[questionId];
+            if (!stats) return 1; // Never seen = normal weight
+            
+            const total = stats.correct + stats.incorrect;
+            if (total === 0) return 1;
+            
+            // Wrong answers get boosted (up to 3x)
+            // Right answers get reduced (down to 0.3x)
+            const wrongRatio = stats.incorrect / total;
+            return 0.3 + (wrongRatio * 2.7); // Range: 0.3 (all correct) to 3.0 (all wrong)
+        }
+        
+        function weightedShuffle(questions, mode) {
+            // Assign weights to each question based on performance
+            const weighted = questions.map((q, i) => {
+                const qId = getQuestionId(mode, i, q);
+                return { question: q, weight: getQuestionWeight(qId), id: qId };
+            });
+            
+            // Sort by weight (higher weight = more likely to appear first)
+            // Add randomness within weight tiers
+            weighted.sort((a, b) => {
+                const weightDiff = b.weight - a.weight;
+                if (Math.abs(weightDiff) < 0.5) {
+                    return Math.random() - 0.5; // Randomize within similar weights
+                }
+                return weightDiff;
+            });
+            
+            return weighted.map(w => ({ ...w.question, _qId: w.id }));
+        }
+        
+        function getStatsForCategory(mode, questions) {
+            let totalCorrect = 0, totalIncorrect = 0, totalUnseen = 0;
+            const weakQuestions = [];
+            
+            questions.forEach((q, i) => {
+                const qId = getQuestionId(mode, i, q);
+                const stats = questionStats[qId];
+                if (!stats || (stats.correct === 0 && stats.incorrect === 0)) {
+                    totalUnseen++;
+                } else {
+                    totalCorrect += stats.correct;
+                    totalIncorrect += stats.incorrect;
+                    const wrongRatio = stats.incorrect / (stats.correct + stats.incorrect);
+                    if (wrongRatio >= 0.5 && stats.incorrect >= 2) {
+                        weakQuestions.push({ q: q.q || q.scenario, wrongRatio, stats });
+                    }
+                }
+            });
+            
+            return { totalCorrect, totalIncorrect, totalUnseen, weakQuestions, total: questions.length };
+        }
         let searchTerm = '';
         let studyFilter = 'all';
         let typeFilter = 'all';
@@ -2316,9 +2406,8 @@
             document.getElementById('capContainer').classList.remove('active');
             document.getElementById('scopingContainer').classList.remove('active');
             document.getElementById('terminologyContainer').classList.remove('active');
-            document.getElementById('bestanswerContainer').classList.remove('active');
-            document.getElementById('distinctionsContainer').classList.remove('active');
             document.getElementById('tipsContainer').classList.remove('active');
+            document.getElementById('statsContainer').classList.remove('active');
             document.getElementById('deepdiveContainer').classList.remove('active');
             
             // Hide all sidebars
@@ -2357,17 +2446,12 @@
                 document.getElementById('terminologyContainer').classList.add('active');
                 document.getElementById('ccaSidebar').style.display = 'block';
                 startCCAMode('terminology', TERMINOLOGY_QUESTIONS);
-            } else if (mode === 'bestanswer') {
-                document.getElementById('bestanswerContainer').classList.add('active');
-                document.getElementById('ccaSidebar').style.display = 'block';
-                startCCAMode('bestanswer', BEST_ANSWER_QUESTIONS);
-            } else if (mode === 'distinctions') {
-                document.getElementById('distinctionsContainer').classList.add('active');
-                document.getElementById('ccaSidebar').style.display = 'block';
-                startCCAMode('distinctions', ASSESSOR_DISTINCTIONS_QUESTIONS);
             } else if (mode === 'tips') {
                 document.getElementById('tipsContainer').classList.add('active');
                 renderTips();
+            } else if (mode === 'stats') {
+                document.getElementById('statsContainer').classList.add('active');
+                renderStats();
             } else if (mode === 'deepdive') {
                 document.getElementById('deepdiveContainer').classList.add('active');
                 document.getElementById('studySidebar').style.display = 'block';
@@ -2845,7 +2929,8 @@
         // ==================== CCA MODES ====================
         function startCCAMode(mode, questions) {
             ccaMode = mode;
-            ccaQuestions = shuffle([...questions]);
+            // Use weighted shuffle - wrong answers appear more often
+            ccaQuestions = weightedShuffle([...questions], mode);
             ccaIndex = 0;
             ccaCorrect = 0;
             ccaIncorrect = 0;
@@ -2866,9 +2951,7 @@
                 'judgment': '🎯 Assessor Judgment',
                 'cap': '📋 CAP Process',
                 'scoping': '🗺️ Scoping & Assets',
-                'terminology': '📚 Terminology Traps',
-                'bestanswer': '🧠 Best Answer Training',
-                'distinctions': '🔬 Assessor Distinctions'
+                'terminology': '📚 Terminology Traps'
             };
             
             let html = `
@@ -2880,7 +2963,7 @@
                     <span class="cca-category ${ccaMode}">${q.category}</span>
             `;
             
-            if (ccaMode === 'judgment' || ccaMode === 'bestanswer') {
+            if (ccaMode === 'judgment') {
                 html += `
                     <div class="cca-scenario">${q.scenario || q.q}</div>
                     <div class="cca-options">
@@ -2942,8 +3025,10 @@
             
             if (isCorrect) {
                 ccaCorrect++;
+                recordAnswer(q._qId || getQuestionId(ccaMode, ccaIndex, q), true);
             } else {
                 ccaIncorrect++;
+                recordAnswer(q._qId || getQuestionId(ccaMode, ccaIndex, q), false);
                 // Track missed question for remediation
                 ccaMissed.push({
                     question: q,
@@ -3079,8 +3164,6 @@
             else if (ccaMode === 'cap') startCCAMode('cap', CAP_QUESTIONS);
             else if (ccaMode === 'scoping') startCCAMode('scoping', SCOPING_QUESTIONS);
             else if (ccaMode === 'terminology') startCCAMode('terminology', TERMINOLOGY_QUESTIONS);
-            else if (ccaMode === 'bestanswer') startCCAMode('bestanswer', BEST_ANSWER_QUESTIONS);
-            else if (ccaMode === 'distinctions') startCCAMode('distinctions', ASSESSOR_DISTINCTIONS_QUESTIONS);
         }
 
         function updateCCAStats() {
@@ -3097,6 +3180,10 @@
                 <div class="header">
                     <h2>💡 Test-Taking Strategy Tips</h2>
                     <p>Key strategies for CCA exam success</p>
+                </div>
+                <div style="text-align: center; margin-bottom: 24px; padding: 15px; background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(251, 146, 60, 0.1) 100%); border-radius: 12px; border: 1px solid rgba(249, 115, 22, 0.3);">
+                    <span style="color: #64748b; font-size: 0.95rem;">Exam insights from </span>
+                    <a href="https://www.linkedin.com/in/constanceblansonphd/" target="_blank" rel="noopener noreferrer" style="color: #f97316; text-decoration: none; font-weight: 600;">Constance Blanson, PhD</a>
                 </div>
                 <div style="max-width: 900px; margin: 0 auto;">
                     <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin-bottom: 24px; border: 2px solid #f59e0b;">
@@ -3160,6 +3247,43 @@
                         </ul>
                     </div>
                     
+                    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #f59e0b;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #92400e; margin-bottom: 16px;">📜 THE DFARS STORY — They Got Stricter Over Time</div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 16px;">
+                            <tr style="background: rgba(255,255,255,0.7);">
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #d97706; color: #92400e;">DFARS</th>
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #d97706; color: #92400e;">Memory Hook</th>
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #d97706; color: #92400e;">What It Does</th>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.4);">
+                                <td style="padding: 10px; border-bottom: 1px solid #fbbf24; font-weight: 700; color: #78350f;">7012</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #fbbf24; color: #92400e;"><strong>"The OG"</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #fbbf24; color: #78350f;"><strong>DO IT</strong> — Implement 800-171, FedRAMP for cloud, 72-hr incident reporting to DIBNet</td>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.6);">
+                                <td style="padding: 10px; border-bottom: 1px solid #fbbf24; font-weight: 700; color: #78350f;">7019</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #fbbf24; color: #92400e;"><strong>"Notice"</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #fbbf24; color: #78350f;"><strong>SHOW IT</strong> — Post your SPRS score, have a current assessment</td>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.4);">
+                                <td style="padding: 10px; border-bottom: 1px solid #fbbf24; font-weight: 700; color: #78350f;">7020</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #fbbf24; color: #92400e;"><strong>"DoD Checks"</strong></td>
+                                <td style="padding: 10px; border-bottom: 1px solid #fbbf24; color: #78350f;"><strong>WE CHECK IT</strong> — DoD can assess you (Basic/Medium/High)</td>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.6);">
+                                <td style="padding: 10px; font-weight: 700; color: #78350f;">7021</td>
+                                <td style="padding: 10px; color: #92400e;"><strong>"CMMC"</strong></td>
+                                <td style="padding: 10px; color: #78350f;"><strong>PROVE IT</strong> — Get your CMMC certification</td>
+                            </tr>
+                        </table>
+                        <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 10px; border-left: 4px solid #d97706;">
+                            <div style="font-weight: 700; color: #92400e; margin-bottom: 8px;">🎯 The Story (in order):</div>
+                            <div style="color: #78350f; font-size: 1rem; line-height: 1.6; font-style: italic;">
+                                "First they said <strong>DO IT</strong> (7012). Then they said <strong>SHOW IT</strong> (7019). Then they said <strong>WE'LL CHECK IT</strong> (7020). Now they say <strong>PROVE IT</strong> (7021)."
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div style="background: linear-gradient(135deg, #fae8ff 0%, #e9d5ff 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #a855f7;">
                         <div style="font-size: 1.2rem; font-weight: 700; color: #6b21a8; margin-bottom: 16px;">📋 CRITICAL: Adequate vs Sufficient Evidence</div>
                         <div style="color: #581c87; line-height: 1.7; margin-bottom: 16px;">
@@ -3220,10 +3344,370 @@
                             <strong>💡 Remember:</strong> Evidence can be ADEQUATE (right kind) but NOT SUFFICIENT (not enough coverage). BOTH conditions must be met for a practice to be MET!
                         </div>
                     </div>
+                    
+                    <!-- Assessor Mindset -->
+                    <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #3b82f6;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #1e40af; margin-bottom: 16px;">🧠 The Assessor Mindset</div>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="background: white; padding: 14px; border-radius: 10px; border-left: 4px solid #3b82f6;">
+                                <strong style="color: #1e40af;">You're finding truth, not hunting failures</strong>
+                                <div style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">Your job is objective evaluation, not "gotcha" moments</div>
+                            </div>
+                            <div style="background: white; padding: 14px; border-radius: 10px; border-left: 4px solid #3b82f6;">
+                                <strong style="color: #1e40af;">Don't jump to findings — Substantiate first</strong>
+                                <div style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">Even when it smells bad, gather evidence before concluding</div>
+                            </div>
+                            <div style="background: white; padding: 14px; border-radius: 10px; border-left: 4px solid #3b82f6;">
+                                <strong style="color: #1e40af;">"Trust me bro" isn't evidence</strong>
+                                <div style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">Get documentation. Verbal assurances need verification.</div>
+                            </div>
+                            <div style="background: white; padding: 14px; border-radius: 10px; border-left: 4px solid #3b82f6;">
+                                <strong style="color: #1e40af;">Observe and document</strong>
+                                <div style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">You're not security, you're an assessor — document what you see</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Common Traps -->
+                    <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #f87171;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #991b1b; margin-bottom: 16px;">⚠️ Common Traps to Avoid</div>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="background: white; padding: 14px; border-radius: 10px; display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: #dc2626; font-size: 1.2rem;">❌</span>
+                                <div>
+                                    <strong style="color: #991b1b;">Jumping to "is it secure?"</strong>
+                                    <div style="color: #64748b; font-size: 0.9rem;">Ask "does it PST CUI?" FIRST — scope before security</div>
+                                </div>
+                            </div>
+                            <div style="background: white; padding: 14px; border-radius: 10px; display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: #dc2626; font-size: 1.2rem;">❌</span>
+                                <div>
+                                    <strong style="color: #991b1b;">Accepting "secure enclave" at face value</strong>
+                                    <div style="color: #64748b; font-size: 0.9rem;">Who ACTUALLY has access? The janitor? The cleaning crew?</div>
+                                </div>
+                            </div>
+                            <div style="background: white; padding: 14px; border-radius: 10px; display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: #dc2626; font-size: 1.2rem;">❌</span>
+                                <div>
+                                    <strong style="color: #991b1b;">Missing documentation vs. reality gaps</strong>
+                                    <div style="color: #64748b; font-size: 0.9rem;">SSP says one thing, reality shows another = TWO findings (control + SSP accuracy)</div>
+                                </div>
+                            </div>
+                            <div style="background: white; padding: 14px; border-radius: 10px; display: flex; gap: 12px; align-items: flex-start;">
+                                <span style="color: #dc2626; font-size: 1.2rem;">❌</span>
+                                <div>
+                                    <strong style="color: #991b1b;">Forgetting practices have multiple parts</strong>
+                                    <div style="color: #64748b; font-size: 0.9rem;">Example: RA.L2-3.11.2 has PERIODIC and REACTIVE scanning requirements</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Power Moves -->
+                    <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #34d399;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #065f46; margin-bottom: 16px;">💪 Power Moves (Killer Questions)</div>
+                        <div style="display: grid; gap: 12px;">
+                            <div style="background: white; padding: 14px; border-radius: 10px; border-left: 4px solid #10b981;">
+                                <div style="color: #065f46; font-weight: 600; font-size: 1.05rem;">"What about the janitor?"</div>
+                                <div style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">Always consider who ACTUALLY has access — cleaning crew, maintenance, visitors</div>
+                            </div>
+                            <div style="background: white; padding: 14px; border-radius: 10px; border-left: 4px solid #10b981;">
+                                <div style="color: #065f46; font-weight: 600; font-size: 1.05rem;">"How did you validate those are false positives? Is it documented?"</div>
+                                <div style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">Push back on dismissals — "trust me, they're false positives" isn't evidence</div>
+                            </div>
+                            <div style="background: white; padding: 14px; border-radius: 10px; border-left: 4px solid #10b981;">
+                                <div style="color: #065f46; font-weight: 600; font-size: 1.05rem;">"So what about the ones that AREN'T false positives?"</div>
+                                <div style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">Don't let them off the hook — acknowledge their point, then redirect</div>
+                            </div>
+                            <div style="background: white; padding: 14px; border-radius: 10px; border-left: 4px solid #10b981;">
+                                <div style="color: #065f46; font-weight: 600; font-size: 1.05rem;">One observation → Think across MULTIPLE domains</div>
+                                <div style="color: #64748b; font-size: 0.9rem; margin-top: 4px;">A shared admin account touches AU (accountability), AC (least privilege), and more</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Asset Categories -->
+                    <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #38bdf8;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #0369a1; margin-bottom: 16px;">📦 Asset Categories (Know These Cold)</div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                            <tr style="background: rgba(255,255,255,0.7);">
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #0ea5e9; color: #0369a1;">Category</th>
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #0ea5e9; color: #0369a1;">Definition</th>
+                                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #0ea5e9; color: #0369a1;">Example</th>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.4);">
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; font-weight: 700; color: #0c4a6e;">CUI Asset</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; color: #0369a1;">Stores, processes, or transmits CUI</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; color: #64748b;">Workstation editing contracts</td>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.6);">
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; font-weight: 700; color: #0c4a6e;">SPA</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; color: #0369a1;">Protects CUI assets but doesn't hold CUI</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; color: #64748b;">SIEM, firewall, Active Directory</td>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.4);">
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; font-weight: 700; color: #0c4a6e;">CRMA</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; color: #0369a1;">CAN access CUI but DOESN'T by policy</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; color: #64748b;">Workstation on same network, policy says no CUI</td>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.6);">
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; font-weight: 700; color: #0c4a6e;">Specialized</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; color: #0369a1;">Gets carve-out because it can't meet all controls</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #7dd3fc; color: #64748b;">GFE, IoT, OT (CNC machines), Test Equipment</td>
+                            </tr>
+                            <tr style="background: rgba(255,255,255,0.4);">
+                                <td style="padding: 10px; font-weight: 700; color: #0c4a6e;">Out of Scope</td>
+                                <td style="padding: 10px; color: #0369a1;">CUI can NEVER flow there</td>
+                                <td style="padding: 10px; color: #64748b;">Conference room TV, separate enclave</td>
+                            </tr>
+                        </table>
+                        
+                        <div style="background: white; border-radius: 10px; padding: 16px; margin-top: 16px;">
+                            <div style="font-weight: 700; color: #0369a1; margin-bottom: 12px;">🔑 CRMA vs. Out of Scope — The Key Difference</div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                                <div style="background: #fef3c7; padding: 12px; border-radius: 8px;">
+                                    <div style="font-weight: 700; color: #92400e; margin-bottom: 6px;">CRMA</div>
+                                    <ul style="color: #78350f; font-size: 0.85rem; margin: 0; padding-left: 16px; line-height: 1.6;">
+                                        <li>CAN access CUI (same network)</li>
+                                        <li>Contractor SAYS it doesn't via policy</li>
+                                        <li>"Trust me bro" + administrative controls</li>
+                                    </ul>
+                                </div>
+                                <div style="background: #dcfce7; padding: 12px; border-radius: 8px;">
+                                    <div style="font-weight: 700; color: #166534; margin-bottom: 6px;">Out of Scope</div>
+                                    <ul style="color: #15803d; font-size: 0.85rem; margin: 0; padding-left: 16px; line-height: 1.6;">
+                                        <li>CUI can NEVER flow there</li>
+                                        <li>Technically/physically separated</li>
+                                        <li>Not even in consideration</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- How to Write a Finding -->
+                    <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #f59e0b;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #92400e; margin-bottom: 16px;">📝 How to Write a Finding</div>
+                        <div style="background: white; padding: 16px; border-radius: 10px; margin-bottom: 16px;">
+                            <div style="font-family: monospace; color: #64748b; font-size: 0.9rem; margin-bottom: 12px;">
+                                <strong style="color: #92400e;">[Practice ID & Name] — NOT MET</strong><br>
+                                Observed [what you saw]. [Why it's a problem]. [What they said when asked].
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.7); padding: 16px; border-radius: 10px; border-left: 4px solid #d97706;">
+                            <div style="font-weight: 700; color: #92400e; margin-bottom: 8px;">Example:</div>
+                            <div style="color: #78350f; font-size: 0.95rem; line-height: 1.6;">
+                                <strong>PE.L1-3.10.3 (Escort Visitors) — NOT MET</strong><br>
+                                Observed visitor with badge walking unescorted near server room. Cleaning crew has access to area. When asked, OSC stated "everyone is authorized" but could not demonstrate visitor escort policy enforcement.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Purpose of CMMC -->
+                    <div style="background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #a78bfa;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #5b21b6; margin-bottom: 16px;">🎯 The Purpose of CMMC</div>
+                        <div style="background: white; padding: 16px; border-radius: 10px; border-left: 4px solid #8b5cf6; margin-bottom: 16px;">
+                            <div style="color: #5b21b6; font-size: 1rem; line-height: 1.6; font-style: italic;">
+                                "CMMC does NOT add security requirements or strengthen security posture — that's NIST 800-171's job. CMMC is an ASSESSMENT FRAMEWORK to verify implementation. Think of it as anti-fraud: ensuring contractors aren't lying about their compliance."
+                            </div>
+                        </div>
+                        <div style="color: #6b21a8; font-size: 0.95rem; line-height: 1.7;">
+                            <p style="margin-bottom: 8px;"><strong>The History:</strong></p>
+                            <ul style="margin: 0; padding-left: 20px;">
+                                <li>DFARS 7012 required 800-171 for almost 10 years</li>
+                                <li>Contractors self-reported SPRS scores</li>
+                                <li>Many submitted 110 (perfect) while not actually implementing controls</li>
+                                <li>CMMC exists to VERIFY they're actually doing what they claim</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             `;
             
             container.innerHTML = html;
+        }
+
+        // ==================== STATS DASHBOARD ====================
+        function renderStats() {
+            const container = document.getElementById('statsContainer');
+            
+            // Gather stats for each category
+            const categories = [
+                { mode: 'ethics', name: 'Ethics', questions: ETHICS_QUESTIONS, domain: 'D3', color: '#8b5cf6' },
+                { mode: 'cap', name: 'CAP Process', questions: CAP_QUESTIONS, domain: 'D3', color: '#10b981' },
+                { mode: 'scoping', name: 'Scoping', questions: SCOPING_QUESTIONS, domain: 'D2', color: '#6366f1' },
+                { mode: 'judgment', name: 'Judgment', questions: JUDGMENT_SCENARIOS, domain: 'D4', color: '#f59e0b' },
+                { mode: 'gotcha', name: 'Gotcha', questions: GOTCHA_QUESTIONS, domain: 'D4', color: '#ef4444' },
+                { mode: 'terminology', name: 'Terminology', questions: TERMINOLOGY_QUESTIONS, domain: 'D4', color: '#ec4899' }
+            ];
+            
+            let totalCorrect = 0, totalIncorrect = 0, totalUnseen = 0;
+            const categoryStats = categories.map(cat => {
+                const stats = getStatsForCategory(cat.mode, cat.questions);
+                totalCorrect += stats.totalCorrect;
+                totalIncorrect += stats.totalIncorrect;
+                totalUnseen += stats.totalUnseen;
+                return { ...cat, stats };
+            });
+            
+            const totalAttempts = totalCorrect + totalIncorrect;
+            const overallAccuracy = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+            
+            // Domain stats
+            const domainStats = {
+                'D1': { correct: 0, incorrect: 0, name: 'Environment', weight: '15%', color: '#2563EB' },
+                'D2': { correct: 0, incorrect: 0, name: 'Scoping', weight: '20%', color: '#6366f1' },
+                'D3': { correct: 0, incorrect: 0, name: 'CAP Process', weight: '25%', color: '#10b981' },
+                'D4': { correct: 0, incorrect: 0, name: 'Evidence/Assessment', weight: '40%', color: '#f59e0b' }
+            };
+            
+            categoryStats.forEach(cat => {
+                domainStats[cat.domain].correct += cat.stats.totalCorrect;
+                domainStats[cat.domain].incorrect += cat.stats.totalIncorrect;
+            });
+            
+            // Get all weak questions across categories
+            const allWeakQuestions = categoryStats.flatMap(cat => 
+                cat.stats.weakQuestions.map(wq => ({ ...wq, category: cat.name, color: cat.color }))
+            ).sort((a, b) => b.wrongRatio - a.wrongRatio).slice(0, 10);
+            
+            let html = `
+                <div class="header">
+                    <h2>📊 Performance Dashboard</h2>
+                    <p>Track your progress and focus on weak areas</p>
+                </div>
+                <div style="max-width: 1000px; margin: 0 auto;">
+                    
+                    <!-- Overall Stats -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px; padding: 20px; text-align: center; color: white;">
+                            <div style="font-size: 2.5rem; font-weight: 800;">${overallAccuracy}%</div>
+                            <div style="opacity: 0.9; font-size: 0.9rem;">Overall Accuracy</div>
+                        </div>
+                        <div style="background: white; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                            <div style="font-size: 2rem; font-weight: 700; color: #10b981;">${totalCorrect}</div>
+                            <div style="color: #64748b; font-size: 0.9rem;">Correct</div>
+                        </div>
+                        <div style="background: white; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                            <div style="font-size: 2rem; font-weight: 700; color: #ef4444;">${totalIncorrect}</div>
+                            <div style="color: #64748b; font-size: 0.9rem;">Incorrect</div>
+                        </div>
+                        <div style="background: white; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                            <div style="font-size: 2rem; font-weight: 700; color: #64748b;">${totalUnseen}</div>
+                            <div style="color: #64748b; font-size: 0.9rem;">Unseen</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Domain Performance (Exam Weighted) -->
+                    <div style="background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                        <h3 style="margin-bottom: 16px; color: #1e293b;">📋 Domain Performance (Exam Weights)</h3>
+                        <div style="display: grid; gap: 16px;">
+                            ${Object.entries(domainStats).map(([key, d]) => {
+                                const attempts = d.correct + d.incorrect;
+                                const accuracy = attempts > 0 ? Math.round((d.correct / attempts) * 100) : 0;
+                                const barWidth = attempts > 0 ? accuracy : 0;
+                                return `
+                                    <div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                                            <span style="font-weight: 600; color: ${d.color};">${key}: ${d.name} <span style="color: #64748b; font-weight: 400;">(${d.weight})</span></span>
+                                            <span style="color: ${accuracy >= 70 ? '#10b981' : accuracy >= 50 ? '#f59e0b' : '#ef4444'}; font-weight: 700;">${accuracy}%</span>
+                                        </div>
+                                        <div style="background: #e5e7eb; border-radius: 10px; height: 12px; overflow: hidden;">
+                                            <div style="background: ${d.color}; height: 100%; width: ${barWidth}%; transition: width 0.5s; border-radius: 10px;"></div>
+                                        </div>
+                                        <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">${d.correct} correct / ${d.incorrect} incorrect</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Category Breakdown -->
+                    <div style="background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                        <h3 style="margin-bottom: 16px; color: #1e293b;">📚 Category Breakdown</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                            ${categoryStats.map(cat => {
+                                const attempts = cat.stats.totalCorrect + cat.stats.totalIncorrect;
+                                const accuracy = attempts > 0 ? Math.round((cat.stats.totalCorrect / attempts) * 100) : 0;
+                                const progressPct = Math.round(((cat.stats.total - cat.stats.totalUnseen) / cat.stats.total) * 100);
+                                return `
+                                    <div style="background: #f8fafc; border-radius: 12px; padding: 16px; border-left: 4px solid ${cat.color};">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <span style="font-weight: 700; color: #1e293b;">${cat.name}</span>
+                                            <span style="background: ${cat.color}; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">${cat.domain}</span>
+                                        </div>
+                                        <div style="font-size: 2rem; font-weight: 700; color: ${accuracy >= 70 ? '#10b981' : accuracy >= 50 ? '#f59e0b' : attempts === 0 ? '#64748b' : '#ef4444'};">${attempts > 0 ? accuracy + '%' : '—'}</div>
+                                        <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">
+                                            ${cat.stats.totalCorrect}✓ / ${cat.stats.totalIncorrect}✗ • ${cat.stats.totalUnseen} unseen
+                                        </div>
+                                        <div style="background: #e5e7eb; border-radius: 6px; height: 6px; margin-top: 8px; overflow: hidden;">
+                                            <div style="background: ${cat.color}; height: 100%; width: ${progressPct}%;"></div>
+                                        </div>
+                                        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">${progressPct}% seen (${cat.stats.total - cat.stats.totalUnseen}/${cat.stats.total})</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Weak Areas -->
+                    ${allWeakQuestions.length > 0 ? `
+                        <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-radius: 16px; padding: 24px; margin-bottom: 24px; border: 2px solid #f87171;">
+                            <h3 style="margin-bottom: 16px; color: #991b1b;">🎯 Focus Areas (Questions You Struggle With)</h3>
+                            <p style="color: #b91c1c; font-size: 0.9rem; margin-bottom: 16px;">These questions have ≥50% wrong answers. They'll appear more frequently in your quizzes.</p>
+                            <div style="display: grid; gap: 12px;">
+                                ${allWeakQuestions.map(wq => `
+                                    <div style="background: white; border-radius: 10px; padding: 14px; border-left: 4px solid ${wq.color};">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                            <span style="font-size: 0.8rem; font-weight: 600; color: ${wq.color};">${wq.category}</span>
+                                            <span style="font-size: 0.8rem; color: #ef4444; font-weight: 700;">${Math.round(wq.wrongRatio * 100)}% wrong</span>
+                                        </div>
+                                        <div style="font-size: 0.9rem; color: #334155; line-height: 1.4;">${wq.q.substring(0, 150)}${wq.q.length > 150 ? '...' : ''}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : `
+                        <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 16px; padding: 24px; margin-bottom: 24px; border: 2px solid #34d399; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">🎉</div>
+                            <h3 style="color: #065f46; margin-bottom: 8px;">No Weak Areas Yet!</h3>
+                            <p style="color: #047857;">Keep practicing to identify areas that need more focus.</p>
+                        </div>
+                    `}
+                    
+                    <!-- How Weighting Works -->
+                    <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px; padding: 24px; border: 2px solid #38bdf8;">
+                        <h3 style="margin-bottom: 12px; color: #0369a1;">⚙️ How Smart Practice Works</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; color: #0c4a6e; font-size: 0.9rem;">
+                            <div>
+                                <strong>🔄 Wrong-Answer Boosting</strong><br>
+                                Questions you get wrong appear up to 3x more often. Questions you consistently get right fade into the background.
+                            </div>
+                            <div>
+                                <strong>📊 Exam-Weighted Distribution</strong><br>
+                                Quiz distribution mirrors the actual CCA exam: D1 (15%), D2 (20%), D3 (25%), D4 (40%).
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reset Button -->
+                    <div style="text-align: center; margin-top: 24px;">
+                        <button onclick="resetQuestionStats()" style="background: #fee2e2; color: #dc2626; border: 2px solid #fecaca; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                            🗑️ Reset All Question Stats
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        function resetQuestionStats() {
+            if (confirm('This will reset ALL your question performance tracking. Are you sure?')) {
+                questionStats = {};
+                localStorage.removeItem('questionStats');
+                renderStats();
+            }
         }
 
         // ==================== DEEP DIVE MODE ====================

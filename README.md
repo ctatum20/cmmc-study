@@ -1,4 +1,4 @@
-# CMMC CCA Exam Study Guide App
+# CMMC CCA Exam Study Guide - Complete PWA
 
 A comprehensive Progressive Web App for CMMC Certified CMMC Assessor (CCA) exam preparation.
 
@@ -57,31 +57,42 @@ A comprehensive Progressive Web App for CMMC Certified CMMC Assessor (CCA) exam 
 - **Progress Tracking**: LocalStorage saves your progress
 - **No Account Required**: Everything runs locally
 
----
-*******Biggest tip that has helped me so far:**********
+## 🚀 Deployment
 
-Each domain tells a coherent story.  
-Instead of memorizing 110 disconnected facts, you're learning 14 stories:
+### GitHub Pages
+1. Create a new repository (e.g., `cmmc-study`)
+2. Upload all files from this folder
+3. Go to Settings → Pages → Deploy from main branch
+4. Access at `https://yourusername.github.io/cmmc-study`
 
-Domain --- The Story It Tells  
-AC --- "Who gets in, and what can they do once they're in?"  
-AT --- "Do people know what they're supposed to do?"  
-AU --- "Can we prove what happened?"  
-CM --- "Is the system configured correctly and controlled?"  
-IA --- "Are you who you say you are?"  
-IR --- "What happens when things go wrong?"  
-MA --- "How do we keep things running safely?"  
-MP --- "How do we protect the actual data containers?"  
-PE --- "Who can physically touch stuff?"  
-PS --- "Can we trust the people?"  
-RA --- "What could go wrong and how bad?"  
-CA --- "Are we actually doing what we say we're doing?"  
-SC --- "How do we protect data moving and sitting?"  
-SI --- "Is the system healthy and clean?"
+### Local Testing
+Just open `index.html` in any modern browser.
 
+## 📁 Files
 
+```
+├── index.html      # Main application (all-in-one)
+├── manifest.json   # PWA manifest
+├── sw.js          # Service worker for offline support
+├── icon-192.png   # App icon (small)
+├── icon-512.png   # App icon (large)
+└── README.md      # This file
+```
 
-Not affiliated with The Cyber AB or CAICO or DoD. Just a study tool.
+## 📊 Content Summary
+
+| Mode | Questions | Focus |
+|------|-----------|-------|
+| Controls | 110 | All L2 requirements |
+| Quiz | Configurable | Active recall |
+| Ethics | 12 | Code of Professional Conduct |
+| Gotcha | 16 | Regulatory tricks & dates |
+| Judgment | 30 | Assessment scenarios |
+| **Total** | **58 CCA + 110 controls** | |
+
+## 🎓 Exam Date Target
+
+February 28, 2025
 
 ---
 

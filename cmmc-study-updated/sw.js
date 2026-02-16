@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cmmc-study-v1';
+const CACHE_NAME = 'cmmc-study-v2';
 const urlsToCache = [
   './',
   './index.html',

@@ -7,10 +7,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="CMMC Study">
     <meta name="theme-color" content="#1a1a2e">
-    <meta name="description" content="CMMC Level 2 CCA Exam Study Guide - 110 Controls, Ethics, Assessment Scenarios">
+    <meta name="description" content="CMMC CCA Assessor Mindset — Think like an assessor, pass the exam. Scenarios, CoPC, CAP process, scoping decisions, and 110 controls.">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
-    <title>CMMC CCA Study Guide - Complete Exam Prep</title>
+    <title>CMMC CCA Assessor Mindset Guide</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -71,7 +71,7 @@
         
         .mode-btn:hover { border-color: #4fc3f7; color: #4fc3f7; }
         .mode-btn.active { background: #4fc3f7; border-color: #4fc3f7; color: #1a1a2e; }
-        .mode-btn .icon { display: block; font-size: 1.1rem; margin-bottom: 3px; }
+        .mode-btn .icon { display: block; font-size: 1.1rem; margin-bottom: 3px; height: 1.3rem; line-height: 1.3rem; }
         
         /* Mode-specific colors */
         .mode-btn.ethics { border-color: #8b5cf6; }
@@ -92,6 +92,8 @@
         .mode-btn.stats:hover, .mode-btn.stats.active { background: #8b5cf6; border-color: #8b5cf6; color: white; }
         .mode-btn.deepdive { border-color: #06b6d4; }
         .mode-btn.deepdive:hover, .mode-btn.deepdive.active { background: #06b6d4; border-color: #06b6d4; color: #1a1a2e; }
+        .mode-btn.mindset { border-color: #059669; }
+        .mode-btn.mindset:hover, .mode-btn.mindset.active { background: #059669; border-color: #059669; color: white; }
         
         /* Progress Section */
         .progress-section {
@@ -533,11 +535,71 @@
                 width: 280px;
             }
             .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 20px; padding-bottom: 80px; }
+            .main-content { margin-left: 0; padding: 15px; padding-bottom: 80px; max-width: 100%; overflow-x: hidden; }
             .mobile-nav { display: block; }
             .quiz-options { grid-template-columns: 1fr; }
             .flashcard { height: 250px; }
-            .quiz-card, .cca-card { padding: 20px; }
+            .quiz-card, .cca-card { padding: 16px; }
+
+            /* Fix controls table on mobile - convert to card layout */
+            .controls-table thead { display: none; }
+            .controls-table, .controls-table tbody, .controls-table tr, .controls-table td {
+                display: block; width: 100%;
+            }
+            .controls-table tr {
+                background: white; border-radius: 12px; margin-bottom: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 14px; border: 1px solid #e9ecef;
+            }
+            .controls-table tr.studied { background: #f0fdf4; border-color: #bbf7d0; }
+            .controls-table tr:hover { background: #f8fafc; }
+            .controls-table td { 
+                padding: 4px 0; border-bottom: none; 
+                font-size: 0.85rem; line-height: 1.5;
+            }
+            .controls-table td:first-child { 
+                display: flex; align-items: center; gap: 10px;
+                margin-bottom: 6px;
+            }
+            .controls-table td[data-label="studied"] { 
+                margin-top: 8px; padding-top: 8px; 
+                border-top: 1px solid #f0f0f0;
+                display: flex; align-items: center; gap: 8px;
+            }
+            .controls-table td[data-label="studied"]::before { 
+                content: "Mark as studied: "; 
+                color: #888; font-size: 0.8rem;
+            }
+            /* Hide implementation type badge row to save space */
+            .controls-table td:nth-child(5) { display: none; }
+
+            /* Wrap all overflow tables in scrollable containers */
+            .domain-content { overflow-x: hidden; }
+            .mode-panel { overflow-x: hidden; max-width: 100%; }
+
+            /* Tips tables - make them scrollable */
+            .tips-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+            
+            /* Fix domain header on mobile */
+            .domain-header { padding: 14px 16px; }
+            .domain-title { font-size: 0.95rem; }
+            .domain-count { font-size: 0.75rem; padding: 3px 8px; }
+            .domain-progress { display: none; }
+
+            /* Fix quiz card elements */
+            .quiz-question { font-size: 1.15rem; }
+            .quiz-score { gap: 12px; }
+
+            /* Fix header padding */
+            .header { margin-bottom: 20px; }
+            .header h2 { font-size: 1.5rem; }
+
+            /* Fix deep dive on mobile */
+            .deepdive-domain-header { padding: 14px 16px; font-size: 0.9rem; }
+            .deepdive-domain-content { padding: 12px; }
+            .deepdive-control { padding: 14px; }
+
+            /* Fix mode panel max-width */
+            .mode-panel { width: 100%; box-sizing: border-box; }
         }
         
         /* Confetti Animation */
@@ -694,10 +756,10 @@
         <div class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
         
         <aside class="sidebar">
-            <h1>📚 CMMC CCA Study</h1>
-            <div class="subtitle">Complete Exam Preparation</div>
+            <h1>🛡️ CMMC CCA Guide</h1>
+            <div class="subtitle">Assessor Mindset & Exam Prep</div>
             <div class="creator-credit">
-                Created by <a href="https://www.linkedin.com/in/charnice-tatum" target="_blank" rel="noopener noreferrer">Charnice Tatum, CCP</a>
+                Created by <a href="https://www.linkedin.com/in/charnice-tatum" target="_blank" rel="noopener noreferrer">Charnice Tatum, CCA</a>
             </div>
             
             <div class="section-title">Study Modes</div>
@@ -709,10 +771,10 @@
                     <span class="icon">✏️</span> Quiz
                 </button>
                 <button class="mode-btn ethics" id="modeEthics" onclick="setMode('ethics')">
-                    <span class="icon">⚖️</span> Ethics
+                    <span class="icon">⚖️</span> Conduct
                 </button>
                 <button class="mode-btn gotcha" id="modeGotcha" onclick="setMode('gotcha')">
-                    <span class="icon">⚡</span> Gotcha
+                    <span class="icon">⚡</span> Watch Out
                 </button>
                 <button class="mode-btn judgment" id="modeJudgment" onclick="setMode('judgment')">
                     <span class="icon">🎯</span> Judgment
@@ -734,6 +796,9 @@
                 </button>
                 <button class="mode-btn deepdive" id="modeDeepDive" onclick="setMode('deepdive')">
                     <span class="icon">🔬</span> Deep Dive
+                </button>
+                <button class="mode-btn mindset" id="modeMindset" onclick="setMode('mindset')">
+                    <span class="icon">🧠</span> Mindset
                 </button>
             </div>
             
@@ -987,6 +1052,9 @@
             
             <!-- Deep Dive Mode -->
             <div id="deepdiveContainer" class="mode-panel"></div>
+
+            <!-- Mindset Mode -->
+            <div id="mindsetContainer" class="mode-panel"></div>
         </main>
     </div>
     
@@ -1004,6 +1072,9 @@
             </button>
             <button class="mobile-nav-btn" id="mobileCCABtn" onclick="mobileSetMode('ethics')">
                 <span class="icon">⚖️</span> CCA
+            </button>
+            <button class="mobile-nav-btn" id="mobileMindsetBtn" onclick="mobileSetMode('mindset')">
+                <span class="icon">🧠</span> Mindset
             </button>
         </div>
     </nav>
@@ -1758,7 +1829,21 @@
             { q: "The OSC's Affirming Official asks you to 'prioritize' certain controls they're confident about and 'save time' on ones they're worried about. Your response?", options: ["Accommodate to build rapport", "Explain you must assess all controls objectively", "Report them for trying to manipulate the assessment", "Agree but document their request"], correct: 1, explanation: "Politely explain that assessment methodology requires objective evaluation of all controls. You cannot skip or minimize assessment of specific controls at the OSC's request.", category: "Independence" },
             { q: "After issuing a CONDITIONAL certification, the OSC calls you directly (bypassing the C3PAO) asking for 'tips' on closing their POA&M items. What do you do?", options: ["Help them — you know their environment best", "Decline and direct them to contact the C3PAO", "Provide general guidance only", "Help but don't document it"], correct: 1, explanation: "Post-assessment consulting creates conflict of interest. Direct them to official C3PAO channels. You cannot provide remediation guidance to an OSC you assessed.", category: "Consulting Prohibition" },
             { q: "During testing, you accidentally see evidence of potential fraud unrelated to CMMC (fake invoices). What's your obligation?", options: ["Report to law enforcement immediately", "Include it in your CMMC findings", "Ignore — it's outside your scope", "Notify your C3PAO and maintain confidentiality"], correct: 3, explanation: "This is outside CMMC scope but may have legal implications. Notify your C3PAO for guidance. Don't investigate, don't include in CMMC report, and maintain confidentiality.", category: "Unexpected Discoveries" },
-            { q: "Your C3PAO management pressures you to 'find a way' to pass an OSC because they're a big client. How do you handle this?", options: ["Follow management direction", "Document the pressure and assess objectively", "Refuse the assignment", "Report to The Cyber AB immediately"], correct: 1, explanation: "Document the pressure, assess objectively based on evidence. If management continues to pressure, escalate to The Cyber AB. Your obligation is to assessment integrity, not C3PAO revenue.", category: "Internal Pressure" }
+            { q: "Your C3PAO management pressures you to 'find a way' to pass an OSC because they're a big client. How do you handle this?", options: ["Follow management direction", "Document the pressure and assess objectively", "Refuse the assignment", "Report to The Cyber AB immediately"], correct: 1, explanation: "Document the pressure, assess objectively based on evidence. If management continues to pressure, escalate to The Cyber AB. Your obligation is to assessment integrity, not C3PAO revenue.", category: "Internal Pressure" },
+            
+            // === COPC DEEP CUTS - THE STUFF PEOPLE MISS ===
+            { q: "A CCA worked as a CMMC consultant for an OSC in 2021 — helping them build their SSP and remediate gaps. It's now 2024. Can this CCA assess that OSC?", options: ["Yes — it's been 3 years", "No — 3 years haven't passed from the LAST consulting activity", "Yes — consulting before CMMC was formal doesn't count", "Only if the CCA discloses it"], correct: 1, explanation: "The 3-year cooling-off period runs from the LAST date of consulting activity. If consulting ended January 2021, the CCA can assess after January 2024. Calculate from the END of the engagement.", category: "Cooling Off Period" },
+            { q: "A CCA worked for the OSC as a full-time employee (not a consultant) doing cybersecurity work until 2022. It is now 2024. Can they assess the same organization?", options: ["Yes — employees aren't consultants", "No — employment is treated the same as consulting under CoPC", "Yes — with C3PAO approval", "Only if no conflict of interest exists"], correct: 1, explanation: "Previous employment in a cybersecurity capacity is treated the same as consulting. The 3-year prohibition applies from last date of employment.", category: "Cooling Off Period" },
+            { q: "A CCA's SPOUSE works for the OSC as a non-security admin assistant. Does this create a conflict of interest?", options: ["No — spouse's role is unrelated to cybersecurity", "Yes — family relationships with OSC employees create conflicts regardless of role", "Only if the spouse has CUI access", "Only if the spouse is in IT"], correct: 1, explanation: "Immediate family relationships with OSC employees create conflicts of interest regardless of the family member's role. This must be disclosed and may require recusal.", category: "Conflicts of Interest" },
+            { q: "A CCA owns 5% of stock in a publicly traded company that is the OSC being assessed. Is this a conflict of interest?", options: ["No — small stock ownership in public companies isn't a conflict", "Yes — any financial interest in an OSC is a conflict", "Only if the stock is worth over $10,000", "Only if it's a private company"], correct: 0, explanation: "Minimal stock ownership in publicly traded companies (where you have no control) is generally not considered a conflict. However, substantial holdings or ownership in private companies would require disclosure and likely recusal.", category: "Financial Conflicts" },
+            { q: "During assessment planning, a CCA realizes they provided a 2-hour free webinar to the OSC's IT team about CMMC basics 2 years ago. Is this a conflict?", options: ["Yes — any past relationship with the OSC is a conflict", "Not necessarily — general training isn't the same as consulting; disclose and let C3PAO decide", "No — a webinar isn't consulting", "Only if they were paid"], correct: 1, explanation: "General public training (webinars, conference talks) is different from direct consulting. However, it should still be disclosed to the C3PAO, who makes the final conflict determination.", category: "Disclosure" },
+            { q: "Which of the following activities is a CCA explicitly PROHIBITED from doing under CoPC?", options: ["Sharing de-identified CMMC methodology insights at a conference", "Providing remediation advice to an OSC they assessed 4 years ago", "Using AI tools to summarize their own assessment notes internally", "Refusing to answer questions from the OSC's IT staff during assessment"], correct: 1, explanation: "Providing remediation advice to an OSC you assessed — even years later — crosses into post-assessment consulting that can compromise perceived objectivity. The CoPC prohibition on consulting is broad.", category: "Prohibited Activities" },
+            { q: "A CCA is halfway through an assessment when they realize the OSC's new CISO is someone they dated briefly 10 years ago. What is the correct action?", options: ["Continue — it was years ago and professional", "Immediately disclose to the Lead CCA and C3PAO; recusal decision belongs to them", "Ask the CISO if they're comfortable continuing", "Complete the assessment but don't interview that person"], correct: 1, explanation: "Past personal relationships — regardless of how distant — must be disclosed immediately. The CCA doesn't make the recusal decision alone. The Lead CCA and C3PAO assess the conflict risk.", category: "Disclosure" },
+            { q: "Under POCMI, which principle specifically covers the requirement to use established CMMC assessment methods rather than improvising your own approach?", options: ["Professionalism", "Objectivity", "Confidentiality", "Proper Use of Consistent Assessment Methods"], correct: 3, explanation: "The 'M' in POCMI — Proper Use of Consistent Assessment Methods — requires assessors to follow established CMMC methodology. You can't invent your own approach or skip steps because you 'know better.'", category: "POCMI Principles" },
+            { q: "A CCA shares anonymized assessment findings (no OSC name) on LinkedIn as a 'lessons learned' post to help the community. Is this permitted?", options: ["Yes — anonymized data doesn't violate confidentiality", "No — assessment findings are confidential regardless of anonymization", "Yes — with C3PAO approval", "Only if the OSC passed the assessment"], correct: 1, explanation: "Assessment information is confidential. Even anonymized findings could be identifiable or violate the spirit of confidentiality obligations. This requires explicit C3PAO approval and careful legal review.", category: "Confidentiality" },
+            { q: "A CCA notices their Lead CCA is rushing through certain controls, saying 'we've already seen enough.' Is this a CoPC concern?", options: ["No — the Lead CCA has authority over assessment pace", "Yes — all assessment team members are individually obligated to maintain integrity", "Only if the controls get marked MET without evidence", "No — trust the Lead CCA's experience"], correct: 1, explanation: "Every CCA on the team bears individual responsibility for assessment integrity. If a team member — including the Lead CCA — is compromising methodology, you have an obligation to raise it. Everyone is accountable.", category: "Team Integrity" },
+            { q: "Which of these is the MOST accurate description of 'Information Integrity' under POCMI?", options: ["Keeping assessment data encrypted", "Ensuring assessment findings accurately reflect observed evidence with no embellishment or omission", "Avoiding cyber incidents during assessment", "Completing reports on time"], correct: 1, explanation: "Information Integrity means your findings are an accurate, unbiased reflection of what the evidence shows — nothing added, nothing hidden. It's the 'I' in POCMI and it's the foundation of a trustworthy assessment.", category: "POCMI Principles" },
+            { q: "A CCA holds a CCP credential and is working on an assessment team led by a CCA. The CCP wants to independently evaluate and score a practice. Is this permitted?", options: ["Yes — CCPs can evaluate any practice they're qualified on", "No — CCPs do not evaluate practices independently; they support the assessment under CCA oversight", "Yes — if the Lead CCA delegates it", "Only for Level 1 practices"], correct: 1, explanation: "CCPs support the assessment team but do not independently evaluate or score practices. Scoring and findings belong to CCAs. CCPs may gather evidence, conduct interviews, or perform testing under CCA supervision.", category: "Role Boundaries" }
         ];
         
         // ==================== CAP PROCESS QUIZ ====================
@@ -1861,7 +1946,12 @@
             { q: "The OSC uses a managed SOC service. The SOC has read-only access to CUI system logs which may contain CUI file names and user activities. Is the SOC an ESP?", options: ["No — they only view logs", "Yes — they have access to CUI-derived information", "Only if they store logs", "No — security services are exempt"], correct: 1, explanation: "If logs contain CUI or CUI-derived information (file names, activities), the SOC accessing them is handling CUI. They're an ESP and need appropriate authorization.", category: "MSP/SOC Scoping" },
             { q: "You find a Raspberry Pi running a network monitoring tool on the CUI subnet. IT says it's 'just a monitoring device' and didn't include it in the asset inventory. Your action?", options: ["Accept — monitoring tools are exempt", "Add to scope as Security Protection Asset", "Ignore if it doesn't store logs", "Only flag if it's internet-connected"], correct: 1, explanation: "Any device providing security/monitoring functions for the CUI environment is a Security Protection Asset. Missing from inventory is also a documentation gap (CM.L2-3.4.1).", category: "Asset Discovery" },
             { q: "The OSC's scope includes 'all systems in Building A.' During walkthrough, you find Building A has a separately-leased suite occupied by another company sharing the same network closet. Impact?", options: ["No impact — other company is separate", "Potential shared infrastructure risk — needs investigation", "Only matters if they share a firewall", "Other tenant is automatically out of scope"], correct: 1, explanation: "Shared infrastructure (network closets, wiring, potentially switches) with another tenant creates risk. Investigate the physical and logical separation before accepting the boundary.", category: "Physical Boundary" },
-            { q: "The contractor's Affirming Official says their 'CUI enclave' is a single VLAN. You discover CUI is also processed in a test environment on a different VLAN for development purposes. What now?", options: ["Test environments are automatically exempt", "Test/dev with real CUI is in scope — flag the gap", "Only flag if test has production data", "Accept if test is isolated"], correct: 1, explanation: "If test/dev environments process real CUI (even copies), they're CUI Assets. 'Test environment' doesn't mean exempt. This is a scope gap that needs documentation.", category: "Dev/Test Scoping" }
+            { q: "The contractor's Affirming Official says their 'CUI enclave' is a single VLAN. You discover CUI is also processed in a test environment on a different VLAN for development purposes. What now?", options: ["Test environments are automatically exempt", "Test/dev with real CUI is in scope — flag the gap", "Only flag if test has production data", "Accept if test is isolated"], correct: 1, explanation: "If test/dev environments process real CUI (even copies), they're CUI Assets. 'Test environment' doesn't mean exempt. This is a scope gap that needs documentation.", category: "Dev/Test Scoping" },
+
+            // === SPECIALIZED ASSET SCENARIOS ===
+            { q: "A defense contractor's machine shop has CNC mills running proprietary controller software on Windows XP. The machines are on the CUI network and receive technical drawings containing CUI. The OSC says 'they can't be patched or updated — the vendor won't support it.' How should these be categorized?", options: ["CUI Assets — they process CUI so full compliance required", "Out-of-Scope — legacy systems can't be assessed", "Specialized Assets — OT/legacy systems with documented limitations and compensating controls", "CRMA — they could process CUI but shouldn't"], correct: 2, explanation: "Operational Technology (OT) that cannot meet the full CMMC control set qualifies as Specialized Assets. They stay in scope and must be documented in the SSP with what controls CAN apply and what compensating measures exist for the rest. 'Can't be patched' is not an excuse to disappear them — it's the reason they get this category.", category: "Specialized Assets" },
+            { q: "During a facility walkthrough you find a badge reader system at the entrance to the CUI processing area. It runs embedded firmware, has no user accounts, can't be patched through normal means, and isn't on the asset inventory. The OSC says 'it's just physical security hardware.' How do you categorize it and what's your finding?", options: ["Out-of-Scope — it's physical security, not cyber", "Specialized Asset — IoT/embedded device providing security function; missing from inventory is a gap", "Security Protection Asset assessed against all 110 controls", "CRMA — it could theoretically be compromised"], correct: 1, explanation: "Badge readers are IoT/embedded devices that provide a security function for the CUI environment — they qualify as Specialized Assets. They can't meet all 110 controls by design. BUT they must appear in the SSP and asset inventory. Missing from inventory = CM.L2-3.4.1 gap, regardless of how they're categorized.", category: "Specialized Assets" },
+            { q: "A contractor has Government Furnished Equipment (GFE) — laptops provided by the DoD program office — that employees use to access a government system containing CUI. The OSC says 'those belong to the government, so they're not our responsibility to document.' Is this correct?", options: ["Yes — government-owned assets are the government's responsibility", "No — GFE is a Specialized Asset and must be documented in the SSP even though it's government-owned", "Yes — GFE is always Out-of-Scope for contractor assessments", "Only if the GFE connects to contractor-owned systems"], correct: 1, explanation: "Government Furnished Equipment is explicitly listed as a Specialized Asset type under 32 CFR Part 170. Government ownership doesn't make it invisible — it must be documented in the SSP. The contractor doesn't control it, but they're responsible for knowing it's in their environment and documenting the limitations.", category: "Specialized Assets" }
         ];
         
         // ==================== TERMINOLOGY TRAPS (Exam gotcha questions!) ====================
@@ -2037,7 +2127,12 @@
             { category: "Artifact Matching", scenario: "For RA.L2-3.11.2 (Vulnerability Scanning), what artifact BEST demonstrates compliance?", options: ["Vulnerability management policy", "Vulnerability scan reports showing scan dates and findings", "List of scanning tools used", "Remediation tickets for vulnerabilities"], correct: 1, explanation: "RA.L2-3.11.2 requires 'scan for vulnerabilities periodically.' Scan reports with dates prove scans occurred. Remediation is 3.11.3. Tools and policy show capability, not execution.", mindset: "The control is about SCANNING. Show me the scans. Remediation is a different control (3.11.3)." },
             { category: "Artifact Matching", scenario: "For SC.L2-3.13.1 (Boundary Protection), what artifact BEST demonstrates external AND internal boundaries are monitored?", options: ["Network diagram showing firewall placement", "Firewall rules and logs showing traffic monitoring at external perimeter and key internal segments", "Boundary protection policy", "Intrusion detection system documentation"], correct: 1, explanation: "SC.L2-3.13.1 requires 'monitor, control, and protect at external boundaries AND key internal boundaries.' Firewall rules (control) plus logs (monitor) at both locations prove compliance.", mindset: "External AND internal. Many orgs forget internal boundaries. Show both." },
             { category: "Artifact Matching", scenario: "For AU.L2-3.3.7 (Time Synchronization), what artifact BEST demonstrates all systems sync to an authoritative time source?", options: ["Time synchronization policy", "NTP server configuration", "Screenshots from multiple systems showing NTP configuration pointing to the same source", "System logs with consistent timestamps"], correct: 2, explanation: "AU.L2-3.3.7 requires 'synchronize internal system clocks.' Screenshots from multiple systems showing they're configured for the same NTP source proves synchronization across the environment.", mindset: "One NTP server config isn't enough — show that SYSTEMS are configured to USE it." },
-            { category: "Artifact Matching", scenario: "For CM.L2-3.4.1 (System Baselining), what artifact BEST demonstrates baseline configurations are maintained?", options: ["Baseline configuration policy", "Documented baseline configurations for system types (servers, workstations, network devices)", "System inventory list", "Configuration management database"], correct: 1, explanation: "CM.L2-3.4.1 requires 'establish and maintain baseline configurations.' Documented baselines showing standard configs for each system type ARE the evidence. Inventory lists assets, not configs.", mindset: "Baseline = the standard configuration. What SHOULD a server look like? Document that." }
+            { category: "Artifact Matching", scenario: "For CM.L2-3.4.1 (System Baselining), what artifact BEST demonstrates baseline configurations are maintained?", options: ["Baseline configuration policy", "Documented baseline configurations for system types (servers, workstations, network devices)", "System inventory list", "Configuration management database"], correct: 1, explanation: "CM.L2-3.4.1 requires 'establish and maintain baseline configurations.' Documented baselines showing standard configs for each system type ARE the evidence. Inventory lists assets, not configs.", mindset: "Baseline = the standard configuration. What SHOULD a server look like? Document that." },
+
+            // === EXAMINE / INTERVIEW / TEST METHOD SELECTION ===
+            { category: "Assessment Method", scenario: "You're assessing AC.L2-3.1.5 (Least Privilege). The control requires employing least privilege and prohibiting users from doing privileged functions unless specifically authorized. Your team lead asks: which assessment method or methods are needed and why?", options: ["EXAMINE only — review the access control list", "INTERVIEW only — ask the admin how they manage privileged access", "TEST only — try to perform privileged actions as a non-privileged user", "All three — EXAMINE policies and access lists, INTERVIEW admins about the process, TEST that restrictions actually work"], correct: 3, explanation: "Least privilege has multiple dimensions: (1) EXAMINE — review the documented privileged account inventory and access control policy to understand intent; (2) INTERVIEW — talk to system admins about HOW they determine who gets privileged access and how they review it; (3) TEST — actually verify that a non-privileged account can't perform privileged functions. Documenting the process isn't enough — you need to verify it works.", mindset: "When a control has a PROCESS (how do you decide) AND a TECHNICAL implementation (does it actually work), you need all three methods. EXAMINE shows intent, INTERVIEW shows understanding, TEST shows reality." },
+            { category: "Assessment Method", scenario: "You're assessing IR.L2-3.6.1 (Incident Response Capability). The control requires establishing an operational incident-handling capability. The OSC hands you a 40-page Incident Response Plan. Is EXAMINE enough, or do you need more?", options: ["EXAMINE only — the plan establishes the capability", "EXAMINE the plan, then INTERVIEW personnel to verify they know and can execute it", "TEST by simulating an incident to see if they respond correctly", "INTERVIEW only — if they can explain it, the plan doesn't matter"], correct: 1, explanation: "A plan on paper establishes the documented capability, but 'operational' means people actually know how to use it. EXAMINE the plan to verify it covers all required phases (preparation, detection, analysis, containment, recovery, user response). Then INTERVIEW personnel — the help desk, IT staff, security team — to verify they're aware of the plan and know their roles. A plan nobody knows about isn't operational.", mindset: "EXAMINE tells you the PLAN exists. INTERVIEW tells you people KNOW the plan. Both are required to prove an 'operational' capability. Testing via tabletop is great evidence if it exists, but it's not always required." },
+            { category: "Assessment Method", scenario: "You're assessing SC.L2-3.13.11 (FIPS-Validated Cryptography). The IT admin says 'we use BitLocker with AES-256 everywhere — we're definitely FIPS compliant.' They offer to show you the BitLocker policy document. Is EXAMINE of the policy document sufficient?", options: ["Yes — if the policy requires AES-256, that satisfies FIPS", "No — EXAMINE the actual system configuration AND TEST that FIPS mode is active; the algorithm alone isn't proof of FIPS validation", "Yes — AES-256 is a FIPS-approved algorithm so the control is met", "No — you must INTERVIEW the vendor who provided BitLocker"], correct: 1, explanation: "FIPS-validated means the cryptographic MODULE is listed on NIST's CMVP database — not just that a FIPS algorithm is used. A policy saying 'use AES-256' doesn't prove FIPS validation. You need to EXAMINE actual system configurations showing FIPS mode is enabled, and TEST by checking the CMVP database for the specific module and version in use. AES-256 is a FIPS-approved algorithm, but BitLocker can run AES-256 without being in FIPS mode.", mindset: "Algorithm ≠ Validated Module. EXAMINE the config to see if FIPS mode is on. TEST against the CMVP database. Policy documents can't prove technical state — you have to look at the systems themselves." }
         ];
 
         // ==================== ASSESSOR DISTINCTIONS (Common Mistakes & Nuanced Thinking) ====================
@@ -2297,8 +2392,14 @@
         
         function getQuestionId(mode, index, question) {
             // Create unique ID based on first 50 chars of question text
+            // Using a simple hash instead of btoa to handle non-ASCII characters safely
             const qText = (question.q || question.scenario || '').substring(0, 50);
-            return `${mode}_${btoa(qText).substring(0, 20)}`;
+            let hash = 0;
+            for (let i = 0; i < qText.length; i++) {
+                hash = ((hash << 5) - hash) + qText.charCodeAt(i);
+                hash |= 0;
+            }
+            return `${mode}_${Math.abs(hash)}`;
         }
         
         function recordAnswer(questionId, isCorrect) {
@@ -2409,6 +2510,7 @@
             document.getElementById('tipsContainer').classList.remove('active');
             document.getElementById('statsContainer').classList.remove('active');
             document.getElementById('deepdiveContainer').classList.remove('active');
+            document.getElementById('mindsetContainer').classList.remove('active');
             
             // Hide all sidebars
             document.getElementById('studySidebar').style.display = 'none';
@@ -2456,6 +2558,9 @@
                 document.getElementById('deepdiveContainer').classList.add('active');
                 document.getElementById('studySidebar').style.display = 'block';
                 renderDeepDive();
+            } else if (mode === 'mindset') {
+                document.getElementById('mindsetContainer').classList.add('active');
+                renderMindset();
             }
         }
 
@@ -2946,18 +3051,27 @@
             updateCCAStats();
             
             const modeTitles = {
-                'ethics': '⚖️ Ethics & Code of Conduct',
-                'gotcha': '⚡ Gotcha Questions',
+                'ethics': '⚖️ Professional Conduct',
+                'gotcha': '⚡ Watch Your Step',
                 'judgment': '🎯 Assessor Judgment',
                 'cap': '📋 CAP Process',
-                'scoping': '🗺️ Scoping & Assets',
-                'terminology': '📚 Terminology Traps'
+                'scoping': '🗺️ Scoping Decisions',
+                'terminology': '📚 Know the Language'
             };
             
+            const modeSubtitles = {
+                'ethics': 'How a credible assessor behaves — before, during, and after an assessment',
+                'gotcha': 'The rules and distinctions that trip up even experienced assessors',
+                'judgment': 'Apply assessor thinking to real scenarios — what would you do on site?',
+                'cap': 'Navigate the assessment process correctly from Phase 1 through closeout',
+                'scoping': 'Categorize assets correctly under pressure — where CUI lives matters',
+                'terminology': 'Precision in language is precision in assessment — know what words mean'
+            };
+
             let html = `
                 <div class="header">
                     <h2>${modeTitles[ccaMode] || ccaMode}</h2>
-                    <p>Question ${ccaIndex + 1} of ${ccaQuestions.length}</p>
+                    <p>${modeSubtitles[ccaMode] || 'Question ' + (ccaIndex + 1) + ' of ' + ccaQuestions.length}</p>
                 </div>
                 <div class="cca-card">
                     <span class="cca-category ${ccaMode}">${q.category}</span>
@@ -2985,9 +3099,9 @@
             
             html += `
                     <div class="cca-explanation">
-                        <h4>📚 Explanation</h4>
+                        <h4>📚 Why This Matters</h4>
                         <p>${q.explanation}</p>
-                        ${q.mindset ? `<div class="cca-mindset"><h5>🎯 Assessor Mindset</h5><p>${q.mindset}</p></div>` : ''}
+                        ${q.mindset ? `<div class="cca-mindset"><h5>🧠 Assessor Thinking</h5><p>${q.mindset}</p></div>` : ''}
                     </div>
                     <button class="quiz-btn quiz-btn-primary cca-next-btn" style="display: none; margin-top: 20px;" onclick="nextCCAQuestion()">
                         ${ccaIndex < ccaQuestions.length - 1 ? 'Next Question →' : 'See Results'}
@@ -3178,8 +3292,8 @@
             
             let html = `
                 <div class="header">
-                    <h2>💡 Test-Taking Strategy Tips</h2>
-                    <p>Key strategies for CCA exam success</p>
+                    <h2>💡 Exam Strategy & Assessor Mindset</h2>
+                    <p>The thinking frameworks that separate passing from failing</p>
                 </div>
                 <div style="text-align: center; margin-bottom: 24px; padding: 15px; background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(251, 146, 60, 0.1) 100%); border-radius: 12px; border: 1px solid rgba(249, 115, 22, 0.3);">
                     <span style="color: #64748b; font-size: 0.95rem;">Exam insights from </span>
@@ -3249,7 +3363,8 @@
                     
                     <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #f59e0b;">
                         <div style="font-size: 1.2rem; font-weight: 700; color: #92400e; margin-bottom: 16px;">📜 THE DFARS STORY — They Got Stricter Over Time</div>
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 16px;">
+                        <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 16px; border-radius: 8px;">
+                        <table style="width: 100%; min-width: 400px; border-collapse: collapse; font-size: 0.9rem;">
                             <tr style="background: rgba(255,255,255,0.7);">
                                 <th style="padding: 10px; text-align: left; border-bottom: 2px solid #d97706; color: #92400e;">DFARS</th>
                                 <th style="padding: 10px; text-align: left; border-bottom: 2px solid #d97706; color: #92400e;">Memory Hook</th>
@@ -3276,6 +3391,7 @@
                                 <td style="padding: 10px; color: #78350f;"><strong>PROVE IT</strong> — Get your CMMC certification</td>
                             </tr>
                         </table>
+                        </div><!-- end scroll wrapper -->
                         <div style="background: rgba(255,255,255,0.7); padding: 15px; border-radius: 10px; border-left: 4px solid #d97706;">
                             <div style="font-weight: 700; color: #92400e; margin-bottom: 8px;">🎯 The Story (in order):</div>
                             <div style="color: #78350f; font-size: 1rem; line-height: 1.6; font-style: italic;">
@@ -3313,7 +3429,8 @@
                         </div>
                         <div style="background: white; padding: 16px; border-radius: 10px; margin-top: 16px;">
                             <div style="font-weight: 700; color: #6b21a8; margin-bottom: 12px;">🎯 Quick Examples for MFA (IA.L2-3.5.3)</div>
-                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                            <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                            <table style="width: 100%; min-width: 380px; border-collapse: collapse; font-size: 0.9rem;">
                                 <tr style="background: #f8fafc;">
                                     <th style="padding: 8px; text-align: left; border-bottom: 2px solid #e2e8f0;">Evidence</th>
                                     <th style="padding: 8px; text-align: center; border-bottom: 2px solid #e2e8f0;">Adequate?</th>
@@ -3339,6 +3456,7 @@
                                     <td style="padding: 8px; border-bottom: 1px solid #e2e8f0;">Right kind AND full scope coverage</td>
                                 </tr>
                             </table>
+                            </div><!-- end scroll wrapper -->
                         </div>
                         <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin-top: 16px; color: #92400e; font-size: 0.9rem;">
                             <strong>💡 Remember:</strong> Evidence can be ADEQUATE (right kind) but NOT SUFFICIENT (not enough coverage). BOTH conditions must be met for a practice to be MET!
@@ -3429,7 +3547,8 @@
                     <!-- Asset Categories -->
                     <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px; padding: 20px; margin-top: 24px; border: 2px solid #38bdf8;">
                         <div style="font-size: 1.2rem; font-weight: 700; color: #0369a1; margin-bottom: 16px;">📦 Asset Categories (Know These Cold)</div>
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px;">
+                        <table style="width: 100%; min-width: 380px; border-collapse: collapse; font-size: 0.9rem;">
                             <tr style="background: rgba(255,255,255,0.7);">
                                 <th style="padding: 10px; text-align: left; border-bottom: 2px solid #0ea5e9; color: #0369a1;">Category</th>
                                 <th style="padding: 10px; text-align: left; border-bottom: 2px solid #0ea5e9; color: #0369a1;">Definition</th>
@@ -3461,6 +3580,7 @@
                                 <td style="padding: 10px; color: #64748b;">Conference room TV, separate enclave</td>
                             </tr>
                         </table>
+                        </div><!-- end scroll wrapper -->
                         
                         <div style="background: white; border-radius: 10px; padding: 16px; margin-top: 16px;">
                             <div style="font-weight: 700; color: #0369a1; margin-bottom: 12px;">🔑 CRMA vs. Out of Scope — The Key Difference</div>
@@ -3710,7 +3830,248 @@
             }
         }
 
-        // ==================== DEEP DIVE MODE ====================
+        // ==================== MINDSET MODE ====================
+        function renderMindset() {
+            const container = document.getElementById('mindsetContainer');
+
+            const GREEN = '#059669';
+            const LIGHTGREEN = '#d1fae5';
+            const DARKGREEN = '#065f46';
+            const MIDGREEN = '#047857';
+
+            const scenarios = [
+                {
+                    title: "Is this a CUI Asset, SPA, or CRMA?",
+                    icon: "📦",
+                    color: GREEN,
+                    scenario: "A contractor has a firewall that sits at the network perimeter and filters all traffic going in and out of the enclave where CUI lives. The firewall never stores, processes, or transmits CUI itself — it just controls access to systems that do.",
+                    steps: [
+                        { label: "Step 1 — Ask: Does it store, process, or transmit CUI?", text: "No. The firewall handles network packets but never contains CUI content. CUI doesn't live in it." },
+                        { label: "Step 2 — Ask: Does it provide security functions that protect CUI assets?", text: "Yes. The firewall enforces access control at the boundary of the CUI enclave. Without it, those systems are exposed." },
+                        { label: "Step 3 — Apply the definition", text: "Security Protection Assets (SPAs) don't hold CUI — they protect systems that do. Firewalls, domain controllers, SIEMs, jump servers, and MFA systems all qualify." }
+                    ],
+                    conclusion: "✅ This is a Security Protection Asset (SPA). It must be included in scope and assessed accordingly.",
+                    trap: "The trap is thinking 'no CUI = out of scope.' SPAs are very much in scope. If the firewall goes down or gets misconfigured, CUI is exposed. That's why it counts."
+                },
+                {
+                    title: "CRMA vs. Out of Scope — the line that matters",
+                    icon: "🗺️",
+                    color: GREEN,
+                    scenario: "A contractor has a shared office printer connected to their corporate network. The network also carries CUI. HR uses the printer daily for offer letters and internal documents. The IT manager says: 'We have a policy — nobody is supposed to print CUI to that printer. It's out of scope.'",
+                    steps: [
+                        { label: "Step 1 — Ask: Is CUI physically or logically unable to reach this asset?", text: "No. The printer is on the same network as CUI systems. There's no technical barrier preventing CUI from being printed there." },
+                        { label: "Step 2 — Ask: Is the only thing stopping CUI flow a policy?", text: "Yes. The contractor's position is 'we told people not to.' That's an administrative control, not a technical one." },
+                        { label: "Step 3 — Apply the distinction", text: "Out of Scope means CUI CANNOT flow there by design — physical separation, or enforced logical isolation. CRMA means CUI COULD flow there but doesn't based on documented policy and business process." }
+                    ],
+                    conclusion: "⚠️ This is a CRMA (Contractor Risk Managed Asset) — not Out of Scope. The policy doesn't eliminate the pathway, it just governs behavior on that pathway.",
+                    trap: "The classic CRMA trap: contractors use 'we have a policy' as a magic wand to move things out of scope. Your job is to evaluate whether the policy genuinely eliminates the CUI pathway or just says it does. If CUI COULD get there, it's in scope."
+                },
+                {
+                    title: "When a device is BOTH on the network AND touches CUI",
+                    icon: "💻",
+                    color: GREEN,
+                    scenario: "A software developer's laptop is used for coding, email, and occasional document review. The developer works on a DoD contract and regularly opens contract specifications that contain CUI. The SSP lists the laptop as a 'general workstation — CRMA.'",
+                    steps: [
+                        { label: "Step 1 — Ask: Does this device actually process CUI?", text: "Yes. The developer opens contract specifications containing CUI on this laptop. That's processing — not a theoretical possibility." },
+                        { label: "Step 2 — Ask: Does the CRMA definition fit?", text: "No. CRMA is for assets that CAN access CUI based on network positioning but DON'T based on policy. If CUI is actively being opened on the laptop, it's not a CRMA — it's already there." },
+                        { label: "Step 3 — Correct the categorization", text: "Any device that stores, processes, or transmits CUI is a CUI Asset, period. The developer's workflow puts it squarely in that definition." }
+                    ],
+                    conclusion: "🔴 This is a CUI Asset, incorrectly categorized as CRMA. This is a scoping error — the SSP doesn't reflect reality.",
+                    trap: "People confuse 'general use' with 'no CUI.' CUI doesn't care what else the device is used for. If CUI touches it, it's a CUI Asset. The SSP saying otherwise is a finding, not a shield."
+                },
+                {
+                    title: "Adequate but NOT Sufficient — don't mix these up",
+                    icon: "🔍",
+                    color: GREEN,
+                    scenario: "You're assessing AU.L2-3.3.1 (Audit Logging). The contractor has 45 CUI assets. They show you detailed, timestamped audit logs from their main domain controller — comprehensive, well-formatted, covering 90 days of activity. Nothing else is provided.",
+                    steps: [
+                        { label: "Step 1 — Ask: Is this the RIGHT kind of evidence?", text: "Yes. Audit logs are exactly what you'd expect to see for AU.L2-3.3.1. The format is correct, the content is relevant." },
+                        { label: "Step 2 — Ask: Does this cover the full assessment scope?", text: "No. One domain controller out of 45 CUI assets is not representative. What about workstations, servers, cloud systems, and other infrastructure?" },
+                        { label: "Step 3 — Separate the two tests", text: "Adequate = right kind of evidence (quality, relevance). Sufficient = enough of the right kind to cover the scope (coverage, quantity). Passing the first test doesn't mean you pass the second." }
+                    ],
+                    conclusion: "⚠️ Evidence is ADEQUATE but NOT SUFFICIENT. The right type of evidence exists — it just doesn't cover the full scope.",
+                    trap: "This is one of the most common evidence evaluation errors. Assessors see good-looking evidence and move on without asking 'does this cover everything?' Adequate and sufficient are two separate hurdles. Both must be cleared."
+                },
+                {
+                    title: "NOT Adequate — the evidence type is wrong",
+                    icon: "📄",
+                    color: GREEN,
+                    scenario: "You're assessing CM.L2-3.4.1 (System Baselining). The contractor provides a 60-page 'Baseline Configuration Standard' document that describes in detail what the configurations should be — including OS settings, firewall rules, and hardening benchmarks.",
+                    steps: [
+                        { label: "Step 1 — Ask: What does this practice actually require?", text: "CM.L2-3.4.1 requires establishing AND maintaining baseline configurations. The key word is established — meaning the baseline exists and is applied to actual systems." },
+                        { label: "Step 2 — Ask: Does the document prove the baseline is applied?", text: "No. A document describing what configurations SHOULD be isn't proof those configurations ARE applied. It shows intent and planning — not implementation." },
+                        { label: "Step 3 — Identify what adequate evidence looks like", text: "You need actual system configurations — screenshots, exported config files, or a live demonstration showing the systems match the documented baseline." }
+                    ],
+                    conclusion: "🔴 Evidence is NOT ADEQUATE. A policy or standard document shows intent, not implementation. You need proof the systems match the baseline.",
+                    trap: "Contractors often hand you documentation thinking it covers everything. Your job is to ask: 'Does this PROVE the control is working, or does it just describe what SHOULD be happening?' Documentation alone almost never satisfies technical controls."
+                },
+                {
+                    title: "Partial Scoring — the two controls you must know cold",
+                    icon: "⚖️",
+                    color: GREEN,
+                    scenario: "An organization has MFA enforced for all remote access and all privileged account logins. However, non-privileged users working locally in the office don't use MFA — they log in with just a password. The OSC says 'we figured local access was lower risk.'",
+                    steps: [
+                        { label: "Step 1 — Identify which practice this is", text: "IA.L2-3.5.3 — Multifactor Authentication. This is one of only TWO practices in the entire CMMC Level 2 framework that allow partial scoring." },
+                        { label: "Step 2 — Apply the partial scoring logic", text: "MFA for some but not all required access paths = 3 points deducted (NOT 5). The partial credit applies when MFA is implemented for SOME of the required scenarios but not all. No MFA at all = 5 points deducted." },
+                        { label: "Step 3 — Score correctly", text: "The organization has remote + privileged covered. Local non-privileged is missing. This is partial implementation — score it at the 3-point deduction level, not the full 5." }
+                    ],
+                    conclusion: "⚠️ CONDITIONAL certification may still be possible. Score as partial (-3 pts). The missing coverage must be in the POA&M.",
+                    trap: "The trap is treating partial MFA as 'no MFA' and hitting them for the full 5 points. Know which two practices have partial scoring: IA.L2-3.5.3 (MFA) and SC.L2-3.13.11 (FIPS-validated cryptography). Those are the ONLY two."
+                },
+                {
+                    title: "Looks MET on paper — but is it really?",
+                    icon: "🎭",
+                    color: GREEN,
+                    scenario: "You're assessing AC.L2-3.1.8 (Unsuccessful Logon Attempts). The SSP states: 'Accounts are locked after 5 failed attempts.' You test it — sure enough, after 5 bad passwords, the account locks. The IT admin shows you the Group Policy confirming the setting. Everything checks out.",
+                    steps: [
+                        { label: "Step 1 — Verify the stated control works", text: "Account lockout after 5 attempts — confirmed. The basic requirement appears met." },
+                        { label: "Step 2 — Ask what the policy says about lockout duration", text: "The requirement references 'organizationally defined' parameters. That means you need to check what THEY defined — not just whether lockout exists." },
+                        { label: "Step 3 — Dig into the implementation", text: "You check the Group Policy and see: lockout duration = 1 minute. Their documented policy says '30 minutes.' The system is technically locking accounts, but not for the duration they defined. The technical implementation doesn't match the policy." }
+                    ],
+                    conclusion: "🔴 NOT MET — the account lockout duration doesn't match the organizationally defined parameter. MET on the 'does lockout exist' question, but NOT MET against their own policy.",
+                    trap: "This is the 'works in practice vs. exists on paper' gap. When requirements have organizationally defined values, your evidence test has two parts: (1) does the control exist, and (2) does the implementation match what they SAID they'd implement? Both must align."
+                },
+                {
+                    title: "The SSP says one thing — reality says another",
+                    icon: "🕵️",
+                    color: GREEN,
+                    scenario: "The SSP states: 'Remote access requires MFA via Duo Security for all users.' During assessment, you interview a remote sales employee who says they connect via VPN with just their domain password. You test it yourself — VPN connects with no MFA prompt.",
+                    steps: [
+                        { label: "Step 1 — Identify the discrepancy", text: "The SSP describes MFA for remote access. Your interview and testing reveal no MFA in use for VPN. There's a direct contradiction between documented and actual state." },
+                        { label: "Step 2 — Count the findings", text: "This isn't just one problem. You have: (1) IA.L2-3.5.3 NOT MET — MFA not implemented for remote access, AND (2) CA.L2-3.12.4 concern — the SSP inaccurately describes the implemented state." },
+                        { label: "Step 3 — Document both", text: "Each issue is its own finding. The SSP accuracy concern relates to the organization's obligation to maintain an accurate system security plan that reflects actual implementation." }
+                    ],
+                    conclusion: "🔴 Two separate issues: a control finding AND an SSP accuracy finding. One observation can generate multiple findings.",
+                    trap: "Assessors sometimes catch a discrepancy and only write it up under the technical control. Don't forget the SSP. If the plan says X and reality is Y, the plan is wrong — and that's its own problem. Always ask: does the documentation accurately describe what's actually in place?"
+                },
+                {
+                    title: "When inheritance isn't a free pass",
+                    icon: "☁️",
+                    color: GREEN,
+                    scenario: "A contractor uses Microsoft 365 (FedRAMP Moderate authorized) for email and document storage. When you assess SC.L2-3.13.8 (Data in Transit encryption), the IT manager says: 'That's inherited from Microsoft — they handle encryption. We don't need evidence.'",
+                    steps: [
+                        { label: "Step 1 — Understand what FedRAMP authorization means here", text: "FedRAMP authorization means Microsoft has demonstrated those controls for their platform. But it doesn't automatically mean the contractor's specific implementation inherits everything." },
+                        { label: "Step 2 — Ask what must still be verified", text: "You need: (1) confirmation the specific service the contractor uses is covered under the FedRAMP boundary, (2) confirmation the inherited control applies to how the contractor USES the service, (3) any customer-side responsibilities from the Customer Responsibility Matrix." },
+                        { label: "Step 3 — Get the actual evidence", text: "FedRAMP authorization letter or attestation, the Customer Responsibility Matrix, and evidence the contractor has configured their tenant correctly. 'Microsoft handles it' without documentation isn't evidence." }
+                    ],
+                    conclusion: "⚠️ Inheritance requires documentation, not just a claim. Verify the scope, confirm applicability, and check customer responsibilities.",
+                    trap: "Cloud services feel like a black box and contractors lean on that. Your job is to verify the inherited control covers the contractor's actual use case AND that they've fulfilled their side of the shared responsibility model. FedRAMP authorization is necessary but not sufficient on its own."
+                },
+                {
+                    title: "Specialized Assets — the category with its own rules",
+                    icon: "🏭",
+                    color: GREEN,
+                    scenario: "A contractor's conference room has a large display screen connected to the corporate network via HDMI and a small media player. Employees occasionally cast presentations from their laptops — some of which contain CUI — onto the screen during internal meetings. The contractor has categorized it as Out of Scope: 'It's just a display, it doesn't store anything.'",
+                    steps: [
+                        { label: "Step 1 — Can CUI reach this device?", text: "Yes. When CUI is cast or displayed, it's being transmitted to that device. It doesn't matter that the device doesn't store it permanently — CUI is flowing through it during use." },
+                        { label: "Step 2 — Does it qualify as Out of Scope?", text: "No. Out of Scope requires CUI to be physically or logically UNABLE to reach the asset. A display on the corporate network receiving CUI presentations fails that test immediately." },
+                        { label: "Step 3 — Is it a CUI Asset, CRMA, SPA, or Specialized Asset?", text: "This is where Specialized Asset applies. The display likely cannot meet all 110 CMMC controls — it has no authentication, no logging, no patch management. Specialized Assets get a carve-out specifically because they're technically incapable of meeting the full control set. Per 32 CFR Part 170 Table 3: IoT devices, OT systems, Government Furnished Equipment (GFE), and restricted information systems all fall here. A conference room display fits the IoT/embedded device profile." },
+                        { label: "Step 4 — What does Specialized Asset status actually mean?", text: "Specialized Assets are in scope — they must be documented in the SSP and protected. But the assessed organization gets to document why the full control set can't apply and what compensating measures are in place instead. It's not a free pass; it's a documented exception with mitigations." }
+                    ],
+                    conclusion: "⚠️ This is a Specialized Asset (IoT/display device) — NOT Out of Scope. It must appear in the SSP with documented limitations and compensating controls.",
+                    trap: "The trap is letting 'it doesn't store data' or 'it's just a display/sensor/machine' push something Out of Scope. Specialized Asset exists precisely for devices that CUI reaches but that can't be fully controlled. The conference room display, the CNC machine on the shop floor, the badge reader, the GFE laptop — all in scope, all Specialized Assets. Document them, don't disappear them."
+                },
+                {
+                    title: "EXAMINE, INTERVIEW, or TEST — picking the right method",
+                    icon: "🔬",
+                    color: GREEN,
+                    scenario: "You're assessing three controls back to back: AC.L2-3.1.5 (Least Privilege), SC.L2-3.13.11 (FIPS-validated cryptography), and IR.L2-3.6.1 (Incident Handling Capability). Your team lead asks you to plan the assessment approach for each. Which method — or combination — does each one call for, and why?",
+                    steps: [
+                        { label: "Step 1 — Understand what each method actually is", text: "EXAMINE = review documentation, configurations, logs, policies, records. INTERVIEW = talk to people — system owners, admins, users — about processes and understanding. TEST = observe, demonstrate, or technically verify that something actually works as described. These aren't interchangeable." },
+                        { label: "Step 2 — AC.L2-3.1.5 (Least Privilege)", text: "This control has two parts: a PROCESS (how do you determine who gets privileged access?) and a TECHNICAL implementation (are privileges actually restricted?). You need INTERVIEW to understand the process — who approves privileged accounts, how access is reviewed. You need EXAMINE to review the access control lists and privileged account inventory. You might TEST by attempting to perform a privileged action as a non-privileged user. All three methods may apply." },
+                        { label: "Step 3 — SC.L2-3.13.11 (FIPS-validated cryptography)", text: "This is a technical control with a specific, verifiable standard — the cryptographic module must appear on the CMVP (Cryptographic Module Validation Program) list. INTERVIEW alone won't cut it — 'we use encryption' is not proof. You need to EXAMINE the actual encryption configuration and TEST that FIPS mode is active. Verify the module certificate number against the CMVP database. This is a TEST-and-EXAMINE scenario." },
+                        { label: "Step 4 — IR.L2-3.6.1 (Incident Handling Capability)", text: "This requires establishing a CAPABILITY — not proving incidents were handled. EXAMINE the Incident Response Plan. INTERVIEW personnel to verify they know the plan exists, know their roles, and understand the process. Testing here might mean a tabletop exercise if one exists. Heavy on EXAMINE and INTERVIEW because this control is primarily about whether the capability is defined and understood." }
+                    ],
+                    conclusion: "✅ Method selection follows the nature of the control: process controls lean on INTERVIEW + EXAMINE, technical controls lean on TEST + EXAMINE, capability controls lean on EXAMINE + INTERVIEW. Most controls need more than one method.",
+                    trap: "The trap is defaulting to EXAMINE for everything because documents are easy to collect. Documents show INTENT — they don't show reality. A policy saying 'we use FIPS encryption' is not TEST evidence. An org chart showing who's responsible for IR is not proof the plan works. Always ask: what would prove this is actually happening, not just documented?"
+                },
+                {
+                    title: "POA&M items are automatically NOT MET — no exceptions",
+                    icon: "📋",
+                    color: GREEN,
+                    scenario: "During assessment, you discover that SC.L2-3.13.11 (FIPS-validated cryptography) is partially implemented — laptops are encrypted with BitLocker but not in FIPS mode. The OSC points to their POA&M: 'We have that listed with a 60-day remediation plan. We're working on it — can that count toward credit?'",
+                    steps: [
+                        { label: "Step 1 — Apply the rule", text: "Any practice listed in a POA&M is automatically scored NOT MET. This is not negotiable. A POA&M is a documented acknowledgment that the control is not fully implemented." },
+                        { label: "Step 2 — Explain the partial scoring separately", text: "SC.L2-3.13.11 is one of two practices with partial scoring. Encryption exists but isn't FIPS-validated = 3-point deduction (not 5). But the score doesn't make it MET — it just reduces the penalty." },
+                        { label: "Step 3 — Clarify the path forward", text: "The POA&M stays as a NOT MET finding. If the OSC completes remediation within 180 days, they can get FINAL certification. The plan to fix it doesn't change today's score." }
+                    ],
+                    conclusion: "🔴 NOT MET — POA&M items are always scored NOT MET regardless of remediation progress or intent.",
+                    trap: "OSCs will try to get credit for 'we're working on it.' The plan to fix something is not the fix. A POA&M in hand means the control isn't implemented — full stop. Don't let good intentions change the score."
+                }
+            ];
+
+            let html = `
+                <div class="header">
+                    <h2>🧠 Assessor Mindset</h2>
+                    <p>Worked examples that build the reasoning muscle — not the answer key</p>
+                </div>
+                <div style="max-width: 900px; margin: 0 auto;">
+                    <div style="background: linear-gradient(135deg, ${LIGHTGREEN}, #a7f3d0); border-radius: 16px; padding: 20px; margin-bottom: 28px; border: 2px solid ${GREEN};">
+                        <div style="font-weight: 700; color: ${DARKGREEN}; font-size: 1.05rem; margin-bottom: 8px;">How to use this section</div>
+                        <div style="color: ${MIDGREEN}; font-size: 0.95rem; line-height: 1.7;">
+                            Each card walks through a real scenario step by step — not to give you the answer, but to show you the <strong>reasoning process</strong> a solid assessor uses. Read the scenario first and think through it before you scroll to the steps. The "Common Trap" at the bottom is where most people go wrong.
+                        </div>
+                    </div>
+                    ${scenarios.map((s, i) => `
+                        <div style="background: white; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; border-left: 5px solid ${s.color};">
+                            
+                            <!-- Card Header -->
+                            <div style="background: linear-gradient(135deg, ${s.color}, ${MIDGREEN}); padding: 18px 24px; display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 1.6rem;">${s.icon}</span>
+                                <div>
+                                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Worked Example ${i + 1}</div>
+                                    <div style="font-size: 1.1rem; font-weight: 700; color: white;">${s.title}</div>
+                                </div>
+                            </div>
+
+                            <div style="padding: 24px;">
+
+                                <!-- Scenario -->
+                                <div style="background: #f8fafc; border-radius: 10px; padding: 16px; margin-bottom: 20px; border-left: 4px solid #94a3b8;">
+                                    <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">📍 The Scenario</div>
+                                    <div style="color: #334155; font-size: 0.95rem; line-height: 1.7;">${s.scenario}</div>
+                                </div>
+
+                                <!-- Steps -->
+                                <div style="margin-bottom: 20px;">
+                                    <div style="font-size: 0.75rem; font-weight: 700; color: ${DARKGREEN}; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">🧩 Walk Through It</div>
+                                    ${s.steps.map((step, si) => `
+                                        <div style="display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start;">
+                                            <div style="background: ${s.color}; color: white; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; margin-top: 2px;">${si + 1}</div>
+                                            <div style="flex: 1;">
+                                                <div style="font-weight: 700; color: ${DARKGREEN}; font-size: 0.9rem; margin-bottom: 4px;">${step.label}</div>
+                                                <div style="color: #475569; font-size: 0.9rem; line-height: 1.6;">${step.text}</div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+
+                                <!-- Conclusion -->
+                                <div style="background: ${LIGHTGREEN}; border-radius: 10px; padding: 16px; margin-bottom: 16px; border: 1px solid #6ee7b7;">
+                                    <div style="font-size: 0.75rem; font-weight: 700; color: ${DARKGREEN}; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">✅ The Call</div>
+                                    <div style="color: ${DARKGREEN}; font-size: 0.95rem; font-weight: 600; line-height: 1.6;">${s.conclusion}</div>
+                                </div>
+
+                                <!-- Trap -->
+                                <div style="background: #fef2f2; border-radius: 10px; padding: 16px; border: 1px solid #fca5a5;">
+                                    <div style="font-size: 0.75rem; font-weight: 700; color: #991b1b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">⚠️ Common Trap</div>
+                                    <div style="color: #7f1d1d; font-size: 0.9rem; line-height: 1.6;">${s.trap}</div>
+                                </div>
+
+                            </div>
+                        </div>
+                    `).join('')}
+
+                    <div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 0.9rem;">
+                        The goal isn't to memorize these scenarios — it's to internalize the <em>questions you ask yourself</em> when you're sitting across from an OSC and something doesn't add up.
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+
         function renderDeepDive() {
             const container = document.getElementById('deepdiveContainer');
             

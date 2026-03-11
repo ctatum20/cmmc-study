@@ -68,6 +68,5 @@ Performance tracking across all question modes with domain-weighted breakdown mi
 | Know the Language | 12 |
 | **Total** | **240** |
 
----
 
 *CMMC® is a registered trademark of the U.S. Department of Defense. This tool is an independent study resource and is not affiliated with, endorsed by, or connected to the Cyber AB, DoD, or any C3PAO.*
